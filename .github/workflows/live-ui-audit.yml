@@ -81,6 +81,29 @@ jobs:
             }
             await page.waitForTimeout(1000);
 
+            const dialogStateBefore = await page.evaluate(() => {
+              const dialog = document.querySelector('dialog');
+              if (!dialog) return null;
+              return { open: dialog.open, hasOpenAttribute: dialog.hasAttribute('open'), display: getComputedStyle(dialog).display };
+            });
+            await page.screenshot({ path: path.join(out, `${vp.name}-initial.png`), fullPage: true });
+
+            let autoModalClosed = false;
+            const openDialog = page.locator('dialog[open]').first();
+            if (await openDialog.count()) {
+              const closeButton = openDialog.getByRole('button', { name: /đóng hộp thoại/i }).first();
+              if (await closeButton.count()) {
+                await closeButton.click();
+                await page.waitForTimeout(150);
+                autoModalClosed = true;
+              }
+            }
+            const dialogStateAfterClose = await page.evaluate(() => {
+              const dialog = document.querySelector('dialog');
+              if (!dialog) return null;
+              return { open: dialog.open, hasOpenAttribute: dialog.hasAttribute('open'), display: getComputedStyle(dialog).display };
+            });
+
             const metrics = await page.evaluate(() => {
               const visible = el => {
                 const r = el.getBoundingClientRect();
@@ -163,7 +186,9 @@ jobs:
               };
             });
 
-            const interactions = {};
+            await page.screenshot({ path: path.join(out, `${vp.name}-clean.png`), fullPage: true });
+
+            const interactions = { dialogStateBefore, dialogStateAfterClose, autoModalClosed };
             if (vp.width < 1024) {
               const menu = page.getByRole('button', { name: /mở menu/i }).first();
               if (await menu.count()) {
