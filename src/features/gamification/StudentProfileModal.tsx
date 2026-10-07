@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, Icon } from "../../components/ui";
+import { Modal, Button, Icon, Progress } from "../../components/ui";
 import { studentProfile } from "../learning/data/student";
 import { initialBadges, type StudentBadge } from "./badges";
 
@@ -202,7 +202,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                       </div>
                       {badge.unlocked && (
                         <span className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-secondary text-white shadow-xs">
-                          <Icon name="check" className="text-[11px]" />
+                          <Icon name="check" className="text-xs" />
                         </span>
                       )}
                     </div>
@@ -213,7 +213,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                           {badge.title}
                         </h5>
                         <span
-                          className={`rounded-md border px-1.5 py-0.2 text-[10px] ${tierInfo.className}`}
+                          className={`rounded-md border px-1.5 py-0.5 text-xs ${tierInfo.className}`}
                         >
                           {tierInfo.label}
                         </span>
@@ -223,7 +223,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                         {badge.description}
                       </p>
 
-                      <div className="mt-3 flex items-center justify-between text-[11px]">
+                      <div className="mt-3 flex items-center justify-between text-xs">
                         <span className="font-semibold text-secondary flex items-center gap-1">
                           <Icon name="savings" className="text-xs" />+
                           {badge.rewardGp} GP
@@ -242,12 +242,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
 
                       {/* Progress bar if locked */}
                       {!badge.unlocked && (
-                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-container">
-                          <div
-                            className="h-full rounded-full bg-secondary transition-all"
-                            style={{ width: `${badge.progress}%` }}
-                          />
-                        </div>
+                        <Progress value={badge.progress} label={`Tiến độ huy hiệu ${badge.name}`} tone="accent" className="mt-1.5 h-1.5 w-full" />
                       )}
                     </div>
                   </div>
@@ -269,7 +264,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                   <h5 className="text-sm font-bold text-primary flex items-center gap-2">
                     {selectedBadge.title}
                     {selectedBadge.unlocked && (
-                      <span className="rounded-full bg-secondary/15 px-2 py-0.2 text-[10px] font-bold text-secondary">
+                      <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-bold text-secondary">
                         Đã mở khóa
                       </span>
                     )}
