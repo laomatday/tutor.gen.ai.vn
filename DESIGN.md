@@ -17,7 +17,7 @@ Giữ nhịp giao diện của hệ thống: nền canvas, chữ navy/ink, teal 
 
 - `src/index.css`: **core CSS được đồng bộ trực tiếp từ `gen.ai.vn/src/index.css`** — brand tokens, type scale, breakpoints, surfaces, fields, buttons, cards, badge/chip/tab, header/menu/dialog/state và reduced-motion.
 - `src/public-site.css`, `src/components/article-unified.css`, `src/components/site/*-reference.css`: giữ cùng cấu trúc/path với `gen.ai.vn` để có thể diff/sync trực tiếp. Chỉ import composition khi Tutor thực sự dùng loại trang tương ứng.
-- `src/fonts.css`: bản CSS font self-hosted của genAi được giữ đồng bộ; Tutor hiện vẫn tải Plus Jakarta Sans/JetBrains Mono qua Google Fonts nên file này chưa được import cho đến khi dependency @fontsource-variable được đưa vào lockfile.
+- `src/fonts.css`: self-hosted font CSS được giữ **byte-identical** với `gen.ai.vn` và được import trước core CSS. Tutor dùng cùng `@fontsource-variable` 5.3.0 cho Plus Jakarta Sans, JetBrains Mono và Newsreader; không còn phụ thuộc Google Fonts runtime.
 - `src/styles/tutor-compat.css`: lớp **adapter duy nhất** cho tên semantic cũ của Tutor và widget riêng (custom Select, native dialog, sidebar nav, native progress). Không được định nghĩa lại brand palette tại đây.
 - `src/components/ui`: ngữ nghĩa, tương tác và khả năng truy cập. Progress phải dùng native `<progress>` qua component `Progress`; không tự dựng `div role="progressbar"`.
 - `src/components/icons`: cùng Material Symbols Rounded SVG (weight 500) với `gen.ai.vn`; feature chỉ gọi qua `Icon`, không import thư viện icon khác.
