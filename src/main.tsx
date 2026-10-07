@@ -1,4 +1,6 @@
 import './index.css';
+import './public-site.css';
+import './styles/tutor-compat.css';
 import {createRoot} from 'react-dom/client';
 import App from './app/App';
 import {CurriculumProvider} from './context/CurriculumContext';
