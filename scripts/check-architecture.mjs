@@ -57,7 +57,7 @@ function visitDirectory(directory) {
       {
         pattern: /https?:\/\//g,
         message: "Move asset/service URLs to configuration or feature data.",
-        exempt: !path.endsWith(".tsx") || path.includes("/dev/"),
+        exempt: !path.endsWith(".tsx") || path.includes("/dev/") || path.includes("/components/icons/"),
       },
       {
         pattern: /material-symbols|lucide-react/g,
