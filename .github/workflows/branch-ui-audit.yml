@@ -76,9 +76,13 @@ jobs:
             const page = await context.newPage();
             const consoleErrors = [];
             const requestFailures = [];
+            const badResponses = [];
             page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
             page.on('pageerror', err => consoleErrors.push(String(err)));
             page.on('requestfailed', req => requestFailures.push({ url: req.url(), error: req.failure()?.errorText }));
+            page.on('response', res => {
+              if (res.status() >= 400) badResponses.push({ url: res.url(), status: res.status() });
+            });
 
             const response = await page.goto('http://127.0.0.1:4173/hoc-bai', { waitUntil: 'networkidle', timeout: 45000 });
             await page.waitForTimeout(250);
@@ -150,7 +154,7 @@ jobs:
               errors.push(`mobile backdrop transparent: ${JSON.stringify(drawer)}`);
             if (drawer && !drawer.navVisible) errors.push(`mobile nav not visible: ${JSON.stringify(drawer)}`);
 
-            report.push({ viewport: vp.name, base, drawer, consoleErrors, requestFailures, errors });
+            report.push({ viewport: vp.name, base, drawer, consoleErrors, requestFailures, badResponses, errors });
             await context.close();
           }
 
