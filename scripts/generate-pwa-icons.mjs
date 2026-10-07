@@ -86,6 +86,7 @@ function renderBrandIcon(x, y, w, h, isMaskable = false) {
   }
 
   // Official genAi gradient: navy → teal → cyan → sky.
+  const t = (x + y) / (w + h);
   const stops = [
     [0.00, [36, 60, 143]],
     [0.44, [25, 183, 165]],
