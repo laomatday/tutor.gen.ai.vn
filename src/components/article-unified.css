@@ -1,0 +1,59 @@
+@reference "../index.css";
+@layer theme, base, components, utilities;
+
+@layer components {
+  .gen-article-archive .gen-article-archive-hero {
+    @apply mx-0;
+  }
+  .gen-article-archive .gen-article-filters {
+    @apply border-line-subtle;
+  }
+  .genai-standard-page .gen-article-card {
+    @apply rounded-3xl border-line-subtle p-2 dark:border-ink-800;
+  }
+  .genai-standard-page .gen-article-card__cover {
+    @apply rounded-2xl;
+  }
+  .genai-standard-page .gen-article-card > div:last-child {
+    @apply px-4 pb-4 pt-5;
+  }
+  .genai-standard-page .gen-article-card h3 {
+    @apply text-brand dark:text-ink-100;
+  }
+  .genai-standard-page .gen-article-feature {
+    @apply rounded-3xl border-line-subtle p-2 dark:border-ink-800;
+  }
+  .genai-standard-page .gen-article-feature__cover {
+    @apply rounded-2xl;
+  }
+  .gen-article-detail .gen-article-hero {
+    @apply mb-10 grid items-center gap-7 rounded-4xl border border-line-subtle bg-white p-5 shadow-card sm:mb-14 sm:p-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-10 lg:p-10 dark:border-ink-800 dark:bg-night-raised dark:shadow-none;
+  }
+  .gen-article-hero__copy {
+    @apply min-w-0;
+  }
+  .gen-article-detail .gen-article-title {
+    @apply text-brand dark:text-ink-100;
+    font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+    line-height: 1.2;
+  }
+  .gen-article-detail .gen-article-byline {
+    @apply border-t border-line-subtle pt-5 dark:border-ink-800;
+  }
+  .gen-article-detail .gen-article-hero__cover {
+    @apply lg:aspect-[4/3];
+  }
+  .gen-article-detail .gen-article-reading-surface {
+    @apply rounded-3xl border border-line-subtle bg-white p-5 sm:p-7 lg:p-8 dark:border-ink-800 dark:bg-night-raised;
+  }
+  .gen-article-detail .gen-article-takeaways {
+    @apply mt-6;
+  }
+  .genai-standard-page .gen-article-sidebar > .ui-card,
+  .gen-article-sidebar .ui-card {
+    @apply rounded-3xl border-line-subtle dark:border-ink-800;
+  }
+  .gen-article-detail .gen-article-actions button {
+    @apply min-h-11;
+  }
+}
