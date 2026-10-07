@@ -14,6 +14,31 @@ export function Badge({
   );
 }
 
+export function Progress({
+  value,
+  max = 100,
+  label,
+  tone = "primary",
+  className,
+}: {
+  value: number;
+  max?: number;
+  label: string;
+  tone?: "primary" | "accent";
+  className?: string;
+}) {
+  const safeMax = Math.max(1, max);
+  const safeValue = Math.min(safeMax, Math.max(0, value));
+  return (
+    <progress
+      className={cn("ui-progress", tone === "accent" && "ui-progress-accent", className)}
+      value={safeValue}
+      max={safeMax}
+      aria-label={label}
+    />
+  );
+}
+
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("ui-card", className)} {...props} />;
 }
