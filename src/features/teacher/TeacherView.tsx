@@ -153,7 +153,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
             <h3 className="mt-4 text-xl font-bold text-on-surface">{classLabel(group.id)}</h3>
             <p className="mt-1 text-sm text-on-surface-variant">{group.topic}</p>
             <div className="mb-2 mt-5 flex justify-between text-xs"><span className="text-on-surface-variant">Tiến độ trung bình</span><span className="font-bold text-primary">{progress}%</span></div>
-            <div aria-label={`Tiến độ lớp ${group.id}: ${progress}%`} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} className="h-1.5 overflow-hidden rounded-full bg-surface-container"><div className="h-full rounded-full bg-secondary" style={{ width: `${progress}%` }} /></div>
+            <Progress value={progress} label={`Tiến độ lớp ${group.id}: ${progress}%`} tone="accent" className="h-1.5" />
             <div className="mt-4 flex items-center justify-between text-xs"><span className="text-secondary">{supportCount} học sinh cần hỗ trợ</span><Icon name="arrow_forward" className="text-lg text-primary" /></div>
           </Button>;
         })}
