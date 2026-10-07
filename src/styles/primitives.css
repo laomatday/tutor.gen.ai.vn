@@ -102,6 +102,9 @@
   .ui-progress::-webkit-progress-bar { border-radius: var(--radius-pill); background: var(--color-chip); }
   .ui-progress::-webkit-progress-value { border-radius: var(--radius-pill); background: var(--color-primary); }
   .ui-progress::-moz-progress-bar { border-radius: var(--radius-pill); background: var(--color-primary); }
+  .ui-progress-accent { color: var(--color-secondary); }
+  .ui-progress-accent::-webkit-progress-value { background: var(--color-secondary); }
+  .ui-progress-accent::-moz-progress-bar { background: var(--color-secondary); }
 
   .ui-dialog { position: fixed; inset: 0; margin: auto; width: min(calc(100% - 2rem), var(--container-dialog)); max-width: none; max-height: calc(100dvh - 2rem); padding: 0; overflow: visible; border: var(--control-border-width) solid var(--color-line); border-radius: var(--radius-card); background: var(--color-white); color: var(--color-on-surface); box-shadow: var(--shadow-dialog); }
   .ui-dialog-layout { display: flex; flex-direction: column; max-height: calc(100dvh - 2rem); min-height: 0; overflow: hidden; border-radius: inherit; }
