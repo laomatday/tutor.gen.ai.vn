@@ -15,10 +15,10 @@ Giữ nhịp giao diện của hệ thống: nền canvas, chữ navy/ink, teal 
 
 ## Một nguồn cho hình thức
 
-- `src/index.css`: **core CSS được đồng bộ trực tiếp từ `gen.ai.vn/src/index.css`** — brand tokens, type scale, breakpoints, surfaces, fields, buttons, cards, badge/chip/tab, header/menu/dialog/state và reduced-motion.
+- `src/index.css`: core CSS bám `gen.ai.vn/src/index.css` — brand tokens, type scale, breakpoints, surfaces, fields, buttons, cards, badge/chip/tab, header/menu/dialog/state và reduced-motion. Cuối file có một khối `@theme inline` được đánh dấu rõ để compile các tên semantic legacy của Tutor (`primary`, `secondary`, `outline-variant`…) trực tiếp sang token genAi; khối này chỉ là alias, không tạo palette mới.
 - `src/public-site.css`, `src/components/article-unified.css`, `src/components/site/*-reference.css`: giữ cùng cấu trúc/path với `gen.ai.vn` để có thể diff/sync trực tiếp. Chỉ import composition khi Tutor thực sự dùng loại trang tương ứng.
 - `src/fonts.css`: self-hosted font CSS được giữ **byte-identical** với `gen.ai.vn` và được import trước core CSS. Tutor dùng cùng `@fontsource-variable` 5.3.0 cho Plus Jakarta Sans, JetBrains Mono và Newsreader; không còn phụ thuộc Google Fonts runtime.
-- `src/styles/tutor-compat.css`: lớp **adapter duy nhất** cho tên semantic cũ của Tutor và widget riêng (custom Select, native dialog, sidebar nav, native progress). Không được định nghĩa lại brand palette tại đây.
+- `src/styles/tutor-compat.css`: lớp runtime adapter cho widget riêng của Tutor (custom Select, native `<dialog>`, sidebar nav, native progress). Native dialog bắt buộc giữ `dialog.ui-dialog:not([open]) { display: none; }`; không định nghĩa lại brand palette hoặc semantic theme trong file này.
 - `src/components/ui`: ngữ nghĩa, tương tác và khả năng truy cập. Progress phải dùng native `<progress>` qua component `Progress`; không tự dựng `div role="progressbar"`.
 - `src/components/icons`: cùng Material Symbols Rounded SVG (weight 500) với `gen.ai.vn`; feature chỉ gọi qua `Icon`, không import thư viện icon khác.
 - `design-preview.html`: trang xem trước dùng component thật, mở ở `/design-preview.html` khi chạy dev server; không nằm trong điều hướng sản phẩm.
@@ -78,4 +78,4 @@ Khi thêm control, cập nhật nguồn chung, kiểm tra bàn phím + điện t
 
 - Bộ chuyển vai trò Học sinh / Giáo viên / Quản trị chỉ xuất hiện trong DEV để kiểm thử UI. Production không trình bày role switch demo như một tính năng người dùng.
 - Màu PWA chuẩn: theme `#243C8F`, canvas `#F7FAFC`; artwork chỉ dùng navy → teal → cyan → sky của genAi.
-- `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, import icon ngoài Material Symbols SVG dùng chung, chữ dưới 12 px và progress bar tự dựng.
+- `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, import icon ngoài Material Symbols SVG dùng chung, chữ dưới 12 px, progress bar tự dựng, semantic alias không được compile bằng `@theme inline`, và regression làm native dialog hiện khi chưa `open`.
