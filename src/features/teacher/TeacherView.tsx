@@ -94,11 +94,11 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
 
 
   return <div className="w-full space-y-6 pb-10">
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="ui-page-header">
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-secondary">Không gian giáo viên</p>
-        <h1 className="text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">{sectionTitles[section]}</h1>
-        <p className="mt-2 text-sm text-on-surface-variant">Theo dõi tiến độ, nhận diện khó khăn và đồng hành cùng từng lớp học.</p>
+        <p className="ui-page-kicker">Không gian giáo viên</p>
+        <h1 className="ui-page-title">{sectionTitles[section]}</h1>
+        <p className="ui-page-description">Theo dõi tiến độ, nhận diện khó khăn và đồng hành cùng từng lớp học.</p>
       </div>
       <Button variant="primary" type="button" onClick={openCreationForm} ><Icon name="add" className="text-lg" />Tạo bài tập</Button>
     </div>
