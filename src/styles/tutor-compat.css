@@ -68,10 +68,6 @@
   --color-info-container: var(--color-sky-50);
   --color-on-info-container: var(--color-sky-800);
 
-  /* Tutor currently loads these two families through Google Fonts. */
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-
   /* Legacy type utility names used by feature code. */
   --font-body-lg: var(--font-sans);
   --font-body-md: var(--font-sans);
