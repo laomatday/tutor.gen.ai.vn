@@ -300,7 +300,7 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
               >
                 {isToday && (
                   <span
-                    className={`absolute -top-2 rounded-full px-2 py-0.2 text-[9px] font-extrabold uppercase ${
+                    className={`absolute -top-2 rounded-full px-2 py-0.5 text-xs font-extrabold uppercase ${
                       isSelected
                         ? "bg-secondary text-white"
                         : "bg-secondary text-white"
@@ -316,7 +316,7 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                   {d.label}
                 </span>
                 <span
-                  className={`mt-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                  className={`mt-1.5 rounded-full px-2 py-0.5 text-xs font-bold ${
                     isSelected
                       ? "bg-white/20 text-white"
                       : "bg-surface-container text-on-surface-variant group-hover:bg-secondary/15 group-hover:text-secondary"
@@ -411,7 +411,7 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                     <span className="text-sm font-extrabold text-primary">
                       {session.startTime}
                     </span>
-                    <span className="text-[10px] text-outline">
+                    <span className="text-xs text-outline">
                       {session.endTime}
                     </span>
                   </div>
@@ -434,12 +434,12 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                         {session.subjectName}
                       </span>
                       <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${badgeMeta.className}`}
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${badgeMeta.className}`}
                       >
                         {badgeMeta.label}
                       </span>
                       {session.status === "completed" && (
-                        <span className="rounded-full bg-secondary/15 px-2 py-0.2 text-[10px] font-semibold text-secondary">
+                        <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-secondary">
                           Đã hoàn thành
                         </span>
                       )}
@@ -605,11 +605,11 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                     >
                       <div className="flex items-center justify-between font-bold">
                         <span className="truncate pr-1">{s.title}</span>
-                        <span className="shrink-0 text-[11px] opacity-80">
+                        <span className="shrink-0 text-xs opacity-80">
                           {s.startTime}
                         </span>
                       </div>
-                      <div className="mt-1 flex items-center justify-between text-[11px] text-on-surface-variant">
+                      <div className="mt-1 flex items-center justify-between text-xs text-on-surface-variant">
                         <span>{s.instructor}</span>
                         <span>{s.location}</span>
                       </div>
