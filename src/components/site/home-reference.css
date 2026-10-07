@@ -1,0 +1,115 @@
+@reference "../../index.css";
+@layer theme, base, components, utilities;
+@layer components {
+  .gen-home { @apply space-y-16 pb-10 lg:space-y-20; }
+  /* The hero is a carousel of whole slides (text, buttons, picture), stacked in one grid cell. */
+  /* A banner card, like the other pages' heroes; its side padding holds the arrows from lg up. */
+  .gen-home-carousel { @apply relative isolate rounded-4xl border border-ink-200/70 bg-white px-4 pt-8 pb-4 sm:px-8 lg:px-16 lg:pt-12 lg:pb-8 dark:border-ink-800 dark:bg-night-raised; background-image: linear-gradient(135deg, color-mix(in oklab, var(--color-ice) 45%, transparent), transparent 65%); }
+  /* Phones: slides sit on the bottom edge, so every slide's picture is at the same height. */
+  .gen-home-hero { @apply relative grid items-center gap-10 max-lg:content-end lg:grid-cols-[1.15fr_1fr] lg:gap-14; }
+  .gen-carousel-stage { @apply grid; }
+  /* The leaving slide fades out fast and the next one fades in just after, so two texts barely overlap. */
+  .gen-carousel-slide { @apply pointer-events-none col-start-1 row-start-1 opacity-0 transition-opacity duration-300 ease-in; }
+  .gen-carousel-slide.is-active { @apply pointer-events-auto opacity-100 delay-100 duration-300 ease-out; }
+  /* A title line's mask; room above and below for Vietnamese marks (ể, ậ) so they are never cut. */
+  .gen-line { @apply block overflow-hidden; padding-block: 0.2em; margin-block: -0.2em; }
+  /* Previous/next over the slides; the layer lets clicks through except on the arrows. */
+  .gen-carousel-arrows { @apply pointer-events-none z-10 col-start-1 row-start-1 grid; }
+  .gen-carousel-arrow { @apply pointer-events-auto absolute top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-line-subtle bg-white/90 text-brand shadow-card backdrop-blur transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-focus dark:border-ink-700 dark:bg-night-raised/90 dark:text-brand-soft dark:hover:bg-night-raised; }
+  /* Phones: on the picture's edges (the card is too narrow to leave them room). From lg: on the
+     card's two sides, mid-height of the slide, in its side padding (the frame no longer positions them). */
+  .gen-carousel-arrows .gen-home-visual { @apply lg:static; }
+  .gen-carousel-arrow.is-prev { @apply left-0 lg:-left-14; }
+  .gen-carousel-arrow.is-next { @apply right-0 lg:-right-14; }
+  /* Under every slide: the facts, under the text column. */
+  .gen-carousel-foot { @apply mt-2 grid gap-x-14 lg:mt-8 lg:grid-cols-[1.15fr_1fr]; }
+  .gen-carousel-foot .gen-home-metrics { @apply mt-4 lg:mt-0; }
+  .gen-home-kicker { @apply mb-6 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-caption font-bold uppercase tracking-wider text-accent-strong dark:bg-accent/15 dark:text-accent-soft; }
+  .gen-home-kicker::before { @apply h-2 w-2 rounded-full bg-accent; content: ''; }
+  .gen-home-title { @apply text-h2 font-extrabold tracking-tight text-brand sm:text-display dark:text-ink-100; }
+  .gen-home-title span { display: block; }
+  /* A two-sentence title: the second in teal. A one-sentence title stays navy. */
+  .gen-home-title span + span { color: var(--color-accent-strong); }
+  .dark .gen-home-title span + span { color: var(--color-accent-soft); }
+  .gen-home-intro { @apply mt-6 max-w-xl text-base leading-7 text-ink-600 lg:text-lg dark:text-ink-300; }
+  .gen-home-actions { @apply mt-7 flex flex-wrap items-center gap-3; }
+  .gen-home-actions > * { @apply max-sm:w-full; }
+  .gen-home-actions .ui-btn-secondary { @apply border-transparent bg-white shadow-card dark:bg-night-raised; }
+  .gen-home-metrics { @apply mt-8 grid grid-cols-3 gap-3 rounded-2xl bg-surface-soft p-4 sm:gap-4 sm:p-5 dark:bg-night-chip; }
+  .gen-home-metrics strong { @apply block text-base font-extrabold text-brand sm:text-xl dark:text-brand-soft; }
+  .gen-home-metrics span { @apply mt-1 block text-xs leading-relaxed text-ink-600 dark:text-ink-400; }
+  .gen-home-visual { @apply relative mx-auto w-full max-w-xl px-2 pt-5 pb-7 sm:px-3 lg:px-0; }
+  .gen-home-photo { @apply relative rounded-3xl bg-white p-3 shadow-card-hover dark:bg-night-raised; }
+  /* A later slide's picture is a same-size blank until it loads, so nothing shifts. */
+  .gen-home-photo > img, .gen-home-photo-slot { @apply block aspect-[4/3] w-full rounded-2xl object-cover; }
+  .gen-home-photo-slot { @apply bg-surface-soft dark:bg-night-chip; }
+  .gen-home-float { @apply absolute z-10 flex max-w-[90%] items-center gap-3 rounded-2xl border border-line-subtle bg-white p-3 shadow-card-hover dark:border-ink-700 dark:bg-night-raised; }
+  .gen-home-float strong { @apply block text-sm font-bold text-brand dark:text-ink-100; }
+  .gen-home-float small { @apply mt-0.5 block text-xs text-ink-500 dark:text-ink-400; }
+  .gen-home-float:first-of-type { @apply left-0 top-0 lg:-left-5; }
+  .gen-home-float:last-of-type { @apply right-0 bottom-0 lg:-right-3; }
+  .gen-home-float-icon { @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-soft text-accent-strong dark:bg-accent/20 dark:text-accent-soft; }
+  .gen-section-heading { @apply mb-7 flex flex-wrap items-end justify-between gap-4; }
+  .gen-section-heading .ui-overline { @apply mb-2 text-accent-strong dark:text-accent-soft; }
+  .gen-needs-grid { @apply grid gap-6 md:grid-cols-3; }
+  .gen-need { @apply block h-full rounded-3xl border border-line-subtle bg-white p-5 shadow-card transition-shadow hover:shadow-card-hover dark:border-ink-800 dark:bg-night-raised; }
+  .gen-need-picture { @apply mb-5 block overflow-hidden rounded-2xl; }
+  .gen-need-picture img { @apply aspect-[16/10] w-full object-cover; }
+  .gen-need-title { @apply flex items-center gap-3; }
+  .gen-need-title > span:first-child { @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand text-white; }
+  .gen-need-title h3 { @apply text-lg font-bold text-brand dark:text-ink-100; }
+  .gen-need-copy { @apply mt-3 block text-sm leading-6 text-ink-600 dark:text-ink-400; }
+  .gen-need .ui-link { @apply mt-5 text-sm; }
+  .gen-practice { @apply rounded-3xl bg-surface-soft p-5 sm:p-8 lg:p-10 dark:bg-night-chip; }
+  /* Teal kicker text on the Ice band needs the deeper teal step (5.4:1; accent-strong stops at 4.49:1). */
+  .gen-practice .gen-section-heading .ui-overline { @apply text-accent-700 dark:text-accent-soft; }
+  .gen-practice-steps { @apply grid gap-5 md:grid-cols-3; }
+  .gen-practice-steps > li { @apply rounded-2xl bg-white p-6 dark:bg-night-raised; }
+  .gen-step-top { @apply mb-4 flex items-center justify-between; }
+  .gen-step-top > span { @apply text-3xl font-extrabold text-brand dark:text-brand-soft; }
+  .gen-step-top > svg { @apply text-accent-strong dark:text-accent-soft; }
+  .gen-practice-example { @apply mt-6 rounded-2xl bg-white p-6 dark:bg-night-raised; }
+  .gen-practice-example ul { @apply mt-4 grid gap-5 md:grid-cols-3; }
+  .gen-home-team > ul > li { @apply rounded-3xl border-0 p-5 shadow-card lg:p-8; }
+  .gen-home-team > ul > li > div:first-child { @apply rounded-2xl; }
+  .gen-home-faq { @apply mx-auto max-w-3xl; }
+}
+@layer components {
+  .gen-home-faq :is(#faq-title, .ui-overline) { @apply text-center; }
+  .gen-home-faq details { @apply py-5; }
+  .gen-home-finale { @apply flex flex-col items-start justify-between gap-7 rounded-3xl bg-brand p-7 text-white sm:p-10 lg:flex-row lg:items-center; }
+  .gen-home-finale .ui-overline { @apply text-aqua; }
+  .gen-home-finale h2 { @apply mt-3 text-3xl font-extrabold leading-tight lg:text-h2; }
+  .gen-home-finale p:not(.ui-overline) { @apply mt-4 max-w-xl text-base leading-7 text-white/80; }
+  .gen-home-finale > button { @apply shrink-0; }
+}
+
+/* Hero slide entrance, after the Artistic Parallax slider, when a slide is changed to (never on the
+   first paint): the picture rises and settles, the floating cards in front rise further and later
+   (depth), and the text comes up line by line out of its masks. Reduced motion makes these instant. */
+@keyframes gen-rise { from { opacity: 0; translate: 0 3rem; scale: 1.06; } }
+@keyframes gen-rise-far { from { opacity: 0; translate: 0 6rem; } }
+@keyframes gen-line-up { from { translate: 0 110%; } }
+@keyframes gen-fade-up { from { opacity: 0; translate: 0 1.25rem; } }
+.is-entering .gen-home-photo { animation: gen-rise 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.is-entering .gen-home-float { animation: gen-rise-far 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both; }
+.is-entering .gen-home-float:last-of-type { animation-delay: 0.3s; }
+.is-entering .gen-home-kicker { animation: gen-fade-up 0.6s ease-out 0.1s both; }
+.is-entering .gen-line > span { animation: gen-line-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s both; }
+.is-entering .gen-line + .gen-line > span { animation-delay: 0.32s; }
+.is-entering .gen-home-intro { animation: gen-fade-up 0.7s ease-out 0.45s both; }
+.is-entering .gen-home-actions { animation: gen-fade-up 0.7s ease-out 0.55s both; }
+
+/* Scroll parallax (lg): as the hero leaves the screen, the picture drifts up faster than the text. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes gen-drift { to { translate: 0 -3rem; } }
+    .gen-carousel-slide .gen-home-visual {
+      @variant lg { animation: gen-drift linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+    }
+  }
+}
+
+/* The hero's pause button is visually hidden (.sr-only) until reached with Tab; then a round
+   button in the card's corner. Outside the layers: .sr-only is a utility, which beats any layer below it. */
+.gen-carousel-pause:focus-visible { @apply absolute bottom-4 right-4 z-20 m-0 flex h-11 w-11 items-center justify-center overflow-visible whitespace-normal rounded-full border border-line-subtle bg-white p-0 text-brand shadow-card outline-2 outline-focus dark:border-ink-700 dark:bg-night-raised dark:text-brand-soft; clip-path: none; }
