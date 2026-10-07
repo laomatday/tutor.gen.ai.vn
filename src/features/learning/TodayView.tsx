@@ -1,4 +1,4 @@
-import { Button, Input, Select, Icon, buttonStyles } from "../../components/ui";
+import { Button, Input, Select, Icon, buttonStyles, Progress } from "../../components/ui";
 import { appConfig } from "../../config/app";
 import { routePath } from "../../config/routes";
 import React from "react";
@@ -154,19 +154,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
               </span>
               <strong className="text-secondary">{percent}%</strong>
             </div>
-            <div
-              role="progressbar"
-              aria-label={`Tiến độ ${ownedLabel}`}
-              aria-valuenow={percent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              className="h-2 overflow-hidden rounded-full bg-surface-container-low"
-            >
-              <div
-                className="h-full rounded-full bg-secondary transition-all"
-                style={{ width: `${percent}%` }}
-              />
-            </div>
+            <Progress value={percent} label={`Tiến độ ${ownedLabel}`} tone="accent" className="h-2" />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-xs text-outline">
@@ -278,7 +266,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-secondary">
                   HUY HIỆU & MỐC THÀNH TÍCH
                 </span>
-                <span className="rounded-full bg-secondary/15 px-2 py-0.2 text-[10px] font-bold text-secondary">
+                <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-bold text-secondary">
                   Đã đạt {unlockedBadges.length}/{initialBadges.length}
                 </span>
               </div>
