@@ -1,0 +1,175 @@
+name: Branch UI Regression Audit
+
+on:
+  push:
+    branches:
+      - fix/live-ui-regressions
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install app
+        run: bun install --frozen-lockfile
+
+      - name: Build app
+        run: bun run build
+
+      - name: Install Playwright library
+        run: npm install --no-save --ignore-scripts playwright@1.63.0
+
+      - name: Start preview
+        run: |
+          bunx vite preview --host 127.0.0.1 --port 4173 > /tmp/tutor-preview.log 2>&1 &
+          echo $! > /tmp/tutor-preview.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/hoc-bai >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/tutor-preview.log
+          exit 1
+
+      - name: Audit fixed UI
+        run: |
+          cat > branch-ui-audit.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const out = '/tmp/branch-ui-audit';
+          fs.mkdirSync(out, { recursive: true });
+          const executablePath = [
+            '/usr/bin/google-chrome-stable',
+            '/usr/bin/google-chrome',
+            '/usr/bin/chromium',
+            '/usr/bin/chromium-browser',
+          ].find(fs.existsSync);
+          if (!executablePath) throw new Error('No Chrome/Chromium on runner');
+
+          const browser = await chromium.launch({
+            headless: true,
+            executablePath,
+            args: ['--no-sandbox', '--disable-dev-shm-usage'],
+          });
+
+          const viewports = [
+            { name: 'mobile-390', width: 390, height: 844 },
+            { name: 'tablet-768', width: 768, height: 1024 },
+            { name: 'desktop-1024', width: 1024, height: 900 },
+            { name: 'desktop-1440', width: 1440, height: 1000 },
+          ];
+          const report = [];
+
+          for (const vp of viewports) {
+            const context = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+            const page = await context.newPage();
+            const consoleErrors = [];
+            const requestFailures = [];
+            page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+            page.on('pageerror', err => consoleErrors.push(String(err)));
+            page.on('requestfailed', req => requestFailures.push({ url: req.url(), error: req.failure()?.errorText }));
+
+            const response = await page.goto('http://127.0.0.1:4173/hoc-bai', { waitUntil: 'networkidle', timeout: 45000 });
+            await page.waitForTimeout(250);
+
+            const base = await page.evaluate(() => {
+              const dialog = document.querySelector('dialog.ui-dialog');
+              const selected = document.querySelector('button[aria-pressed="true"]');
+              const tiny = [...document.querySelectorAll('body *')]
+                .filter(el => {
+                  const r = el.getBoundingClientRect();
+                  const s = getComputedStyle(el);
+                  return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' && !el.classList.contains('sr-only');
+                })
+                .filter(el => parseFloat(getComputedStyle(el).fontSize) < 12)
+                .slice(0,20)
+                .map(el => ({ tag: el.tagName, text: (el.textContent || '').trim().slice(0,60), fontSize: getComputedStyle(el).fontSize }));
+              return {
+                dialog: dialog ? {
+                  open: dialog.open,
+                  hasOpen: dialog.hasAttribute('open'),
+                  display: getComputedStyle(dialog).display,
+                } : null,
+                selectedGrade: selected ? {
+                  text: (selected.textContent || '').trim(),
+                  backgroundColor: getComputedStyle(selected).backgroundColor,
+                  color: getComputedStyle(selected).color,
+                  borderColor: getComputedStyle(selected).borderColor,
+                } : null,
+                width: innerWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+                tiny,
+              };
+            });
+
+            let drawer = null;
+            if (vp.width < 1024) {
+              const menu = page.getByRole('button', { name: /mở menu/i }).first();
+              if (await menu.count()) {
+                await menu.click();
+                await page.waitForTimeout(150);
+                drawer = await page.evaluate(() => {
+                  const overlay = [...document.querySelectorAll('div[aria-hidden="true"]')]
+                    .find(el => el.classList.contains('fixed') && el.classList.contains('inset-0') && el.classList.contains('z-40'));
+                  const nav = document.querySelector('#main-navigation');
+                  return {
+                    overlayBackground: overlay ? getComputedStyle(overlay).backgroundColor : null,
+                    navVisible: nav ? getComputedStyle(nav).visibility !== 'hidden' && getComputedStyle(nav).display !== 'none' : false,
+                  };
+                });
+              }
+            }
+
+            await page.screenshot({ path: `${out}/${vp.name}.png`, fullPage: true });
+
+            const errors = [];
+            if (response?.status() !== 200) errors.push(`HTTP ${response?.status()}`);
+            if (!base.dialog || base.dialog.open || base.dialog.hasOpen || base.dialog.display !== 'none')
+              errors.push(`closed native dialog is visible: ${JSON.stringify(base.dialog)}`);
+            if (!base.selectedGrade || !/Lớp 9/.test(base.selectedGrade.text))
+              errors.push(`selected grade not found: ${JSON.stringify(base.selectedGrade)}`);
+            if (base.selectedGrade && base.selectedGrade.backgroundColor === 'rgba(0, 0, 0, 0)')
+              errors.push(`selected grade background is transparent: ${JSON.stringify(base.selectedGrade)}`);
+            if (base.scrollWidth !== base.width)
+              errors.push(`horizontal overflow ${base.scrollWidth} > ${base.width}`);
+            if (base.tiny.length) errors.push(`text below 12px: ${JSON.stringify(base.tiny)}`);
+            if (consoleErrors.length) errors.push(`console errors: ${JSON.stringify(consoleErrors)}`);
+            if (requestFailures.length) errors.push(`request failures: ${JSON.stringify(requestFailures)}`);
+            if (drawer && (!drawer.overlayBackground || drawer.overlayBackground === 'rgba(0, 0, 0, 0)'))
+              errors.push(`mobile backdrop transparent: ${JSON.stringify(drawer)}`);
+            if (drawer && !drawer.navVisible) errors.push(`mobile nav not visible: ${JSON.stringify(drawer)}`);
+
+            report.push({ viewport: vp.name, base, drawer, consoleErrors, requestFailures, errors });
+            await context.close();
+          }
+
+          fs.writeFileSync(`${out}/report.json`, JSON.stringify(report, null, 2));
+          console.log(JSON.stringify(report, null, 2));
+          await browser.close();
+
+          const failures = report.flatMap(item => item.errors.map(error => `${item.viewport}: ${error}`));
+          if (failures.length) {
+            console.error('\nUI REGRESSION FAILURES\n' + failures.join('\n'));
+            process.exit(1);
+          }
+          JS
+          node ./branch-ui-audit.mjs
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-ui-regression-audit
+          path: /tmp/branch-ui-audit
+          retention-days: 3
