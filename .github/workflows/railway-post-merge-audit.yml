@@ -1,0 +1,163 @@
+name: Railway Post-Merge UI Audit
+
+on:
+  push:
+    branches:
+      - fix/live-ui-regressions
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Playwright library
+        run: npm install --no-save --ignore-scripts playwright@1.63.0
+
+      - name: Audit deployed Railway UI
+        env:
+          AUDIT_URL: https://tutorgenaivn-production.up.railway.app/hoc-bai
+        run: |
+          cat > railway-post-merge-audit.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const out='/tmp/railway-post-merge-audit';
+          fs.mkdirSync(out,{recursive:true});
+          const executablePath=[
+            '/usr/bin/google-chrome-stable','/usr/bin/google-chrome',
+            '/usr/bin/chromium','/usr/bin/chromium-browser'
+          ].find(fs.existsSync);
+          if(!executablePath) throw new Error('No Chrome/Chromium on runner');
+
+          const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox','--disable-dev-shm-usage']});
+          const viewports=[
+            {name:'mobile-390',width:390,height:844},
+            {name:'tablet-768',width:768,height:1024},
+            {name:'desktop-1024',width:1024,height:900},
+            {name:'desktop-1440',width:1440,height:1000},
+          ];
+          const report=[];
+
+          for(const vp of viewports){
+            const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+            const page=await context.newPage();
+            const consoleErrors=[];
+            const requestFailures=[];
+            const badResponses=[];
+            page.on('console',m=>{if(m.type()==='error') consoleErrors.push({text:m.text(),location:m.location()});});
+            page.on('pageerror',e=>consoleErrors.push({text:String(e),location:null}));
+            page.on('requestfailed',r=>requestFailures.push({url:r.url(),error:r.failure()?.errorText||'unknown'}));
+            page.on('response',r=>{if(r.status()>=400) badResponses.push({url:r.url(),status:r.status()});});
+
+            const response=await page.goto(process.env.AUDIT_URL,{waitUntil:'networkidle',timeout:45000});
+            await page.waitForTimeout(500);
+
+            const base=await page.evaluate(()=>{
+              const visible=el=>{
+                const r=el.getBoundingClientRect(),s=getComputedStyle(el);
+                return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden';
+              };
+              const dialog=document.querySelector('dialog.ui-dialog');
+              const selected=document.querySelector('button[aria-pressed="true"]');
+              const tiny=[...document.querySelectorAll('body *')].filter(visible)
+                .filter(el=>!el.classList.contains('sr-only')&&parseFloat(getComputedStyle(el).fontSize)<12)
+                .slice(0,30).map(el=>({tag:el.tagName,text:(el.textContent||'').trim().slice(0,60),fontSize:getComputedStyle(el).fontSize}));
+              const brokenImages=[...document.images].filter(visible)
+                .filter(img=>!img.complete||img.naturalWidth===0)
+                .map(img=>({src:img.currentSrc||img.src,alt:img.alt}));
+              const smallTargets=[...document.querySelectorAll('button,a[href],input,select,textarea,summary')]
+                .filter(visible)
+                .filter(el=>!el.classList.contains('sr-only'))
+                .map(el=>{const r=el.getBoundingClientRect(); return {
+                  tag:el.tagName,
+                  text:(el.textContent||el.getAttribute('aria-label')||'').trim().slice(0,60),
+                  width:Math.round(r.width),height:Math.round(r.height),
+                  className:typeof el.className==='string'?el.className:''
+                };})
+                .filter(x=>x.width<44||x.height<44).slice(0,30);
+              return {
+                title:document.title,
+                href:location.href,
+                dialog:dialog?{open:dialog.open,hasOpen:dialog.hasAttribute('open'),display:getComputedStyle(dialog).display}:null,
+                selectedGrade:selected?{
+                  text:(selected.textContent||'').trim(),
+                  backgroundColor:getComputedStyle(selected).backgroundColor,
+                  color:getComputedStyle(selected).color,
+                  borderColor:getComputedStyle(selected).borderColor,
+                }:null,
+                width:innerWidth,
+                scrollWidth:document.documentElement.scrollWidth,
+                tiny,
+                brokenImages,
+                smallTargets,
+                bodyFont:getComputedStyle(document.body).fontFamily,
+                bodyBackground:getComputedStyle(document.body).backgroundColor,
+              };
+            });
+
+            let drawer=null;
+            if(vp.width<1024){
+              const menu=page.getByRole('button',{name:/mở menu/i}).first();
+              if(await menu.count()){
+                await menu.click();
+                await page.waitForTimeout(200);
+                drawer=await page.evaluate(()=>{
+                  const overlay=[...document.querySelectorAll('div[aria-hidden="true"]')]
+                    .find(el=>el.classList.contains('fixed')&&el.classList.contains('inset-0')&&el.classList.contains('z-40'));
+                  const nav=document.querySelector('#main-navigation');
+                  return {
+                    overlayBackground:overlay?getComputedStyle(overlay).backgroundColor:null,
+                    navVisible:nav?getComputedStyle(nav).visibility!=='hidden'&&getComputedStyle(nav).display!=='none':false,
+                  };
+                });
+              }
+            }
+
+            await page.screenshot({path:`${out}/${vp.name}.png`,fullPage:true});
+
+            const errors=[];
+            if(response?.status()!==200) errors.push(`HTTP ${response?.status()}`);
+            if(!base.dialog||base.dialog.open||base.dialog.hasOpen||base.dialog.display!=='none')
+              errors.push(`closed dialog visible: ${JSON.stringify(base.dialog)}`);
+            if(!base.selectedGrade||!/Lớp 9/.test(base.selectedGrade.text))
+              errors.push(`selected grade missing: ${JSON.stringify(base.selectedGrade)}`);
+            if(base.selectedGrade?.backgroundColor!=='rgb(36, 60, 143)')
+              errors.push(`selected grade wrong background: ${JSON.stringify(base.selectedGrade)}`);
+            if(base.scrollWidth!==base.width) errors.push(`horizontal overflow ${base.scrollWidth} > ${base.width}`);
+            if(base.tiny.length) errors.push(`text below 12px: ${JSON.stringify(base.tiny)}`);
+            if(base.brokenImages.length) errors.push(`broken images: ${JSON.stringify(base.brokenImages)}`);
+            if(consoleErrors.length) errors.push(`console errors: ${JSON.stringify(consoleErrors)}`);
+            if(requestFailures.length) errors.push(`request failures: ${JSON.stringify(requestFailures)}`);
+            if(badResponses.length) errors.push(`bad responses: ${JSON.stringify(badResponses)}`);
+            if(drawer&&(!drawer.overlayBackground||drawer.overlayBackground==='rgba(0, 0, 0, 0)'))
+              errors.push(`transparent mobile backdrop: ${JSON.stringify(drawer)}`);
+            if(drawer&&!drawer.navVisible) errors.push(`mobile nav hidden: ${JSON.stringify(drawer)}`);
+
+            report.push({viewport:vp.name,status:response?.status(),base,drawer,consoleErrors,requestFailures,badResponses,errors});
+            await context.close();
+          }
+          fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));
+          console.log(JSON.stringify(report,null,2));
+          await browser.close();
+
+          const failures=report.flatMap(r=>r.errors.map(e=>`${r.viewport}: ${e}`));
+          if(failures.length){
+            console.error('\nPRODUCTION UI AUDIT FAILURES\n'+failures.join('\n'));
+            process.exit(1);
+          }
+          JS
+          node ./railway-post-merge-audit.mjs
+
+      - name: Upload production audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: railway-post-merge-ui-audit
+          path: /tmp/railway-post-merge-audit
+          retention-days: 3
