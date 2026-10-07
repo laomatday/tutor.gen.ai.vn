@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
-import { Button, Icon } from "../../components/ui";
+import { Button, Icon, Progress } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
+import { BrandLogo } from "../../components/BrandLogo";
 import { appConfig } from "../../config/app";
 import {
   roleHome,
@@ -66,27 +67,7 @@ export function AppSidebar({
           onClick={() => onNavigate(roleHome[role])}
           className="flex items-center gap-3 text-left"
         >
-          <img
-            src={appConfig.brand.logoUrl}
-            alt={appConfig.brand.name}
-            width={44}
-            height={44}
-            className="h-11 w-11 shrink-0 object-contain"
-            referrerPolicy="no-referrer"
-          />
-          <span>
-            <span className="block text-lg font-bold tracking-tight text-primary">
-              {appConfig.brand.wordmark}
-              <span className="ml-1 text-xs font-semibold uppercase">
-                {appConfig.brand.product}
-              </span>
-            </span>
-            <span className="block text-xs text-secondary">
-              {role === "Học sinh"
-                ? appConfig.brand.tagline
-                : presentation.label}
-            </span>
-          </span>
+          <BrandLogo />
         </Button>
         <Button
           ref={closeRef}
@@ -218,19 +199,7 @@ export function AppSidebar({
                   {progress}%
                 </span>
               </div>
-              <div
-                role="progressbar"
-                aria-label="Tiến độ học tập môn đã đăng ký"
-                aria-valuenow={progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                className="h-2 overflow-hidden rounded-full bg-surface-container"
-              >
-                <div
-                  className="h-full rounded-full bg-secondary transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              <Progress value={progress} label="Tiến độ học tập môn đã đăng ký" tone="accent" className="h-2" />
             </div>
           </section>
         ) : (
@@ -268,7 +237,7 @@ export function AppSidebar({
                 className="h-9 w-9 rounded-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-white text-[9px]">
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-white text-xs">
                 <Icon name="military_tech" />
               </span>
             </div>
