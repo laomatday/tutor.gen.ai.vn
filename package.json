@@ -14,9 +14,13 @@
     "format": "prettier --write src tests scripts *.ts *.json *.html *.md",
     "format:check": "prettier --check src tests scripts *.ts *.json *.html *.md",
     "tokens:export": "node scripts/export-design-tokens.mjs",
-    "check": "npm run lint && npm run test && npm run format:check && npm run build"
+    "check": "npm run lint && npm run test && npm run format:check && npm run build",
+    "prebuild": "node scripts/generate-pwa-icons.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/katex": "^0.16.8",
     "@vitejs/plugin-react": "^6.1.1",

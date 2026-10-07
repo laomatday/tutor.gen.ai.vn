@@ -1,0 +1,65 @@
+@reference "./index.css";
+@layer theme, base, components, utilities;
+
+/* Public pages share the approved home-page tokens. Course layouts and the
+   editorial dashboard have their own surfaces and are deliberately scoped out. */
+@layer components {
+  main:has(.genai-standard-page) {
+    @apply bg-surface-page dark:bg-night;
+  }
+  .genai-standard-page {
+    --gen-page-card-radius: var(--radius-3xl);
+    --gen-page-hero-radius: var(--radius-4xl);
+  }
+  .genai-standard-page .gen-page-hero {
+    @apply mx-0 border border-line-subtle bg-white p-6 shadow-card sm:p-10 lg:p-12 dark:border-ink-800 dark:bg-night-raised dark:shadow-none;
+    border-radius: var(--gen-page-hero-radius);
+    background-image: none;
+  }
+  .genai-standard-page .gen-page-hero > div {
+    min-width: 0;
+  }
+  .genai-standard-page :is(.ui-h1, .ui-h2, .ui-h3) {
+    @apply text-brand dark:text-ink-100;
+  }
+  .genai-standard-page .ui-band-navy :is(.ui-h1, .ui-h2, .ui-h3) {
+    @apply text-white;
+  }
+  .genai-standard-page .gen-hero-eyebrow {
+    @apply inline-flex items-center rounded-full bg-accent/10 px-3 py-2 text-accent-strong dark:bg-accent/15 dark:text-accent-soft;
+  }
+  .genai-standard-page .gen-hero-media {
+    @apply rounded-3xl bg-surface-soft p-2 dark:bg-night-chip;
+  }
+  .genai-standard-page .gen-hero-media img {
+    @apply rounded-2xl shadow-none;
+  }
+  .genai-standard-page .ui-card {
+    @apply border-line-subtle dark:border-ink-800;
+    border-radius: var(--gen-page-card-radius);
+  }
+  .genai-standard-page .ui-section-soft {
+    @apply rounded-4xl bg-surface-soft p-5 sm:p-8 dark:bg-night-chip;
+  }
+  .genai-standard-page .ui-section-index {
+    @apply gap-2 rounded-3xl border border-line-subtle bg-white p-3 dark:border-ink-800 dark:bg-night-raised;
+  }
+  .genai-standard-page .ui-section-index a {
+    @apply rounded-2xl px-4 hover:bg-surface-muted hover:no-underline dark:hover:bg-night-chip;
+  }
+  .genai-standard-page .gen-page-cta {
+    @apply rounded-4xl;
+  }
+  .genai-standard-page .gen-page-cta::before {
+    content: none;
+  }
+  .gen-policy-content {
+    @apply mx-auto max-w-4xl space-y-6;
+  }
+  .gen-policy-content > section[id] {
+    @apply m-0 rounded-3xl border border-line-subtle bg-white p-6 sm:p-8 dark:border-ink-800 dark:bg-night-raised;
+  }
+  .gen-policy-content > section[id] > h2 {
+    @apply text-brand dark:text-ink-100;
+  }
+}

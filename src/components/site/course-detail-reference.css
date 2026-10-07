@@ -1,0 +1,250 @@
+@reference "../../index.css";
+/* Course detail follows the supplied Stitch composition. Content remains in
+   the catalog/CMS; only presentation lives here. Colours, radii, type sizes
+   and breakpoints come from src/index.css; rules stay unlayered so they keep
+   refining the shared component classes. */
+.ref-course-page {
+  --ref-radius: var(--radius-3xl);
+  --ref-card-radius: var(--radius-2xl);
+  --ref-panel-padding: clamp(1rem, 2.5vw, 1.5rem);
+  --ref-surface: var(--color-white);
+  --ref-soft: var(--color-surface-page);
+  --ref-subtle: var(--color-surface-soft);
+  --ref-border: var(--color-line-subtle);
+  --ref-ink: var(--color-brand);
+  --ref-muted: var(--color-ink-600);
+  background: var(--ref-soft);
+  border-radius: var(--ref-radius);
+}
+.dark .ref-course-page {
+  --ref-surface: var(--color-night-raised);
+  --ref-soft: var(--color-night);
+  --ref-subtle: var(--color-night-chip);
+  --ref-border: var(--color-ink-700);
+  --ref-ink: var(--color-ink-100);
+  --ref-muted: var(--color-ink-400);
+}
+.ref-course-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 2rem;
+  padding: 0 0 2rem;
+
+  @variant lg { grid-template-columns: minmax(0, 1.4fr) minmax(19rem, 1fr); gap: 2.5rem; }
+}
+/* The badge stays the same visual height as its peers; ui-hit-area supplies
+   a separate 44px tap target without stretching the pill. */
+.ref-course-badges .ui-badge { line-height: 1.5; }
+.ref-course-badges > ul { gap: 0.5rem; }
+.ref-course-intro { min-width: 0; padding-top: 0.5rem; }
+.ref-course-page .ref-course-title {
+  font-size: clamp(1.75rem, 3.1vw, 2.55rem);
+  line-height: 1.22;
+  letter-spacing: -0.035em;
+  color: var(--ref-ink);
+  font-weight: 800;
+}
+.ref-course-intro .ui-lead { font-size: var(--text-base); line-height: 1.75; }
+/* Two facts a row on phones too, so the summary stays one glance tall. */
+.ref-course-facts {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1.75rem;
+
+  @variant sm { grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); }
+}
+.ref-course-fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--ref-card-radius);
+  background: var(--ref-surface);
+
+  @variant max-sm { padding: 0.85rem; }
+}
+/* On phones an odd last fact takes the whole row. */
+.ref-course-fact:last-child:nth-child(odd) { @variant max-sm { grid-column: 1 / -1; } }
+.ref-course-fact .ui-spec-icon {
+  width: 2.25rem; height: 2.25rem; border-radius: var(--radius-lg); background: var(--ref-subtle); color: var(--ref-ink);
+
+  @variant max-sm { display: none; }
+}
+.ref-course-enrollment { min-width: 0; }
+.ref-course-page .ref-enrollment-card {
+  position: static;
+  top: auto;
+  order: initial;
+  overflow: hidden;
+  padding: 0;
+  border-radius: var(--ref-radius);
+  border: 1px solid var(--ref-border);
+  background: var(--ref-surface);
+  box-shadow: var(--shadow-card-hover);
+}
+.ref-enrollment-media { padding: 0.5rem 0.5rem 0; }
+.ref-course-page .ref-course-cover { aspect-ratio: 16 / 10; border-radius: var(--ref-card-radius); }
+.ref-enrollment-body { padding: 1.35rem; }
+.ref-enrollment-body .ui-enrollment-price { margin-top: 0.85rem; padding-block: 0.85rem; border-color: var(--ref-subtle); font-variant-numeric: tabular-nums; }
+.ref-enrollment-body .ui-enrollment-price > p:nth-child(2) { font-size: clamp(1.3rem, 2.2vw, 1.8rem); line-height: 1.35; }
+.ref-course-sections { display: grid; gap: var(--spacing-section); padding: 2rem 0 0; }
+.ref-course-sections > section,
+.ref-course-sections > .ref-course-faq,
+.ref-course-sections > .ref-course-team { min-width: 0; padding: 0; }
+.ref-course-page .ui-h2 { color: var(--ref-ink); font-size: clamp(1.45rem, 2.4vw, 2rem); line-height: 1.3; }
+/* Section kickers read like the home hero's: teal words on a 10% teal tint (4.9:1). */
+.ref-course-sections > section > div:first-child > div > .ui-overline,
+.ref-course-team .ui-overline {
+  display: inline-block;
+  @apply rounded-full;
+  padding: 0.3rem 0.6rem;
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent-strong);
+}
+.dark .ref-course-sections > section > div:first-child > div > .ui-overline,
+.dark .ref-course-team .ui-overline { background: color-mix(in srgb, var(--color-accent) 15%, transparent); color: var(--color-accent-soft); }
+.ref-course-sections > .ref-course-overview { padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--ref-subtle); border-radius: var(--ref-radius); background: var(--ref-surface); }
+.ref-course-description { max-width: none; }
+.ref-outcomes-grid {
+  display: grid; gap: 1rem;
+
+  @variant sm { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @variant lg { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.ref-outcomes-grid--paired { @variant sm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ref-outcome-card { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.4rem; border-radius: var(--ref-card-radius); background: var(--ref-surface); box-shadow: var(--shadow-card); }
+.ref-outcome-card > span { background: var(--ref-subtle); color: var(--ref-ink); }
+.ref-syllabus-stages { display: grid; gap: 1rem; }
+.ref-syllabus-stage { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; border-radius: var(--ref-card-radius); background: var(--ref-surface); box-shadow: var(--shadow-card); }
+.ref-syllabus-number { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2.5rem; height: 2.5rem; margin-top: 0.25rem; border-radius: var(--radius-xl); background: var(--color-brand); color: var(--color-white); font-size: var(--text-sm); font-weight: 800; }
+.ref-syllabus-stage:nth-child(even) .ref-syllabus-number { background: var(--color-accent-strong); }
+.ref-syllabus-stage button { padding: 0.7rem 0.75rem; border-radius: var(--radius-xl); }
+.ref-syllabus-content { padding: 1rem 1.25rem; margin: 0.65rem 0.4rem 0.25rem; border-radius: var(--radius-xl); background: var(--ref-soft); }
+.ref-syllabus-content[hidden] { display: none; }
+.ref-syllabus-content > div > :is(ul, ol) { margin-block: 0; }
+.ref-course-sections > .ref-course-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: 0; padding: 1.1rem 1.25rem; border-radius: var(--ref-card-radius); background: var(--ref-surface); }
+.ref-course-tools > h2 { font-size: var(--text-base); line-height: 1.5; }
+.ref-course-audience { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 1rem; }
+.ref-course-audience > div { padding: 1.5rem; border: 0; border-radius: var(--ref-card-radius); background: var(--ref-surface); }
+.ref-instructor-card { padding: 1.75rem; border-radius: var(--ref-card-radius); background: var(--ref-surface); text-align: center; }
+.ref-instructor-avatar { display: flex; align-items: center; justify-content: center; width: 6rem; height: 6rem; margin-inline: auto; overflow: hidden; border-radius: 50%; background: var(--ref-subtle); color: var(--ref-ink); }
+.ref-course-methods li { border: 0; border-radius: var(--ref-card-radius); }
+.ref-course-sections > .ref-course-team:empty { display: none; }
+.ref-course-team .ui-card { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; border: 0; border-radius: var(--ref-card-radius); text-align: center; }
+.ref-course-team .ui-card > div:first-child { width: 6rem; height: 6rem; min-height: 0; aspect-ratio: 1; flex-shrink: 0; border-radius: 50%; }
+.ref-course-team .ui-card > div:last-child { max-width: 45rem; padding: 1.2rem 0 0; }
+.ref-course-team .ui-card ul { justify-content: center; }
+/* One teacher: photo beside the words from sm (the row of several stays stacked). */
+.ref-course-team ul:not(.no-scrollbar) > .ui-card { @variant sm { flex-direction: row; gap: 1.5rem; padding: 2rem; text-align: left; } }
+.ref-course-team ul:not(.no-scrollbar) > .ui-card > div:last-child { @variant sm { padding: 0; } }
+.ref-course-team ul:not(.no-scrollbar) > .ui-card ul { @variant sm { justify-content: flex-start; } }
+.ref-course-faq > section { max-width: 50rem; margin-inline: auto; }
+.ref-course-faq h2,
+.ref-course-faq .ui-overline { text-align: center; }
+.ref-course-page .ref-course-contact {
+  display: grid;
+  gap: 1.75rem;
+  background: var(--color-brand-strong);
+  color: var(--color-white);
+  border-radius: var(--ref-radius);
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: start;
+
+  /* The heading row keeps its own height; the details take what the form's height leaves. */
+  @variant lg { grid-template-columns: minmax(0, 1.25fr) minmax(21rem, 1fr); grid-template-rows: auto 1fr; gap: 1.5rem 3rem; }
+}
+.ref-course-contact-heading {
+  .ui-overline { color: var(--color-aqua); }
+
+  @variant lg { grid-column: 1; align-self: start; }
+}
+.ref-course-page .ref-course-contact-heading h2 { color: var(--color-white); }
+.ref-course-contact-heading > p:not(.ui-overline) { color: var(--color-white); opacity: 0.85; }
+.ref-course-contact-grid { display: contents; }
+.ref-course-form {
+  min-width: 0; overflow: hidden; align-self: start; border-radius: var(--ref-card-radius); color: var(--color-ink-900); box-shadow: var(--shadow-card-hover);
+
+  @variant lg { grid-column: 2; grid-row: 1 / span 2; }
+}
+.dark .ref-course-form { color: var(--color-ink-100); }
+.ref-course-contact-details {
+  min-width: 0;
+
+  @variant lg { grid-column: 1; grid-row: 2; }
+}
+.ref-course-contact-details :is(.ui-overline, .ui-link, .ui-muted, dt, dd, li, h3, p) { color: var(--color-white); }
+.ref-course-contact-details .ui-fact-icon { color: var(--color-aqua); }
+.ref-course-contact-details .ui-fact-grid { gap: 1rem; }
+.ref-course-contact-details ol > li > span { color: var(--color-brand-strong); background: var(--color-aqua); }
+.ref-course-contact-details > p { border-color: var(--color-sky); }
+
+/* Grids use the content present: a single product or related course is a
+   deliberate wide card, while multiple items retain the same spacing. */
+.ref-products-grid, .ref-related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1.5rem; }
+.ref-product-card { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--ref-card-radius); }
+.ref-product-card--image:only-child,
+.ref-related-grid > .ref-course-card:only-child { @variant sm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); align-items: center; } }
+.ref-product-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.ref-product-body { flex: 1; padding: 1.5rem; }
+.ref-course-page :is(h2, h3) { text-wrap: balance; }
+
+/* One rounded surface owns the active course content. Tabs switch panels in
+   place; they are not a sticky table of contents or scrolling anchors. */
+.ref-course-tabs {
+  margin: 1.75rem 0 0;
+  border: 1px solid var(--ref-border);
+  border-radius: var(--ref-radius);
+  background: var(--ref-surface);
+  overflow: hidden;
+  scroll-margin-top: calc(var(--header-h) + 1.25rem);
+}
+.ref-course-tablist {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--ref-subtle);
+  background: var(--ref-soft);
+}
+/* On a phone the last tabs sit past the edge, and the third one can end flush
+   with it, so nothing says there is more. A fade on the right edge says so
+   while the strip can still scroll; the scroll timeline is inactive when the
+   strip fits, so wide screens get no fade. */
+@property --ref-tab-fade { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@keyframes ref-tab-fade { from { --ref-tab-fade: 4rem; } to { --ref-tab-fade: 0px; } }
+@supports (animation-timeline: scroll()) {
+  .ref-course-tablist {
+    mask-image: linear-gradient(to right, var(--color-white) calc(100% - var(--ref-tab-fade)), transparent);
+    animation: ref-tab-fade linear both;
+    animation-timeline: scroll(self inline);
+  }
+}
+.ref-course-tablist > button {
+  flex: 1 0 auto;
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid transparent;
+  @apply rounded-full;
+  color: var(--ref-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+.ref-course-tablist > button:hover { color: var(--ref-ink); background: var(--ref-subtle); }
+.ref-course-tablist > button[aria-selected="true"] { color: var(--color-white); background: var(--color-brand); }
+/* The site's own focus ring (colour per theme), drawn inside: the strip and panel clip outside it. */
+.ref-course-tablist > button:focus-visible,
+.ref-course-panel:focus-visible { outline-offset: -3px; }
+.ref-course-panel { gap: 2rem; padding: var(--ref-panel-padding); min-width: 0; }
+.ref-course-panel[hidden] { display: none; }
+.ref-course-panel > .ref-course-overview { padding: 0; border: 0; background: transparent; }
+.ref-course-panel > .ref-course-tools { background: var(--ref-soft); }
+.ref-course-panel :is(.ref-outcome-card, .ref-syllabus-stage, .ref-course-audience > div, .ref-instructor-card, .ref-course-methods li, .ref-course-team .ui-card) { background: var(--ref-soft); box-shadow: none; }
+.ref-course-panel .ref-product-card { border-color: var(--ref-subtle); box-shadow: none; }
+.ref-course-panel .ref-course-form { scroll-margin-top: calc(var(--header-h) + 1.25rem); }
+.ref-course-related:empty { display: none; }
+@media (prefers-reduced-motion: reduce) { .ref-course-tablist > button { transition: none; } }

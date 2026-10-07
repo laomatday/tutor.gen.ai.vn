@@ -1,4 +1,5 @@
 @reference "../../index.css";
+@reference "../../styles/tutor-compat.css";
 @layer components {
   .app-sidebar {
     @apply fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col border-r border-outline-variant bg-white transition-transform;
@@ -8,11 +9,13 @@
     translate: 0;
   }
   .app-header {
-    @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-outline-variant bg-surface px-4 sm:px-6;
+    @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-outline-variant bg-white/95 px-4 backdrop-blur-md sm:px-6;
     height: var(--header-h);
   }
   .app-main {
-    @apply min-h-screen px-4 pb-8 sm:px-6;
+    @apply min-h-screen w-full px-4 pb-8 sm:px-6;
+    max-width: var(--container-content);
+    margin-inline: auto;
     padding-top: calc(var(--header-h) + 1rem);
   }
   .app-frame {

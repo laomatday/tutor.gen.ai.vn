@@ -85,11 +85,22 @@ function renderBrandIcon(x, y, w, h, isMaskable = false) {
     if (!inBg) return [0, 0, 0, 0];
   }
 
-  // Gradient bg from #2563eb to #1d4ed8
+  // Official genAi gradient: navy → teal → cyan → sky.
   const t = (x + y) / (w + h);
-  const rBg = Math.round(37 + (29 - 37) * t);
-  const gBg = Math.round(99 + (78 - 99) * t);
-  const bBg = Math.round(235 + (216 - 235) * t);
+  const stops = [
+    [0.00, [36, 60, 143]],
+    [0.44, [25, 183, 165]],
+    [0.72, [73, 183, 219]],
+    [1.00, [91, 183, 239]],
+  ];
+  let left = stops[0], right = stops[stops.length - 1];
+  for (let i = 1; i < stops.length; i++) {
+    if (t <= stops[i][0]) { left = stops[i - 1]; right = stops[i]; break; }
+  }
+  const local = Math.max(0, Math.min(1, (t - left[0]) / Math.max(0.0001, right[0] - left[0])));
+  const rBg = Math.round(left[1][0] + (right[1][0] - left[1][0]) * local);
+  const gBg = Math.round(left[1][1] + (right[1][1] - left[1][1]) * local);
+  const bBg = Math.round(left[1][2] + (right[1][2] - left[1][2]) * local);
 
   // Simple clean emblem in center
   const scale = isMaskable ? 0.65 : 0.8;
@@ -114,7 +125,7 @@ function renderBrandIcon(x, y, w, h, isMaskable = false) {
     return [255, 255, 255, 255];
   }
   if (inTassel) {
-    return [56, 189, 248, 255];
+    return [124, 211, 204, 255];
   }
 
   return [rBg, gBg, bBg, 255];

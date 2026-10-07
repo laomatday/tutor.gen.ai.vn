@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import { Button, Icon } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
+import { BrandLogo } from "../../components/BrandLogo";
 import { appConfig } from "../../config/app";
 import { roles, roleHome, type UserRole } from "../../config/routes";
 import { studentProfile } from "../../features/learning/data/student";
@@ -38,11 +39,7 @@ export function AppHeader({
         >
           <Icon name="menu" />
         </Button>
-        <img
-          src={appConfig.brand.logoUrl}
-          alt={appConfig.brand.wordmark}
-          className="hidden h-7 w-7 object-contain sm:block md:hidden"
-        />
+        <BrandLogo compact showProduct={false} className="hidden sm:inline-flex md:hidden" />
         <nav
           aria-label="Trang hiện tại"
           className="hidden min-w-0 items-center gap-2 text-sm text-on-surface-variant md:flex"
@@ -58,27 +55,29 @@ export function AppHeader({
           size="sm"
           className="hidden sm:inline-flex"
         />
-        <div className="ui-segmented" role="group" aria-label="Chọn không gian">
-          {roles.map((item) => (
-            <Button
-              key={item}
-              variant="ghost"
-              size="sm"
-              aria-pressed={role === item}
-              onClick={() => role !== item && onNavigate(roleHome[item])}
-              className="ui-segment"
-            >
-              {item}
-            </Button>
-          ))}
-        </div>
+        {import.meta.env.DEV && (
+          <div className="ui-segmented" role="group" aria-label="Chọn không gian thử nghiệm">
+            {roles.map((item) => (
+              <Button
+                key={item}
+                variant="ghost"
+                size="sm"
+                aria-pressed={role === item}
+                onClick={() => role !== item && onNavigate(roleHome[item])}
+                className="ui-segment"
+              >
+                {item}
+              </Button>
+            ))}
+          </div>
+        )}
         {role === "Học sinh" ? (
           <Button
             variant="surface"
             type="button"
             onClick={onOpenProfile}
             title={`${studentProfile.name} — Xem hồ sơ & huy hiệu`}
-            className="hidden sm:inline-flex items-center rounded-full p-0.5 ring-1 ring-outline-variant hover:ring-secondary transition-all hover:scale-105 active:scale-95 h-auto min-h-0 min-w-0"
+            className="hidden h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full p-1 ring-1 ring-outline-variant transition-colors hover:ring-secondary sm:inline-flex"
           >
             <img
               alt={studentProfile.name}

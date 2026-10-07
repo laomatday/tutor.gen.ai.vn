@@ -1,0 +1,172 @@
+@reference "../../index.css";
+/* Catalog composition from the approved reference. Colours, radii, type sizes
+   and breakpoints come from src/index.css tokens; rules stay unlayered so
+   they keep overriding the shared component classes they refine. */
+.ref-catalog {
+  --ref-surface: var(--color-white);
+  --ref-wash: var(--color-surface-page);
+  --ref-soft: var(--color-surface-soft);
+  --ref-ink: var(--color-ink-900);
+  --ref-muted: var(--color-ink-600);
+  --ref-heading: var(--color-brand);
+}
+.ref-catalog-hero {
+  position: relative; padding: 2.75rem 0 3.5rem; text-align: center;
+  @variant max-md { padding-top: 1.5rem; }
+}
+.ref-catalog-hero::before { content: ''; pointer-events: none; position: absolute; z-index: -1; inset: -2rem 0 0; background: radial-gradient(ellipse at 66% 15%, color-mix(in srgb, var(--color-aqua) 24%, transparent), transparent 57%); }
+/* The same kicker as the home hero: teal words and dot on a 10% teal tint
+   (4.9:1; teal text on Ice stops at 4.49:1). */
+.ref-catalog-eyebrow { display: inline-flex; align-items: center; gap: .55rem; @apply rounded-full; padding: .5rem .85rem; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent-strong); font-size: var(--text-caption); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.ref-catalog-eyebrow > span { height: .4rem; width: .4rem; border-radius: 50%; background: var(--color-accent); }
+.ref-catalog-hero h1 { max-width: 21ch; margin: 1.1rem auto 0; color: var(--ref-heading); font-size: clamp(var(--text-h2), 4.5vw, var(--text-display)); line-height: 1.14; letter-spacing: -.045em; font-weight: 800; text-wrap: balance; }
+.ref-catalog-hero__description {
+  max-width: 46rem; margin: 1.25rem auto 0; color: var(--ref-muted); font-size: var(--text-base); line-height: 1.8;
+  @variant max-md { font-size: var(--text-sm); }
+}
+.ref-catalog-highlights {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .85rem; padding: 1.25rem; border-radius: var(--radius-3xl); background: var(--ref-surface); margin-top: 2.75rem; box-shadow: var(--shadow-card); text-align: left;
+  @variant max-lg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @variant max-md { padding: .7rem; gap: .6rem; margin-top: 2rem; }
+}
+.ref-catalog-highlights > div {
+  display: flex; align-items: center; gap: .75rem; padding: .85rem; min-width: 0; background: var(--ref-wash); border-radius: var(--radius-2xl);
+  @variant max-md { padding: .7rem; flex-direction: column; align-items: start; }
+}
+.ref-catalog-highlights__icon { display: grid; place-items: center; flex-shrink: 0; width: 2.75rem; height: 2.75rem; border-radius: var(--radius-xl); background: var(--color-brand); color: var(--color-white); }
+.ref-catalog-highlights > div:nth-child(even) .ref-catalog-highlights__icon { background: var(--color-accent-strong); }
+.ref-catalog-highlights dt {
+  color: var(--ref-heading); font-size: var(--text-base); font-weight: 700; line-height: 1.45;
+  @variant max-md { font-size: var(--text-sm); }
+}
+.ref-catalog-highlights dd { color: var(--ref-muted); font-size: var(--text-caption); line-height: 1.5; margin-top: .2rem; }
+.ref-catalog-listing { padding: 1.5rem 0 4rem; }
+.ref-course-explorer { display: flex; flex-direction: column; gap: 1.5rem; }
+.ref-catalog-toolbar.ui-catalog-toolbar {
+  display: flex; flex-direction: row; align-items: center; gap: .75rem; padding: 0; border: 0; background: transparent; box-shadow: none;
+  @variant max-md { flex-wrap: wrap; }
+}
+.ref-catalog-toolbar form { @variant max-md { flex-basis: 100%; } }
+.ref-catalog-toolbar .ui-field, .ref-catalog-toolbar .ui-btn-secondary, .ref-catalog-toolbar [aria-haspopup='listbox'] { border-color: transparent; background: var(--ref-surface); box-shadow: var(--shadow-card); min-height: 2.9rem; font-size: var(--text-sm); }
+.ref-catalog-sort {
+  min-width: 11rem;
+  @variant max-md { flex: 1; min-width: 0; }
+}
+.ref-catalog-categories ul { display: flex; flex-wrap: wrap; gap: .4rem; }
+.ref-catalog-categories a { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: .55rem 1rem; @apply rounded-full; background: var(--ref-surface); color: var(--ref-muted); font-size: var(--text-sm); transition: background-color 150ms, color 150ms; }
+.ref-catalog-categories a[aria-current='page'], .ref-catalog-categories a:hover { background: var(--color-brand); color: var(--color-white); }
+.ref-catalog-results-heading {
+  display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; padding-top: 1.5rem;
+  @variant max-md { align-items: start; flex-direction: column; gap: .6rem; padding-top: .8rem; }
+}
+.ref-catalog-results-heading .ui-h2 { font-size: clamp(1.6rem, 2.4vw, var(--text-h2)); color: var(--ref-heading); }
+.ref-course-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;
+  @variant max-lg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @variant max-sm { grid-template-columns: 1fr; }
+}
+.ref-course-grid > * { min-width: 0; }
+/* Course and article cards share one grid, so they share one card: the 24px
+   radius, and the 2px lift of .ui-card-link. The picture's zoom is
+   .ui-card-media's own (the card is a `group`). */
+.ref-course-card { display: flex; flex-direction: column; height: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--color-line-subtle); border-radius: var(--radius-3xl); background: var(--color-white); box-shadow: var(--shadow-card); transition: box-shadow 200ms ease-out, translate 200ms ease-out; }
+.ref-course-card:hover { box-shadow: var(--shadow-card-hover); translate: 0 calc(var(--spacing) * -0.5); }
+.ref-course-card__visual { position: relative; overflow: hidden; margin: .45rem .45rem 0; border-radius: var(--radius-2xl); }
+.ref-course-card__visual > div > .absolute.right-3 { left: .65rem; right: auto; top: .65rem; max-width: calc(100% - 1.3rem); }
+.ref-course-card__visual .ui-status-chip { padding: .35rem .65rem; font-size: var(--text-caption); }
+.ref-course-card__audience { display: inline-flex; align-items: center; gap: .3rem; position: absolute; left: .65rem; bottom: .65rem; max-width: calc(100% - 1.3rem); padding: .3rem .55rem; border-radius: var(--radius-lg); background: var(--color-brand); color: var(--color-white); font-size: var(--text-caption); line-height: 1.5; font-weight: 600; }
+.ref-course-card__audience svg { flex-shrink: 0; }
+.ref-course-card__body { display: flex; flex: 1; flex-direction: column; padding: 1.25rem; }
+.ref-course-card__kicker { color: var(--color-accent-strong); font-size: var(--text-caption); line-height: 1.6; letter-spacing: .05em; text-transform: uppercase; font-weight: 700; margin-bottom: .55rem; }
+.ref-course-card__title { color: var(--color-ink-900); font-size: var(--text-lg); line-height: 1.55; letter-spacing: -.025em; font-weight: 700; text-wrap: pretty; }
+.ref-course-card__title a { display: block; min-height: 2.75rem; }
+.ref-course-card__title a:hover { color: var(--color-brand); }
+.ref-course-card__summary { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: .6rem; color: var(--color-ink-600); font-size: var(--text-sm); line-height: 1.7; }
+.ref-course-card__facts { display: grid; gap: .55rem; background: var(--color-surface-page); padding: .8rem; margin-top: 1.1rem; border-radius: var(--radius-xl); color: var(--color-ink-600); font-size: var(--text-caption); line-height: 1.65; }
+.ref-course-card__facts > div { display: flex; align-items: start; gap: .5rem; }
+.ref-course-card__facts dt { color: var(--color-accent-strong); flex-shrink: 0; padding-top: .15rem; }
+.ref-course-card__facts dd { overflow-wrap: anywhere; }
+.ref-course-card__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; margin-top: auto; padding-top: 1.25rem; }
+.ref-course-card__detail { display: inline-flex; align-items: center; gap: .25rem; min-height: 2.75rem; color: var(--color-brand); font-size: var(--text-caption); font-weight: 700; }
+.ref-catalog-path { padding: 3.25rem 0; }
+.ref-catalog-section-title { max-width: 44rem; text-align: center; margin: 0 auto 2.4rem; }
+.ref-catalog-section-title h2 { margin-top: .65rem; color: var(--ref-heading); }
+.ref-catalog-section-title > p:last-child { margin-top: 1rem; font-size: var(--text-sm); line-height: 1.8; }
+.ref-catalog-steps {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;
+  @variant max-md { grid-template-columns: 1fr; gap: 1rem; }
+}
+.ref-catalog-steps li {
+  background: var(--ref-surface); border-radius: var(--radius-3xl); padding: 1.8rem; box-shadow: var(--shadow-card);
+  @variant max-md { padding: 1.5rem; }
+}
+.ref-catalog-step-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+/* Step numbers read like the home page's: navy, text-3xl. */
+.ref-catalog-step-top > span:first-child { font-size: var(--text-3xl); line-height: var(--text-3xl--line-height); font-weight: 800; color: var(--color-brand); }
+.ref-catalog-step-icon { width: 3rem; height: 3rem; display: grid; place-items: center; color: var(--color-accent-strong); background: var(--color-surface-soft); border-radius: var(--radius-2xl); }
+.ref-catalog-steps h3 { font-size: var(--text-base); color: var(--ref-ink); line-height: 1.55; font-weight: 700; }
+.ref-catalog-steps p { margin-top: .65rem; color: var(--ref-muted); line-height: 1.75; font-size: var(--text-sm); }
+.ref-catalog-step-detail { display: flex; align-items: center; gap: .5rem; margin-top: 1.4rem; color: var(--color-accent-strong); font-size: var(--text-caption); font-weight: 600; }
+.ref-catalog-step-detail svg { flex-shrink: 0; }
+.ref-catalog-advisor {
+  margin-top: 2rem; display: flex; align-items: center; gap: 1.25rem; padding: 1.7rem 2rem; background: var(--color-brand); border-radius: var(--radius-3xl); color: var(--color-white); box-shadow: var(--shadow-card-hover);
+  @variant max-lg { flex-wrap: wrap; }
+  @variant max-md { padding: 1.5rem; align-items: start; gap: 1rem; }
+}
+.ref-catalog-advisor__icon {
+  display: grid; place-items: center; width: 3.75rem; height: 3.75rem; flex-shrink: 0; border-radius: var(--radius-2xl); background: color-mix(in srgb, var(--color-white) 14%, transparent); color: var(--color-aqua);
+  @variant max-md { display: none; }
+}
+.ref-catalog-advisor > div {
+  flex: 1;
+  @variant max-md { flex-basis: 100%; }
+}
+.ref-catalog-advisor .ui-btn {
+  @variant max-lg { margin-left: 5rem; }
+  @variant max-md { margin-left: 0; width: 100%; }
+}
+.ref-catalog-advisor__label { font-size: var(--text-caption); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--color-aqua); }
+.ref-catalog-advisor h3 { font-size: var(--text-xl); font-weight: 700; margin-top: .4rem; }
+.ref-catalog-advisor p:last-child { font-size: var(--text-sm); line-height: 1.7; margin-top: .5rem; opacity: .9; }
+.ref-catalog-advisor .ui-btn-inverse { flex-shrink: 0; background: var(--color-aqua); color: var(--color-brand); }
+.ref-catalog-approach {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; padding: 4rem 0;
+  @variant max-lg { gap: 2rem; }
+  @variant max-md { grid-template-columns: 1fr; padding: 2rem 0; }
+}
+.ref-catalog-approach h2 { margin-top: 1rem; color: var(--ref-heading); }
+.ref-catalog-principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.ref-catalog-principles article {
+  background: var(--ref-surface); border-radius: var(--radius-3xl); padding: 1.5rem; color: var(--ref-heading); box-shadow: var(--shadow-card);
+  @variant max-md { padding: 1.15rem; }
+}
+.ref-catalog-principles article:nth-child(2) { background: var(--color-brand); color: var(--color-white); }
+.ref-catalog-principles article:last-child { display: flex; align-items: start; gap: 1rem; grid-column: 1 / -1; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent-strong); }
+.ref-catalog-principles article:last-child > svg { flex-shrink: 0; }
+.ref-catalog-principles h3 { font-size: var(--text-base); font-weight: 700; margin-top: 1rem; }
+.ref-catalog-principles article:last-child h3 { margin-top: 0; }
+.ref-catalog-principles p { font-size: var(--text-sm); line-height: 1.7; margin-top: .6rem; }
+.ref-catalog-inquiry {
+  display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; padding: 3rem; margin: 3rem 0 4rem; background: var(--ref-surface); border-radius: var(--radius-3xl); box-shadow: var(--shadow-card);
+  @variant max-lg { padding: 2rem; gap: 2rem; }
+  @variant max-md { grid-template-columns: 1fr; padding: 1.25rem; margin-top: 2rem; }
+}
+.ref-catalog-inquiry__copy h2 { margin-top: 1rem; color: var(--ref-heading); }
+.ref-catalog-inquiry__copy > p:not(.ui-overline) { margin-top: 1rem; font-size: var(--text-sm); line-height: 1.8; }
+.ref-catalog-inquiry__copy ul { margin-top: 1.5rem; display: grid; gap: .8rem; color: var(--ref-muted); font-size: var(--text-sm); line-height: 1.7; }
+.ref-catalog-inquiry__copy li { display: flex; gap: .5rem; align-items: start; }
+.ref-catalog-inquiry__copy li svg { flex-shrink: 0; margin-top: .15rem; color: var(--color-accent-strong); }
+.ref-catalog-inquiry__form { min-width: 0; background: var(--ref-wash); border-radius: var(--radius-2xl); }
+.ref-catalog-inquiry__form .ui-field, .ref-catalog-inquiry__form [aria-haspopup='listbox'] { background: var(--ref-surface); }
+.ref-catalog-faq { max-width: 52rem; margin: 0 auto; }
+.dark .ref-catalog { --ref-surface: var(--color-night-raised); --ref-wash: var(--color-night); --ref-soft: var(--color-night-chip); --ref-ink: var(--color-ink-100); --ref-muted: var(--color-ink-300); --ref-heading: var(--color-brand-soft); }
+.dark .ref-catalog-eyebrow { background: color-mix(in srgb, var(--color-accent) 15%, transparent); color: var(--color-accent-soft); }
+.dark .ref-catalog-step-top > span:first-child { color: var(--color-brand-soft); }
+.dark .ref-course-card { background: var(--color-night-raised); border-color: var(--color-ink-700); }
+.dark .ref-course-card__title { color: var(--color-ink-100); }
+.dark .ref-course-card__summary, .dark .ref-course-card__facts { color: var(--color-ink-300); }
+.dark .ref-course-card__facts { background: var(--color-night); }
+.dark .ref-course-card__kicker, .dark .ref-course-card__facts dt, .dark .ref-catalog-step-detail { color: var(--color-accent-soft); }
+.dark .ref-course-card__detail, .dark .ref-course-card__title a:hover { color: var(--color-brand-soft); }
+.dark .ref-catalog-principles article:last-child { background: var(--color-accent-950); color: var(--color-accent-soft); }
+@media (prefers-reduced-motion: reduce) { .ref-course-card { transition: none; } .ref-course-card:hover { translate: none; } }

@@ -31,8 +31,8 @@ export default defineConfig(() => {
           name: `${appConfig.brand.name} — Không gian học tập`,
           short_name: "genAi Tutor",
           description: appConfig.brand.description,
-          theme_color: "#1d4ed8",
-          background_color: "#f8fafc",
+          theme_color: "#243c8f",
+          background_color: "#f7fafc",
           display: "standalone",
           start_url: "/",
           scope: "/",
@@ -60,34 +60,6 @@ export default defineConfig(() => {
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
           runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-              handler: "CacheFirst",
-              options: {
-                cacheName: "google-fonts-cache",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-              handler: "CacheFirst",
-              options: {
-                cacheName: "gstatic-fonts-cache",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
           ],
         },
         devOptions: {

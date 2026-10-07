@@ -1,20 +1,1009 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
-@import "./styles/tokens.css";
-@import "./styles/primitives.css";
 
-@layer base {
-  html, body { margin: 0; padding: 0; font-family: var(--font-sans); color: var(--color-on-surface); background: var(--color-background); }
-  body { overscroll-behavior: none; }
-  :is(button, a, input, select, textarea, summary):focus-visible { outline: var(--focus-ring-width) solid var(--color-focus); outline-offset: var(--focus-ring-offset); }
-  button:not(:disabled), select, summary { cursor: pointer; }
-  button:disabled { cursor: not-allowed; }
-  dialog::backdrop { background: var(--color-overlay); backdrop-filter: blur(4px); }
-  * { scrollbar-width: thin; scrollbar-color: var(--color-scrollbar) transparent; }
+/* Restore class-based dark mode (Tailwind v4 defaults `dark:` to OS
+   prefers-color-scheme unless told otherwise) so the in-app theme toggle,
+   which adds/removes `.dark` on <html>, actually controls every `dark:` utility. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Design tokens — the only place brand and surface colours are defined.
+   Every `--color-*` below becomes a Tailwind colour (bg-brand, text-accent,
+   ring-focus/15, dark:bg-night-raised …). Components must use these names,
+   never raw hex values; ESLint rejects `[#rrggbb]` in class names.
+   ========================================================================== */
+@theme {
+  /* Self-hosted open-licence fonts (SIL OFL): Plus Jakarta Sans for the
+     interface, Newsreader for articles. */
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-serif: 'Newsreader Variable', Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Type scale (guideline §03, p.16): Display 56/64, H1 48/56, H2 36/44,
+     H3 24/32, Body 16/26, Caption 12/18. Nothing is set below Caption. */
+  --text-display: 3.5rem;
+  --text-display--line-height: 4rem;
+  --text-h1: 3rem;
+  --text-h1--line-height: 3.5rem;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 2.75rem;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 2rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.125rem;
+
+  /* Max content width 1200 px (guideline §05, p.24) */
+  --container-content: 75rem;
+
+  /* Breakpoints, mobile first. sm…2xl keep Tailwind's values; xs only marks
+     the narrowest phones (max-xs: below 360 px). CSS in this file uses them
+     through `@variant sm { … }`, never a raw media query. */
+  --breakpoint-xs: 22.5rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  /* Vertical rhythm between the blocks of a page (hero, sections, the
+     closing call to action): mt-section, mb-section, space-y-section. */
+  --spacing-section: 3.5rem;
+
+  /* Elevation: soft, layered shadows tinted with the brand ink (#0d1a29)
+     and navy (#243c8f), never one hard drop. Cards rest on shadow-card and
+     lift to shadow-card-hover; the header takes shadow-header once the
+     page scrolls under it. */
+  --shadow-card: 0 1px 2px 0 rgb(13 26 41 / 0.04), 0 2px 6px -2px rgb(13 26 41 / 0.05);
+  --shadow-card-hover: 0 2px 4px -1px rgb(13 26 41 / 0.06), 0 16px 32px -12px rgb(36 60 143 / 0.22);
+  --shadow-header: 0 1px 0 0 rgb(13 26 41 / 0.04), 0 8px 24px -12px rgb(13 26 41 / 0.18);
+
+  /* Tailwind's default palette is switched off: only the colours below exist,
+     so an off-brand class (stone-, amber-, indigo- …) produces no colour and
+     ESLint rejects it. */
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+
+  /* Brand — measured from the official logo (Canva "logo", Supabase
+     brand-assets/logo.png): navy wordmark, teal "NEXT", and the
+     navy → teal → sky gradient of the G mark. */
+  --color-brand: #243c8f;          /* navy: wordmark, primary actions, links, active states */
+  --color-brand-strong: #112c80;   /* hover/pressed of brand */
+  --color-brand-soft: #5bb7ef;     /* genAi Sky: brand text/icons on dark surfaces */
+  --color-accent: #19b7a5;         /* teal: highlights, markers, decorative accents */
+  --color-accent-strong: #00786c;  /* teal text on light surfaces (5:1 on white) */
+  --color-accent-soft: #7cd3cc;    /* teal text on dark surfaces (the logo's dot) */
+  --color-accent-pale: #b5f0e7;    /* teal text on brand gradients */
+  --color-sky: #5bb7ef;            /* genAi Sky: gradient end of the G mark */
+  /* Core palette additions (guideline §03, p.13) */
+  --color-cyan: #49b7db;           /* genAi Cyan: gradient 72% stop, small accents */
+  --color-aqua: #7cd3cc;           /* genAi Aqua: the logo's dot; focus ring */
+  --color-ice: #dceef2;            /* genAi Ice: soft surfaces; the reversed logo on navy */
+
+  /* Gradient master 135° (guideline p.14): logo, hero and large accents only,
+     never behind body text. */
+  --gradient-brand: linear-gradient(135deg, var(--color-brand) 0%, var(--color-accent) 44%, var(--color-cyan) 72%, var(--color-sky) 100%);
+
+  /* Tonal scales generated in HCT (Material 3 colour space) from the three
+     logo colours: same hue and chroma, tones 97/94/88/80/70/60/50/40/30/20/12
+     for 50…950 (tints capped in chroma so they stay calm as backgrounds).
+     Text on white/paper: use 600 or darker for 4.5:1. */
+  --color-brand-50: #f7f5ff;
+  --color-brand-100: #ecedff;
+  --color-brand-200: #d5dbff;
+  --color-brand-300: #b7c4ff;
+  --color-brand-400: #91a7ff;
+  --color-brand-500: #768ce3;
+  --color-brand-600: #5c72c7;
+  --color-brand-700: #4259ac;
+  --color-brand-800: #284093;
+  --color-brand-900: #09277c;
+  --color-brand-950: #00185b;
+  --color-accent-50: #ebfaf5;
+  --color-accent-100: #d4f5ed;
+  --color-accent-200: #a9e9dd;
+  --color-accent-300: #6ed8c8;
+  --color-accent-400: #2abfad;
+  --color-accent-500: #00a392;
+  --color-accent-600: #008678;
+  --color-accent-700: #006b5f;
+  --color-accent-800: #005047;
+  --color-accent-900: #003731;
+  --color-accent-950: #002520;
+  --color-sky-50: #f2f7ff;
+  --color-sky-100: #e2efff;
+  --color-sky-200: #c2e0ff;
+  --color-sky-300: #94ccff;
+  --color-sky-400: #5eb2f5;
+  --color-sky-500: #3f97d8;
+  --color-sky-600: #147dbc;
+  --color-sky-700: #006399;
+  --color-sky-800: #004b74;
+  --color-sky-900: #003352;
+  --color-sky-950: #002238;
+
+  /* Neutrals — cool greys running from the brand canvas (#f7fafc, 50) to the
+     brand ink (#0d1a29, 900). Tones match the previous stone scale step for
+     step, so every text/background contrast pair is unchanged. */
+  --color-ink-50: #f7fafc;
+  --color-ink-100: #f2f5f7;
+  --color-ink-200: #e3e6e8;
+  --color-ink-300: #d0d4d7;
+  --color-ink-400: #9ea4a9;
+  --color-ink-500: #6b737b;
+  --color-ink-600: #4b555f;
+  --color-ink-700: #37424d;
+  --color-ink-800: #1b2735;
+  --color-ink-900: #0d1a29;
+  --color-ink-950: #010b19;
+
+  /* Status — meaning, not decoration: success (saved, published), warning
+     (pending review, unsaved, cautions), danger (errors, destructive actions).
+     Same HCT ladder and chroma level as the brand scales (hues 155 / 70 / 27),
+     so they sit calmly next to navy and teal: 600 gives 4.5:1 on white. */
+  --color-success-50: #eefaec;
+  --color-success-100: #dbf5dc;
+  --color-success-200: #b7e9c0;
+  --color-success-300: #8cd79f;
+  --color-success-400: #5fbe7d;
+  --color-success-500: #43a265;
+  --color-success-600: #23884d;
+  --color-success-700: #006d38;
+  --color-success-800: #005229;
+  --color-success-900: #00391a;
+  --color-success-950: #002610;
+  --color-warning-50: #fff5ed;
+  --color-warning-100: #ffead7;
+  --color-warning-200: #ffd6a8;
+  --color-warning-300: #ffb961;
+  --color-warning-400: #ed9915;
+  --color-warning-500: #ca8000;
+  --color-warning-600: #a76900;
+  --color-warning-700: #865300;
+  --color-warning-800: #653e00;
+  --color-warning-900: #472a00;
+  --color-warning-950: #301b00;
+  --color-danger-50: #fff4f2;
+  --color-danger-100: #ffe9e6;
+  --color-danger-200: #ffd3cc;
+  --color-danger-300: #ffb4a8;
+  --color-danger-400: #ff8a79;
+  --color-danger-500: #f4604e;
+  --color-danger-600: #d14737;
+  --color-danger-700: #af2f22;
+  --color-danger-800: #8d150d;
+  --color-danger-900: #690001;
+  --color-danger-950: #490000;
+
+  /* Interaction */
+  --color-focus: #147dbc;          /* focus rings, selected borders (sky 600) */
+  --color-focus-strong: #006399;
+  --color-focus-soft: #64b7fa;     /* focus on dark surfaces */
+  --color-focus-pale: #f2f7ff;
+
+  /* Light surfaces */
+  --color-paper: #f7fafc;          /* page background = brand canvas */
+  --color-paper-deep: #eef2f6;     /* footer / recessed areas */
+  --color-chip: #eef3f8;           /* soft control background (pills, search) */
+  --color-chip-hover: #e2eaf3;
+
+  /* Public surface roles (guideline pp.13, 19, 23): reuse the approved
+     Canvas, Ice and neutral tokens. The HCT brand ladder is not a page
+     palette: its pale tones look lavender when spread across a full page. */
+  --color-surface-page: var(--color-paper);
+  --color-surface-soft: var(--color-ice);
+  --color-surface-muted: var(--color-chip);
+  --color-line-subtle: var(--color-ink-200);
+
+  /* Dark surfaces — brand ink hue, same tones as before */
+  --color-night: #071423;          /* header / chrome */
+  --color-night-deep: #04101f;     /* page background, footer, code */
+  --color-night-raised: #131f2f;   /* cards, inputs, popovers */
+  --color-night-chip: #1d2939;     /* soft control background */
+  --color-night-chip-hover: #263343;
+
 }
 
-.katex { font-size: 1.05em !important; }
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  :root {
+    /* Shared by the sticky header and everything that sticks below it, so
+       the two can never drift apart (the article toolbar used to slide 12px
+       under a taller header while scrolling). */
+    --header-h: 4rem;
+    --subheader-h: 3.25rem;
+    color-scheme: light;
 
+    @variant sm {
+      --header-h: 4.25rem;
+    }
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Headings wrap into even lines; short text never leaves one word alone
+     on its last line. Article prose keeps the browser's own wrapping.
+     :where() keeps both at zero specificity, so a utility still wins. */
+  :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  :where(p, li, dd, figcaption):not(:where(.prose-reading *)) {
+    text-wrap: pretty;
+  }
+
+  /* The page ground follows the theme too, so overscroll and the area
+     around short pages never flash the light colour in dark mode. */
+  body {
+    font-family: var(--font-sans);
+    @apply bg-paper text-ink-900;
+  }
+
+  .dark body {
+    @apply bg-night-deep text-ink-100;
+  }
+
+  /* Selected text in brand colours */
+  ::selection {
+    @apply bg-aqua/40 text-ink-900;
+  }
+
+  .dark ::selection {
+    @apply bg-aqua/30 text-white;
+  }
+
+  /* Keyboard focus is always visible and on brand. Controls that draw their
+     own ring (.ui-btn, .ui-chip, .ui-field …) turn this outline off; every
+     other link or control (breadcrumbs, footer links, menu items) gets it
+     instead of the browser's default black ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .dark :focus-visible {
+    outline-color: var(--color-focus-soft);
+  }
+
+  /* No visible scrollbars anywhere. Content still scrolls by wheel,
+     trackpad, touch and keyboard; hiding the bar also removes the layout
+     shift and the stray gutter it drew inside rounded dialogs. */
+  html,
+  body,
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* ==========================================================================
+   Components — shared building blocks. Layout (width, flex, spacing between
+   blocks) stays as utilities at the call site; look-and-feel lives here.
+   ========================================================================== */
+@layer components {
+  /* ---- Form controls --------------------------------------------------- */
+  .ui-label {
+    @apply mb-1.5 block text-sm font-semibold text-ink-800 dark:text-ink-100;
+  }
+
+  .ui-label-note {
+    @apply font-normal text-ink-500 dark:text-ink-400;
+  }
+
+  .ui-hint {
+    @apply mt-1.5 text-xs leading-relaxed text-ink-500 dark:text-ink-400;
+  }
+
+  .ui-error-text {
+    @apply mt-1.5 text-xs text-danger-600 dark:text-danger-400;
+  }
+
+  /* One field style for input, select and textarea across the site.
+     16px text on phones stops iOS from zooming into the page on focus. */
+  .ui-field {
+    @apply block min-h-11 w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-400 hover:border-ink-300 focus:border-focus focus:ring-4 focus:ring-focus/15 disabled:cursor-not-allowed disabled:opacity-60 aria-[invalid=true]:border-danger-500 aria-[invalid=true]:focus:ring-danger-500/15 sm:text-sm dark:border-ink-700 dark:bg-night-raised dark:text-ink-100 dark:hover:border-ink-600 dark:focus:border-focus-soft;
+  }
+
+  .ui-field[readonly] {
+    @apply cursor-default bg-ink-50 text-ink-500 hover:border-ink-200 focus:ring-0 dark:bg-night-chip dark:text-ink-400;
+  }
+
+  textarea.ui-field {
+    @apply min-h-24 resize-y leading-relaxed;
+  }
+
+  /* Dense variant for inline editing inside dashboard lists. */
+  .ui-field-sm {
+    @apply min-h-9 rounded-lg px-3 py-1.5 sm:text-xs;
+  }
+
+  textarea.ui-field-sm {
+    @apply min-h-16;
+  }
+
+  select.ui-field {
+    @apply cursor-pointer appearance-none bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.875rem center;
+    background-size: 1rem;
+  }
+
+  .dark select.ui-field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  select.ui-field-sm {
+    @apply pr-8;
+    background-position: right 0.625rem center;
+    background-size: 0.875rem;
+  }
+
+  /* Filled search box (header search, list filters). */
+  .ui-search {
+    @apply block min-h-11 w-full rounded-full border border-transparent bg-chip px-4 py-2 text-base text-ink-900 outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-400 hover:bg-chip-hover focus:border-focus focus:bg-white focus:ring-4 focus:ring-focus/15 sm:text-sm dark:bg-night-chip dark:text-ink-100 dark:hover:bg-night-chip-hover dark:focus:border-focus-soft dark:focus:bg-night-raised;
+  }
+
+  .ui-check {
+    @apply h-4 w-4 shrink-0 cursor-pointer rounded border-ink-300 accent-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus;
+  }
+
+  /* ---- Buttons --------------------------------------------------------- */
+  /* Guideline §05 p.27: 48 px high, a 2 px aqua focus ring, and every state
+     (hover, focus, pressed, disabled) defined. */
+  /* Pressing gives a small, quick give (scale 0.98) so a tap feels
+     answered; a disabled button does not move. */
+  .ui-btn {
+    @apply inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-[background-color,border-color,color,opacity,box-shadow,scale] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 dark:focus-visible:ring-offset-night-deep;
+  }
+
+  /* The one main action of a page: taller, bigger text, easy to hit */
+  .ui-btn-lg {
+    @apply min-h-14 rounded-full px-7 text-base;
+  }
+
+  /* Dense lists: smaller text, still a 44 px touch target (p.30) */
+  .ui-btn-sm {
+    @apply min-h-11 rounded-full px-3.5 py-1.5 text-xs;
+  }
+
+  /* Primary: navy; darker on hover, ink when pressed, ice when disabled.
+     One per area. */
+  .ui-btn-primary {
+    @apply bg-brand text-white shadow-sm shadow-brand/20 hover:bg-brand-strong hover:shadow-md hover:shadow-brand/25 active:bg-ink-900 active:shadow-none disabled:bg-ice disabled:text-ink-500 disabled:opacity-100 disabled:shadow-none dark:shadow-none dark:disabled:bg-night-chip dark:disabled:text-ink-400;
+  }
+
+  /* Kept as an alias of primary: the guideline keeps gradients off controls
+     and text (white text fails contrast on the sky end). */
+  .ui-btn-gradient {
+    @apply bg-brand text-white hover:bg-brand-strong active:bg-ink-900;
+  }
+
+  /* Secondary: navy outline (p.27 hierarchy); tertiary is .ui-link. */
+  .ui-btn-secondary {
+    @apply border-2 border-brand bg-white text-brand hover:bg-surface-muted active:bg-surface-soft dark:border-brand-soft dark:bg-transparent dark:text-brand-soft dark:hover:bg-night-chip;
+  }
+
+  .ui-btn-soft {
+    @apply bg-chip text-ink-700 hover:bg-chip-hover dark:bg-night-chip dark:text-ink-200 dark:hover:bg-night-chip-hover;
+  }
+
+  .ui-btn-danger {
+    @apply bg-danger-600 text-white hover:bg-danger-700;
+  }
+
+  .ui-btn-inverse {
+    @apply bg-white font-bold text-brand hover:bg-ink-100 focus-visible:ring-white focus-visible:ring-offset-brand;
+  }
+
+  /* Provider controls share a quiet outline; navy remains the email CTA. */
+  .ui-btn-social {
+    @apply border border-ink-300 bg-white text-ink-800 font-medium hover:bg-chip hover:border-ink-400 dark:border-ink-600 dark:bg-night-raised dark:text-ink-100 dark:hover:bg-night-chip;
+  }
+
+  .ui-social-spinner {
+    @apply h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent;
+  }
+
+  /* A row of actions: full width, stacked on phones; side by side from sm */
+  .ui-actions {
+    @apply grid gap-3 sm:flex sm:flex-wrap;
+  }
+
+  .ui-link {
+    @apply inline-flex min-h-11 items-center gap-2 font-semibold text-brand transition-colors hover:text-brand-strong dark:text-brand-soft dark:hover:text-white;
+  }
+
+  /* ---- Surfaces -------------------------------------------------------- */
+  /* A card rests just above the page (hairline border + soft shadow); on
+     dark surfaces the border alone separates it. */
+  .ui-card {
+    @apply rounded-2xl border border-ink-200/80 bg-white shadow-card dark:border-ink-800 dark:bg-night-raised dark:shadow-none;
+  }
+
+  /* A whole card that is a link lifts 2 px towards the pointer. */
+  .ui-card-link {
+    @apply transition-[border-color,box-shadow,translate] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-card-hover active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-4 dark:hover:border-accent/50 dark:hover:shadow-black/50 dark:focus-visible:ring-offset-night-deep;
+  }
+
+  /* The picture of a link card: a slow 3 % zoom while the card is hovered
+     or focused (the card clips it with overflow-hidden). */
+  .ui-card-media {
+    @apply transition-[scale] duration-300 ease-out group-hover:scale-[1.03] group-focus-visible:scale-[1.03];
+  }
+
+  /* The page column: 1200 px at most, with the header's and footer's side
+     padding, so every page edge lines up with the logo above it. */
+  .ui-container {
+    @apply mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Kicker / section label: navy on light, aqua on dark (as in the guideline) */
+  .ui-overline {
+    @apply text-caption font-bold uppercase tracking-wider text-brand dark:text-accent-soft;
+  }
+
+  .ui-muted {
+    @apply text-ink-600 dark:text-ink-400;
+  }
+
+  /* ---- Headings -------------------------------------------------------- */
+  /* Page title (one per page), section title, and the paragraph under a page title. */
+  /* Guideline type scale: H1 48/56 and H2 36/44 from lg up, stepped down on
+     smaller screens (structure first, not shrinking) to the next token, so
+     Vietnamese diacritics keep the scale's line height; H3 24/32 Medium. */
+  .ui-h1 {
+    @apply text-h2 font-bold tracking-tight text-ink-900 lg:text-h1 dark:text-ink-100;
+  }
+
+  .ui-h2 {
+    @apply text-3xl font-bold tracking-tight text-ink-900 lg:text-h2 dark:text-ink-100;
+  }
+
+  .ui-h3 {
+    @apply text-h3 font-medium text-ink-900 dark:text-ink-100;
+  }
+
+  .ui-lead {
+    @apply text-body text-ink-600 sm:text-lg dark:text-ink-400;
+  }
+
+  /* ---- Badges ------------------------------------------------------------
+     One shape; the colour says what it is. Brand navy: who the course is for
+     (solid) and subject/tool (light); teal: level/language; sky: software
+     and outlines; success/neutral: course status. */
+  .ui-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-caption font-semibold ring-1 ring-inset;
+  }
+
+  .ui-badge-brand {
+    @apply bg-brand text-white ring-brand dark:bg-brand-soft dark:text-night dark:ring-brand-soft;
+  }
+
+  .ui-badge-navy {
+    @apply bg-surface-soft text-brand ring-brand/15 dark:bg-brand-soft/15 dark:text-brand-soft dark:ring-brand-soft/25;
+  }
+
+  .ui-badge-teal {
+    @apply bg-accent-100 text-accent-800 ring-accent/25 dark:bg-accent-950/50 dark:text-accent-300 dark:ring-accent/30;
+  }
+
+  .ui-badge-sky {
+    @apply bg-sky-100 text-sky-800 ring-sky-300/40 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-800;
+  }
+
+  .ui-badge-success {
+    @apply bg-success-100 text-success-800 ring-success-200 dark:bg-success-950/50 dark:text-success-300 dark:ring-success-900;
+  }
+
+  .ui-badge-neutral {
+    @apply bg-ink-100 text-ink-600 ring-ink-200 dark:bg-ink-800 dark:text-ink-300 dark:ring-ink-700;
+  }
+
+  .ui-badge-warning {
+    @apply bg-warning-100 text-warning-800 ring-warning-200 dark:bg-warning-950/50 dark:text-warning-300 dark:ring-warning-900;
+  }
+
+  .ui-badge-danger {
+    @apply bg-danger-100 text-danger-700 ring-danger-200 dark:bg-danger-950/50 dark:text-danger-300 dark:ring-danger-900;
+  }
+
+  /* A small link that must stay small (a badge in a row of badges) still
+     takes a 44 px tap: an invisible area centred on it, which never moves
+     the layout. Only where nothing else tappable sits within reach. */
+  .ui-hit-area {
+    position: relative;
+  }
+
+  .ui-hit-area::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: max(100%, 2.75rem);
+    translate: 0 -50%;
+  }
+
+  /* On top of a card image */
+  .ui-badge-on-image {
+    @apply bg-white text-brand ring-white;
+  }
+
+  /* ---- Chips: pill links and toggles (program switcher, choices) -------- */
+  .ui-chip {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 text-sm font-semibold text-ink-700 transition-[color,background-color,border-color,scale] duration-150 ease-out hover:border-brand/40 hover:text-ink-900 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua dark:border-ink-700 dark:bg-transparent dark:text-ink-300 dark:hover:text-ink-100;
+  }
+
+  /* Smaller text and padding; the touch target stays 44 px */
+  .ui-chip-sm {
+    @apply px-3 text-xs;
+  }
+
+  .ui-chip[aria-current='page'],
+  .ui-chip[aria-pressed='true'],
+  .ui-chip[aria-checked='true'] {
+    @apply border-brand bg-brand text-white dark:border-brand-soft dark:bg-brand-soft dark:text-night;
+  }
+
+  /* ---- Tabs: underline marks the selected one ---------------------------- */
+  .ui-tab {
+    @apply relative inline-flex min-h-12 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap px-4 text-sm font-semibold text-ink-500 transition-colors hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-100;
+  }
+
+  .ui-tab[aria-selected='true'] {
+    @apply text-brand dark:text-brand-soft;
+  }
+
+  .ui-tab[aria-selected='true']::after {
+    @apply absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-brand content-[''] dark:bg-brand-soft;
+  }
+
+  /* ---- Small blocks ------------------------------------------------------- */
+  /* A course's facts (Độ tuổi, Thời lượng, Học phí…): an icon, the label over
+     the value, in a plain grid with no box around each. Two a row on phones,
+     three on tablets, --fact-cols (chosen for even rows) on desktop. */
+  .ui-fact-grid {
+    @apply grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3;
+
+    @variant lg {
+      grid-template-columns: repeat(var(--fact-cols, 4), minmax(0, 1fr));
+    }
+  }
+
+  .ui-fact {
+    @apply flex min-w-0 items-start gap-2.5;
+  }
+
+  .ui-fact-icon {
+    @apply mt-0.5 shrink-0 text-accent-strong dark:text-accent-soft;
+  }
+
+  /* The icon tile of a course fact (Đối tượng, Thời lượng, Kiến thức đầu vào…). */
+  .ui-spec-icon {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-ice text-brand sm:h-10 sm:w-10 dark:bg-night-chip dark:text-brand-soft;
+  }
+
+  /* A row that scrolls sideways (tabs): the right edge fades out to show there is more */
+  .ui-scroll-fade {
+    mask-image: linear-gradient(to right, var(--color-black) calc(100% - 2.5rem), transparent);
+
+    @variant lg {
+      mask-image: none;
+    }
+  }
+
+  /* Public redesign: a quiet paper surface, navy hierarchy and teal detail. */
+  .ui-hero-panel {
+    @apply relative isolate -mx-4 border-y border-ink-200/70 bg-white px-4 py-10 sm:mx-0 sm:rounded-4xl sm:border sm:p-10 dark:border-ink-800 dark:bg-night-raised;
+    background-image: linear-gradient(135deg, color-mix(in oklab, var(--color-ice) 45%, transparent), transparent 65%);
+  }
+  .ui-catalog-toolbar { @apply flex flex-col gap-4 rounded-3xl border border-ink-200 bg-white p-5 sm:flex-row sm:items-end dark:border-ink-800 dark:bg-night-raised; }
+  .ui-anchor, main h2[id], main h3[id] { scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+  .ui-course-layout { @apply grid items-start gap-10 xl:grid-cols-[minmax(0,1fr)_22rem]; }
+  .ui-enrollment-panel { @apply order-first rounded-3xl border border-brand/15 bg-white p-6 shadow-card xl:order-last xl:sticky dark:border-brand-soft/20 dark:bg-night-raised; top: calc(var(--header-h) + 1.5rem); }
+  .ui-enrollment-price { @apply my-5 border-y border-ink-200 py-5 dark:border-ink-800; }
+  .ui-service-scope { @apply grid gap-6 lg:grid-cols-2; }
+  .ui-section-index { @apply mb-8 flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-ink-200 pb-4 dark:border-ink-800; }
+  .ui-section-index a { @apply inline-flex min-h-11 items-center text-sm font-semibold text-brand hover:underline dark:text-brand-soft; }
+
+  /* The card that carries the price and the main action */
+  /* An explanatory note in forms and dashboards */
+  .ui-note {
+    @apply rounded-xl bg-accent/10 p-3 text-xs leading-relaxed text-ink-600 dark:text-ink-300;
+  }
+
+  .ui-alert-error {
+    @apply rounded-xl bg-danger-50 px-3 py-2 text-xs text-danger-600 dark:bg-danger-950/30 dark:text-danger-400;
+  }
+
+  /* A tinted band that groups a section (how-to steps, highlights) */
+  .ui-section-soft {
+    @apply rounded-4xl bg-accent/10 p-6 sm:p-10 dark:bg-accent/5;
+  }
+
+  /* The genAi mark on navy, gradients and photos: the reversed (Ice) logo,
+     drawn from the master file as a mask — no shadow, glow or outline
+     (guideline p.8, p.19-20). The page passes the master URL as --logo-url. */
+  .ui-logo-mark {
+    @apply block h-7 w-7 bg-ice;
+    mask: var(--logo-url) center / contain no-repeat;
+  }
+
+  /* Navy band for hero sections and calls to action: white text on navy
+     (9.92:1, AAA). The gradient master shows only as a corner accent, away
+     from the text (p.12, p.14). */
+  .ui-band-navy {
+    @apply relative isolate overflow-hidden bg-brand text-white;
+  }
+
+  /* Headings keep the type scale on navy; only their colour changes. */
+  .ui-band-navy :is(.ui-h1, .ui-h2, .ui-h3) {
+    @apply text-white;
+  }
+
+  .ui-band-navy::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -40%;
+    right: -20%;
+    width: 60%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    background-image: var(--gradient-brand);
+    opacity: 0.35;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  /* Small brand tile behind a white icon or initials */
+  .ui-tile-brand {
+    @apply bg-brand text-white dark:bg-brand;
+  }
+
+  /* Progress fill (reading, audio, leaderboard) */
+  .ui-progress-fill {
+    @apply bg-accent;
+  }
+
+  /* Gradient master 135° (p.14): artwork and large accents only */
+  .ui-gradient-brand {
+    background-image: var(--gradient-brand);
+  }
+
+  /* Navy overlay behind the logo on a photo (p.19: 45-65%) */
+  .ui-image-scrim {
+    background: linear-gradient(180deg, color-mix(in oklab, var(--color-brand) 55%, transparent) 0%, transparent 60%);
+  }
+
+  /* A status: a dot plus its words, never colour alone (p.30) */
+  .ui-status {
+    @apply inline-flex items-center gap-1.5 text-caption font-semibold;
+  }
+
+  .ui-status::before {
+    @apply h-2 w-2 shrink-0 rounded-full bg-current content-[''];
+  }
+
+  .ui-status-open {
+    @apply text-success-700 dark:text-success-300;
+  }
+
+  .ui-status-planned {
+    @apply text-sky-700 dark:text-sky-300;
+  }
+
+  .ui-status-request {
+    @apply text-accent-700 dark:text-accent-300;
+  }
+
+  .ui-status-neutral {
+    @apply text-ink-500 dark:text-ink-400;
+  }
+
+  /* The same status on a card image (course cards): a light chip keeps it
+     readable over any photo or the gradient artwork. */
+  .ui-status-chip {
+    @apply inline-flex rounded-full bg-white/95 px-2.5 py-1 shadow-sm dark:bg-night/90;
+  }
+
+  /* ---- States: loading, empty, error --------------------------------------
+     One look for "loading", "nothing here yet", "no match" and "could not
+     load" (StatePanel, LoadingState): an icon in a soft circle, a short
+     title, one line of help, then the next step. */
+  .ui-state {
+    @apply flex flex-col items-center px-6 py-10 text-center sm:px-10;
+  }
+
+  .ui-state-icon {
+    @apply mb-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ice text-brand dark:bg-night-chip dark:text-brand-soft;
+  }
+
+  .ui-state-icon-danger {
+    @apply bg-danger-50 text-danger-600 dark:bg-danger-950/40 dark:text-danger-300;
+  }
+
+  .ui-state-title {
+    @apply text-lg font-bold text-ink-900 dark:text-ink-100;
+  }
+
+  .ui-state-text {
+    @apply mt-2 max-w-xl text-sm leading-relaxed text-ink-600 dark:text-ink-400;
+  }
+
+  .ui-state-actions {
+    @apply mt-6 flex flex-wrap items-center justify-center gap-3;
+  }
+
+  /* Placeholder in the shape of the content on its way. */
+  .ui-skeleton {
+    @apply animate-pulse rounded-2xl bg-ice dark:bg-night-chip;
+  }
+
+  /* First stop of the Tab key: jumps past the header to the page content.
+     Off screen until focused; a full 44 px target when shown. */
+  .ui-skip-link {
+    @apply fixed left-3 top-3 z-60 inline-flex min-h-11 -translate-y-24 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white shadow-lg transition-transform duration-150 focus:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 dark:focus-visible:ring-offset-night;
+  }
+
+  /* ---- Header & navigation (public site and dashboard share it) --------- */
+  .ui-header {
+    @apply sticky top-0 z-40 border-b border-ink-200/80 bg-white/95 backdrop-blur-md transition-colors dark:border-ink-800/80 dark:bg-night/95;
+  }
+
+  /* Once the page scrolls under it, the header trades its hairline for a
+     soft shadow. Scroll-driven, no JavaScript; browsers without scroll
+     timelines keep the hairline. */
+  @supports (animation-timeline: scroll()) {
+    .ui-header {
+      animation: ui-header-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 4rem;
+    }
+  }
+
+  /* Bar + 1px bottom border = exactly --header-h. */
+  .ui-header-bar {
+    height: calc(var(--header-h) - 1px);
+  }
+
+  .ui-nav-pill {
+    @apply flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap text-ink-600 transition-colors hover:bg-chip hover:text-ink-950 dark:text-ink-300 dark:hover:bg-night-chip dark:hover:text-white;
+  }
+
+  .ui-nav-pill-active {
+    @apply bg-chip font-bold text-brand dark:bg-night-chip dark:text-brand-soft;
+  }
+
+  .ui-icon-btn {
+    @apply relative inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-600 transition-colors hover:bg-chip hover:text-ink-900 dark:text-ink-400 dark:hover:bg-night-chip dark:hover:text-ink-100;
+  }
+
+  /* Dense editor toolbars in the dashboard (desktop, mouse) */
+  .ui-icon-btn-sm {
+    @apply h-9 w-9;
+  }
+
+  .ui-count-badge {
+    @apply absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-0.5 font-mono text-caption font-bold tabular-nums text-white ring-2 ring-white dark:ring-night;
+  }
+
+  /* ---- Menus: one look for every dropdown ------------------------------
+     Header navigation, account menu, selects, keyword suggestions and the
+     reading-settings panel all use the same surface, items, headings,
+     selected state and opening motion. */
+
+  /* Solid background: menus open over busy content (hero text, images) and
+     a see-through panel hurts legibility. */
+  .ui-popover {
+    @apply z-50 rounded-2xl border border-ink-200/80 bg-white p-1.5 text-ink-900 shadow-2xl shadow-brand/10 dark:border-ink-700/60 dark:bg-night-raised dark:text-ink-100 dark:shadow-black/60;
+    animation: ui-popover-in 150ms ease-out both;
+    transform-origin: top;
+  }
+
+  .ui-menu-item {
+    @apply flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs text-ink-700 transition-colors hover:bg-chip hover:text-ink-950 dark:text-ink-200 dark:hover:bg-night-chip dark:hover:text-white;
+  }
+
+  /* Keyboard/pointer highlight in comboboxes: same as hover. */
+  .ui-menu-item[data-active='true'] {
+    @apply bg-chip text-ink-950 dark:bg-night-chip dark:text-white;
+  }
+
+  /* Current page / chosen value: same brand tint in every menu. */
+  .ui-menu-item[aria-current='page'],
+  .ui-menu-item[data-selected='true'] {
+    @apply bg-brand/10 font-semibold text-brand hover:bg-brand/15 dark:bg-focus/15 dark:text-brand-soft dark:hover:bg-focus/20;
+  }
+
+  .ui-menu-item-title {
+    @apply block font-semibold text-ink-800 dark:text-ink-100;
+  }
+
+  .ui-menu-item[aria-current='page'] .ui-menu-item-title {
+    @apply text-brand dark:text-brand-soft;
+  }
+
+  .ui-menu-item-desc {
+    @apply mt-0.5 block text-caption leading-relaxed font-normal text-ink-500 dark:text-ink-400;
+  }
+
+  /* "See all …" row closing a menu. */
+  .ui-menu-footer {
+    @apply mt-1 border-t border-ink-100 pt-1 dark:border-ink-800;
+  }
+
+  .ui-menu-footer .ui-menu-item {
+    @apply justify-between font-semibold text-brand dark:text-brand-soft;
+  }
+
+  .ui-menu-heading {
+    @apply px-3 pt-2 pb-1 text-caption font-bold uppercase tracking-wider text-ink-500 dark:text-ink-400;
+  }
+
+  /* Menus and the mobile drawer opening under the header never run past
+     the bottom of the screen; they scroll inside instead. */
+  .ui-header-panel {
+    max-height: calc(100dvh - var(--header-h) - 0.75rem);
+  }
+
+  /* Segmented choice (e.g. reading font / size). */
+  .ui-segmented {
+    @apply grid gap-0.5 rounded-full bg-chip p-0.5 dark:bg-night-chip;
+  }
+
+  .ui-segmented > button {
+    @apply cursor-pointer rounded-full py-1.5 text-center text-ink-600 transition-colors hover:text-ink-900 dark:text-ink-400 dark:hover:text-white;
+  }
+
+  .ui-segmented > button[aria-pressed='true'] {
+    @apply bg-white font-semibold text-brand shadow-xs dark:bg-night-raised dark:text-brand-soft;
+  }
+
+  /* ---- Dialogs --------------------------------------------------------- */
+  .ui-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-ink-950/60 p-3 backdrop-blur-md sm:p-4;
+  }
+
+  /* Header and footer stay put; only the body scrolls. `overflow-hidden`
+     keeps the rounded corners clean over the gradient header. */
+  .ui-dialog {
+    @apply relative flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden rounded-3xl border border-ink-200 bg-white text-ink-900 shadow-2xl outline-none sm:max-h-[calc(100dvh-2rem)] dark:border-ink-700 dark:bg-night-raised dark:text-ink-100;
+  }
+
+  .ui-dialog-header {
+    @apply shrink-0;
+  }
+
+  /* A dialog's header in the page-hero style (DialogHero) */
+  .ui-dialog-hero {
+    @apply relative shrink-0 border-b border-ink-200/70 bg-gradient-to-br from-ice via-white to-surface-page px-5 py-5 sm:px-6 dark:border-ink-800 dark:from-night-raised dark:via-night dark:to-night-raised;
+  }
+
+  /* With tabs along its bottom edge */
+  .ui-dialog-hero-tabs {
+    @apply pb-0;
+  }
+
+  .ui-dialog-body {
+    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain;
+  }
+
+  .ui-dialog-footer {
+    @apply shrink-0 border-t border-ink-100 bg-ink-50/80 dark:border-ink-800 dark:bg-night-deep/40;
+  }
+
+  /* ---- Sticky offsets tied to the header height ------------------------- */
+  .ui-subheader {
+    @apply sticky z-30 flex items-center border-b border-ink-200/80 bg-white/95 backdrop-blur-md dark:border-ink-800/80 dark:bg-night/95;
+    top: var(--header-h);
+    height: var(--subheader-h);
+  }
+
+  /* Anchors scrolled into view land below the sticky header. */
+  .ui-sticky-offset {
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
+  .ui-toast-anchor {
+    top: calc(var(--header-h) + 0.75rem);
+  }
+
+  /* Desktop side panel that follows the page and scrolls on its own when it
+     is taller than the viewport, so its cards never slide under each other. */
+  .ui-sticky-panel {
+    @variant lg {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      align-self: start;
+      max-height: calc(100dvh - var(--header-h) - 3rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ui-sticky-toc {
+    top: calc(var(--header-h) + var(--subheader-h) + 1.5rem);
+  }
+}
+
+/* ==========================================================================
+   Reading typography
+   ========================================================================== */
+.prose-reading {
+  /* Fills the reading column; the column itself (next to the rail) keeps lines readable */
+  max-width: none;
+  line-height: 1.8;
+}
+
+.prose-reading.font-serif {
+  font-family: var(--font-serif);
+}
+
+.prose-reading.font-sans {
+  font-family: var(--font-sans);
+}
+
+@keyframes ui-header-lift {
+  to {
+    border-bottom-color: transparent;
+    box-shadow: var(--shadow-header);
+  }
+}
+
+@keyframes ui-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+/* Reduced motion (guideline p.30): no movement, state changes stay visible */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .ui-popover {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Kept for existing call sites; every scrollbar is hidden globally now. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+
+/* Public composition uses semantic surfaces, not the HCT brand ladder. */
+@layer components {
+  main:has(.genai-public-page) { @apply bg-surface-page dark:bg-night; }
+  .genai-public-page .ui-h1, .genai-public-page .ui-h2 { @apply text-brand dark:text-ink-100; }
+  .genai-public-page:not(.genai-standard-page) .ui-hero-panel { @apply border-0 shadow-none; background: transparent; }
+  .genai-public-page .ui-section-soft { @apply bg-surface-soft dark:bg-night-chip; }
+  .genai-public-page .ui-card { @apply border-line-subtle dark:border-ink-800; }
 }

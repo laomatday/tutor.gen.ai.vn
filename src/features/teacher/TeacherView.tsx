@@ -1,4 +1,4 @@
-import { Button, Input, Textarea, Select, Icon, Badge, Field, Alert } from '../../components/ui';
+import { Button, Input, Textarea, Select, Icon, Badge, Field, Alert, Progress } from "../../components/ui";
 import { TeacherAssignmentList } from './TeacherAssignmentList';
 import { TeacherDetailsDialog } from './TeacherDetailsDialog';
 import React, { useEffect, useRef, useState } from 'react';
@@ -94,11 +94,11 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
 
 
   return <div className="w-full space-y-6 pb-10">
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="ui-page-header">
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-secondary">Không gian giáo viên</p>
-        <h1 className="text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">{sectionTitles[section]}</h1>
-        <p className="mt-2 text-sm text-on-surface-variant">Theo dõi tiến độ, nhận diện khó khăn và đồng hành cùng từng lớp học.</p>
+        <p className="ui-page-kicker">Không gian giáo viên</p>
+        <h1 className="ui-page-title">{sectionTitles[section]}</h1>
+        <p className="ui-page-description">Theo dõi tiến độ, nhận diện khó khăn và đồng hành cùng từng lớp học.</p>
       </div>
       <Button variant="primary" type="button" onClick={openCreationForm} ><Icon name="add" className="text-lg" />Tạo bài tập</Button>
     </div>
@@ -153,7 +153,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
             <h3 className="mt-4 text-xl font-bold text-on-surface">{classLabel(group.id)}</h3>
             <p className="mt-1 text-sm text-on-surface-variant">{group.topic}</p>
             <div className="mb-2 mt-5 flex justify-between text-xs"><span className="text-on-surface-variant">Tiến độ trung bình</span><span className="font-bold text-primary">{progress}%</span></div>
-            <div aria-label={`Tiến độ lớp ${group.id}: ${progress}%`} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} className="h-1.5 overflow-hidden rounded-full bg-surface-container"><div className="h-full rounded-full bg-secondary" style={{ width: `${progress}%` }} /></div>
+            <Progress value={progress} label={`Tiến độ lớp ${group.id}: ${progress}%`} tone="accent" className="h-1.5" />
             <div className="mt-4 flex items-center justify-between text-xs"><span className="text-secondary">{supportCount} học sinh cần hỗ trợ</span><Icon name="arrow_forward" className="text-lg text-primary" /></div>
           </Button>;
         })}
@@ -176,7 +176,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
             {filteredStudents.map(student => <tr key={student.id} className="hover:bg-surface/80">
               <th scope="row" className="px-5 py-4 font-semibold text-on-surface">{student.name}</th>
               <td className="px-5 py-4 text-on-surface-variant">{student.classId}</td>
-              <td className="px-5 py-4"><div className="flex items-center gap-2"><div className="h-1.5 w-16 overflow-hidden rounded-full bg-surface-container"><div className={`h-full rounded-full ${needsSupport(student) ? 'bg-tertiary-fixed-dim' : 'bg-secondary'}`} style={{ width: `${student.completion}%` }} /></div><span className="text-xs text-on-surface-variant">{student.completion}%</span></div></td>
+              <td className="px-5 py-4"><div className="flex items-center gap-2"><Progress value={student.completion} label={`Tiến độ của ${student.name}`} tone="accent" className="h-1.5 w-16" /><span className="text-xs text-on-surface-variant">{student.completion}%</span></div></td>
               <td className="px-5 py-4 font-semibold text-primary">{student.score.toLocaleString(appConfig.locale, { minimumFractionDigits: 1 })}</td>
               <td className="px-5 py-4"><Badge tone={needsSupport(student) ? 'warning' : 'success'}>{needsSupport(student) ? 'Cần hỗ trợ' : 'Đúng tiến độ'}</Badge></td>
               <td className="px-5 py-4"><Button variant="ghost" size="icon" type="button" onClick={() => setActiveStudent(student)}  aria-label={`Xem tiến độ ${student.name}`}><Icon name="open_in_new" className="text-lg" /></Button></td>

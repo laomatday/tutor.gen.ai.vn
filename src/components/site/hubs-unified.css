@@ -1,0 +1,25 @@
+@reference "../../index.css";
+@layer theme, base, components, utilities;
+
+@layer components {
+  .gen-hub-content { @apply space-y-16 lg:space-y-20; }
+  .gen-hub-groups { @apply grid gap-6 lg:grid-cols-3; }
+  .gen-hub-group { @apply flex scroll-mt-28 flex-col rounded-3xl p-6 outline-none sm:p-7; }
+  .gen-hub-icon { @apply flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-white; }
+  .gen-hub-group-title { @apply mt-5 text-xl font-bold text-brand dark:text-ink-100; }
+  .gen-hub-solutions { @apply mt-5 space-y-1 border-t border-line-subtle pt-4 dark:border-ink-800; }
+  .gen-hub-solution { @apply -mx-2 flex min-h-12 items-center justify-between gap-3 rounded-xl px-2 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:bg-surface-muted hover:text-brand dark:text-ink-200 dark:hover:bg-night-chip dark:hover:text-brand-soft; }
+  .gen-hub-process { @apply rounded-3xl p-5 sm:p-8 lg:p-10; }
+  .gen-hub-steps { @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-5; }
+  .gen-hub-step { @apply rounded-2xl border-0 p-5; }
+  .gen-hub-step-number { @apply mb-4 block text-3xl font-extrabold text-brand dark:text-brand-soft; }
+  .gen-hub-step h3 { @apply text-brand dark:text-ink-100; }
+  .gen-hub-cases { @apply grid gap-6 lg:grid-cols-3; }
+  .gen-hub-case { @apply flex flex-col rounded-3xl p-6 sm:p-7; }
+  .gen-hub-case h3 { @apply text-brand dark:text-ink-100; }
+  .gen-hub-case dl > div + div { @apply border-t border-line-subtle pt-3 dark:border-ink-800; }
+  .gen-hub-example-label { @apply self-start rounded-full bg-accent/10 px-3 py-1.5 text-caption font-bold text-accent-strong dark:bg-accent/15 dark:text-accent-soft; }
+  .gen-hub-faq { @apply mx-auto max-w-3xl; }
+  .gen-hub-faq #faq-title { @apply text-center; }
+  .gen-hub-faq details { @apply py-5; }
+}
