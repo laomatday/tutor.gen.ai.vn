@@ -88,6 +88,13 @@ jobs:
             });
             await page.screenshot({ path: path.join(out, `${vp.name}-initial.png`), fullPage: true });
 
+            let compatDialogFixInjected = false;
+            if (dialogStateBefore && !dialogStateBefore.open && dialogStateBefore.display !== 'none') {
+              await page.addStyleTag({ content: 'dialog.ui-dialog:not([open]) { display: none !important; }' });
+              await page.waitForTimeout(100);
+              compatDialogFixInjected = true;
+            }
+
             let autoModalClosed = false;
             const openDialog = page.locator('dialog[open]').first();
             if (await openDialog.count()) {
@@ -188,7 +195,7 @@ jobs:
 
             await page.screenshot({ path: path.join(out, `${vp.name}-clean.png`), fullPage: true });
 
-            const interactions = { dialogStateBefore, dialogStateAfterClose, autoModalClosed };
+            const interactions = { dialogStateBefore, dialogStateAfterClose, compatDialogFixInjected, autoModalClosed };
             if (vp.width < 1024) {
               const menu = page.getByRole('button', { name: /mở menu/i }).first();
               if (await menu.count()) {
