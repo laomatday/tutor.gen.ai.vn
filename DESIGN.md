@@ -15,8 +15,10 @@ Giữ nhịp giao diện của hệ thống: nền canvas, chữ navy/ink, teal 
 
 ## Một nguồn cho hình thức
 
-- `src/styles/tokens.css`: màu, font, kích thước control, bo góc, bóng, chiều cao header và lớp nổi. Đây là nguồn giá trị thiết kế duy nhất. Tên token cũ là lớp tương thích cho các màn hình hiện có.
-- `src/styles/primitives.css`: trạng thái và hình thức của thành phần dùng chung.
+- `src/index.css`: **core CSS được đồng bộ trực tiếp từ `gen.ai.vn/src/index.css`** — brand tokens, type scale, breakpoints, surfaces, fields, buttons, cards, badge/chip/tab, header/menu/dialog/state và reduced-motion.
+- `src/public-site.css`, `src/components/article-unified.css`, `src/components/site/*-reference.css`: giữ cùng cấu trúc/path với `gen.ai.vn` để có thể diff/sync trực tiếp. Chỉ import composition khi Tutor thực sự dùng loại trang tương ứng.
+- `src/fonts.css`: bản CSS font self-hosted của genAi được giữ đồng bộ; Tutor hiện vẫn tải Plus Jakarta Sans/JetBrains Mono qua Google Fonts nên file này chưa được import cho đến khi dependency @fontsource-variable được đưa vào lockfile.
+- `src/styles/tutor-compat.css`: lớp **adapter duy nhất** cho tên semantic cũ của Tutor và widget riêng (custom Select, native dialog, sidebar nav, native progress). Không được định nghĩa lại brand palette tại đây.
 - `src/components/ui`: ngữ nghĩa, tương tác và khả năng truy cập. Progress phải dùng native `<progress>` qua component `Progress`; không tự dựng `div role="progressbar"`.
 - `src/components/icons`: cùng Material Symbols Rounded SVG (weight 500) với `gen.ai.vn`; feature chỉ gọi qua `Icon`, không import thư viện icon khác.
 - `design-preview.html`: trang xem trước dùng component thật, mở ở `/design-preview.html` khi chạy dev server; không nằm trong điều hướng sản phẩm.
@@ -54,7 +56,7 @@ import { Button, Field, Input, Select, Badge, Modal } from '@/src/components/ui'
 | `Select`            | Một giá trị, children `<option>`/`<optgroup>`, `value` hoặc `defaultValue`, `onChange(event.target.value)` như native. `variant="pill"` dùng trong thanh lọc.                                                 |
 | `Badge`, `Alert`    | Tone theo trạng thái: `info`, `success`, `warning`, `danger`; Badge thêm `neutral`, `primary`.                                                                                                                |
 | `Card`              | Bề mặt dùng chung, feature tự chọn padding và bố cục.                                                                                                                                                         |
-| `Icon`              | `name` hoặc chuỗi children; SVG cục bộ từ dependency Lucide sẵn có, giữ alias tên icon của dữ liệu cũ. Mặc định trang trí; truyền `aria-label` khi có ý nghĩa độc lập.                                        |
+| `Icon`              | `name` hoặc chuỗi children; dùng cùng Material Symbols Rounded SVG (weight 500) với `gen.ai.vn`, giữ alias tên icon của dữ liệu cũ. Mặc định trang trí; truyền `aria-label` khi có ý nghĩa độc lập.                          |
 | `Modal`             | `open`, `onClose`, `title`, `description?`, `children`, `footer?`. Native dialog bảo đảm nền inert, giữ focus, trả focus, đóng bằng Escape và bấm ngoài.                                                      |
 
 `surface` dành cho hàng/thẻ tương tác có bố cục riêng, không phải hành động chính. Nó vẫn dùng focus và trạng thái disabled chung. Điều hướng dùng `ui-nav-item` và `aria-current="page"`; nhóm lựa chọn dùng `ui-segmented` với `aria-pressed` hoặc `aria-selected` đúng ngữ nghĩa.
@@ -76,4 +78,4 @@ Khi thêm control, cập nhật nguồn chung, kiểm tra bàn phím + điện t
 
 - Bộ chuyển vai trò Học sinh / Giáo viên / Quản trị chỉ xuất hiện trong DEV để kiểm thử UI. Production không trình bày role switch demo như một tính năng người dùng.
 - Màu PWA chuẩn: theme `#243C8F`, canvas `#F7FAFC`; artwork chỉ dùng navy → teal → cyan → sky của genAi.
-- `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, Lucide/import icon ngoài hệ, chữ dưới 12 px và progress bar tự dựng.
+- `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, import icon ngoài Material Symbols SVG dùng chung, chữ dưới 12 px và progress bar tự dựng.
