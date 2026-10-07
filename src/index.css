@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
+@import "./styles/tutor-theme.css";
 
 /* Restore class-based dark mode (Tailwind v4 defaults `dark:` to OS
    prefers-color-scheme unless told otherwise) so the in-app theme toggle,
