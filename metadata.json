@@ -1,0 +1,6 @@
+{
+  "name": "genAi Tutor — Không gian học tập",
+  "description": "Học theo lớp, môn và chủ đề với lý thuyết, ví dụ minh họa và bài tập. Tài khoản trải nghiệm đã đăng ký môn Toán lớp 9.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

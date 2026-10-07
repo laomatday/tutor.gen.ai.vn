@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+@import "./styles/tokens.css";
+@import "./styles/primitives.css";
+
+@layer base {
+  html, body { margin: 0; padding: 0; font-family: var(--font-sans); color: var(--color-on-surface); background: var(--color-background); }
+  body { overscroll-behavior: none; }
+  :is(button, a, input, select, textarea, summary):focus-visible { outline: var(--focus-ring-width) solid var(--color-focus); outline-offset: var(--focus-ring-offset); }
+  button:not(:disabled), select, summary { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  dialog::backdrop { background: var(--color-overlay); backdrop-filter: blur(4px); }
+  * { scrollbar-width: thin; scrollbar-color: var(--color-scrollbar) transparent; }
+}
+
+.katex { font-size: 1.05em !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

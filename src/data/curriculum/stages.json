@@ -1,0 +1,23 @@
+[
+  {
+    "id": "theory",
+    "label": "Lý thuyết",
+    "title": "Hiểu lý thuyết",
+    "icon": "menu_book",
+    "description": "Nắm kiến thức cốt lõi và điều cần ghi nhớ."
+  },
+  {
+    "id": "examples",
+    "label": "Ví dụ minh họa",
+    "title": "Xem ví dụ minh họa",
+    "icon": "lightbulb",
+    "description": "Theo dõi từng bước và cách vận dụng."
+  },
+  {
+    "id": "exercises",
+    "label": "Bài tập",
+    "title": "Tự làm bài tập",
+    "icon": "edit_note",
+    "description": "Thử sức, nhận giải thích và củng cố."
+  }
+]

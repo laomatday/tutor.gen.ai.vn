@@ -1,0 +1,17 @@
+{
+  "formulaTools": [
+    { "label": "x²", "value": "x^2", "title": "Bình phương" },
+    { "label": "(-x)²", "value": "(-2)^2", "title": "Bình phương số âm" },
+    { "label": "√x", "value": "\\sqrt{x}", "title": "Căn bậc hai" },
+    { "label": "Phân số", "value": "\\frac{12}{4}", "title": "Phân số" },
+    { "label": "≠", "value": "\\neq ", "title": "Khác" },
+    { "label": "±", "value": "\\pm ", "title": "Cộng trừ" },
+    { "label": "⇔", "value": "\\iff ", "title": "Tương đương" },
+    { "label": "⇒", "value": "\\Rightarrow ", "title": "Suy ra" }
+  ],
+  "policy": {
+    "hintPenaltyGp": 5,
+    "minimumRewardGp": 5,
+    "inputLimit": 4000
+  }
+}

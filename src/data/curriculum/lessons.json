@@ -1,0 +1,390 @@
+[
+  {
+    "id": "can-bac-hai",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "can-thuc",
+    "title": "Căn bậc hai số học",
+    "summary": "Hiểu ý nghĩa căn bậc hai và xác định điều kiện của biểu thức.",
+    "kind": "lesson",
+    "durationMinutes": 15,
+    "order": 1,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Căn bậc hai số học",
+        "text": "Với $a \\ge 0$, căn bậc hai số học của $a$ là số không âm có bình phương bằng $a$, kí hiệu $\\sqrt{a}$. Chẳng hạn $\\sqrt{25} = 5$."
+      },
+      {
+        "heading": "Điều kiện xác định",
+        "text": "Biểu thức $\\sqrt{A}$ xác định khi $A \\ge 0$. Luôn nhớ $\\sqrt{a^2} = |a|$, kể cả khi $a$ âm."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Tính giá trị căn thức",
+        "prompt": "Tính $\\sqrt{(-3)^2}$.",
+        "steps": [
+          "Áp dụng $\\sqrt{a^2} = |a|$.",
+          "Thay $a = -3$, được $\\sqrt{(-3)^2} = |-3|$."
+        ],
+        "answer": "Kết quả bằng $3$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "can-bac-hai-1",
+        "prompt": "Biểu thức $\\sqrt{x-2}$ xác định khi nào?",
+        "options": ["$x \\ge 2$", "$x \\le 2$", "$x > 0$"],
+        "correctIndex": 0,
+        "explanation": "Điều kiện $x - 2 \\ge 0$ tương đương $x \\ge 2$."
+      }
+    ]
+  },
+  {
+    "id": "rut-gon-can-thuc",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "can-thuc",
+    "title": "Rút gọn biểu thức chứa căn",
+    "summary": "Đưa thừa số ra ngoài dấu căn và thu gọn các căn đồng dạng.",
+    "kind": "problem-type",
+    "durationMinutes": 20,
+    "order": 2,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Đưa thừa số ra ngoài dấu căn",
+        "text": "Với $A \\ge 0$, ta có $\\sqrt{A^2B} = A\\sqrt{B}$ khi $B \\ge 0$. Hãy phân tích số dưới căn thành tích chứa một số chính phương."
+      },
+      {
+        "heading": "Cộng, trừ các căn đồng dạng",
+        "text": "Sau khi rút gọn, các căn có cùng phần dưới dấu căn có thể cộng hoặc trừ hệ số: $a\\sqrt{b} - c\\sqrt{b} = (a-c)\\sqrt{b}$."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Gom các căn đồng dạng",
+        "prompt": "Rút gọn $\\sqrt{72} - \\sqrt{8}$.",
+        "steps": [
+          "$\\sqrt{72} = \\sqrt{36 \\times 2} = 6\\sqrt{2}$.",
+          "$\\sqrt{8} = \\sqrt{4 \\times 2} = 2\\sqrt{2}$.",
+          "Trừ các hệ số: $(6-2)\\sqrt{2}$."
+        ],
+        "answer": "$4\\sqrt{2}$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "rut-gon-1",
+        "prompt": "Rút gọn $\\sqrt{50} + \\sqrt{8}$.",
+        "options": ["$7\\sqrt{2}$", "$\\sqrt{58}$", "$3\\sqrt{2}$"],
+        "correctIndex": 0,
+        "explanation": "$\\sqrt{50}=5\\sqrt{2}$ và $\\sqrt{8}=2\\sqrt{2}$, nên tổng bằng $7\\sqrt{2}$."
+      },
+      {
+        "id": "rut-gon-2",
+        "prompt": "Giá trị của $\\sqrt{81}$ là bao nhiêu?",
+        "options": ["$-9$", "$9$", "$\\pm 9$"],
+        "correctIndex": 1,
+        "explanation": "Căn bậc hai số học luôn không âm nên $\\sqrt{81}=9$."
+      }
+    ]
+  },
+  {
+    "id": "ham-so-bac-hai",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "ham-so",
+    "title": "Hàm số bậc hai và đồ thị parabol",
+    "summary": "Đọc đồ thị và tìm hệ số của hàm số y = ax².",
+    "kind": "lesson",
+    "durationMinutes": 20,
+    "order": 3,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Đặc điểm của đồ thị",
+        "text": "Đồ thị của hàm số $y=ax^2$ với $a \\ne 0$ là một parabol có đỉnh $O(0;0)$, nhận trục $Oy$ làm trục đối xứng."
+      },
+      {
+        "heading": "Dấu của hệ số a",
+        "text": "Nếu $a>0$, parabol mở lên và $O$ là điểm thấp nhất. Nếu $a<0$, parabol mở xuống và $O$ là điểm cao nhất."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Tìm hệ số từ một điểm",
+        "prompt": "Parabol $y=ax^2$ đi qua điểm $M(-2;12)$. Tìm $a$.",
+        "steps": [
+          "Thay tọa độ của $M$ vào công thức: $12=a(-2)^2$.",
+          "Tính $(-2)^2=4$, suy ra $12=4a$.",
+          "Chia hai vế cho $4$: $a=3$."
+        ],
+        "answer": "Hàm số cần tìm là $y=3x^2$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ham-so-1",
+        "prompt": "Hàm số $y=-3x^2$ có đồ thị như thế nào?",
+        "options": ["Parabol mở lên", "Parabol mở xuống", "Đường thẳng"],
+        "correctIndex": 1,
+        "explanation": "Vì $a=-3<0$, parabol mở xuống."
+      },
+      {
+        "id": "ham-so-2",
+        "prompt": "Parabol $y=ax^2$ đi qua $A(2;8)$. Giá trị của $a$ là:",
+        "options": ["$4$", "$-2$", "$2$"],
+        "correctIndex": 2,
+        "explanation": "Thay tọa độ vào ta được $8=a\\times 2^2=4a$, nên $a=2$."
+      }
+    ]
+  },
+  {
+    "id": "he-phuong-trinh",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "phuong-trinh",
+    "title": "Hệ phương trình bậc nhất hai ẩn",
+    "summary": "Sử dụng phương pháp cộng đại số để tìm và kiểm tra nghiệm.",
+    "kind": "lesson",
+    "durationMinutes": 25,
+    "order": 4,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Phương pháp cộng đại số",
+        "text": "Cộng hoặc trừ hai phương trình để khử một ẩn. Nếu cần, nhân mỗi phương trình với một số khác 0 để các hệ số của một ẩn bằng nhau hoặc đối nhau."
+      },
+      {
+        "heading": "Kiểm tra nghiệm",
+        "text": "Sau khi tìm được một ẩn, thế vào phương trình để tìm ẩn còn lại. Cặp số thu được phải thỏa mãn cả hai phương trình ban đầu."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Khử ẩn y",
+        "prompt": "Giải hệ $x+y=7$ và $2x-y=2$.",
+        "steps": [
+          "Cộng hai phương trình: $3x=9$, suy ra $x=3$.",
+          "Thế vào $x+y=7$: $y=4$.",
+          "Kiểm tra: $3+4=7$ và $2\\times3-4=2$."
+        ],
+        "answer": "Nghiệm của hệ là $(x;y)=(3;4)$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "he-1",
+        "prompt": "Hệ $x+y=5$ và $x-y=1$ có nghiệm nào?",
+        "options": ["$(2;3)$", "$(3;2)$", "$(4;1)$"],
+        "correctIndex": 1,
+        "explanation": "Cộng hai phương trình được $2x=6$, nên $x=3$ và $y=2$."
+      }
+    ]
+  },
+  {
+    "id": "he-thuc-viete",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "phuong-trinh",
+    "title": "Hệ thức Vi-ét và biểu thức hai nghiệm",
+    "summary": "Tính biểu thức đối xứng mà không cần giải phương trình.",
+    "kind": "problem-type",
+    "durationMinutes": 25,
+    "order": 5,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Tổng và tích hai nghiệm",
+        "text": "Nếu phương trình $ax^2+bx+c=0$ ($a\\ne0$) có hai nghiệm thực $x_1,x_2$, thì $x_1+x_2=-\\frac{b}{a}$ và $x_1x_2=\\frac{c}{a}$."
+      },
+      {
+        "heading": "Biểu thức đối xứng",
+        "text": "Dùng hằng đẳng thức $x_1^2+x_2^2=(x_1+x_2)^2-2x_1x_2$. Trước khi áp dụng, kiểm tra phương trình có nghiệm thực."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Tính tổng bình phương hai nghiệm",
+        "prompt": "Với $x^2-5x+6=0$, tính $x_1^2+x_2^2$.",
+        "steps": [
+          "$\\Delta=25-24=1>0$, phương trình có hai nghiệm.",
+          "Theo Vi-ét: $S=5$, $P=6$.",
+          "$x_1^2+x_2^2=S^2-2P=25-12$."
+        ],
+        "answer": "$x_1^2+x_2^2=13$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "viete-1",
+        "prompt": "Hai nghiệm của $x^2-7x+10=0$ có tổng bằng:",
+        "options": ["$-7$", "$10$", "$7$"],
+        "correctIndex": 2,
+        "explanation": "Theo Vi-ét, $x_1+x_2=-b/a=-(-7)/1=7$."
+      }
+    ]
+  },
+  {
+    "id": "goc-noi-tiep",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "hinh-hoc",
+    "title": "Góc nội tiếp",
+    "summary": "Nhận biết góc nội tiếp và mối liên hệ với cung bị chắn.",
+    "kind": "lesson",
+    "durationMinutes": 20,
+    "order": 6,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Nhận biết góc nội tiếp",
+        "text": "Góc nội tiếp có đỉnh nằm trên đường tròn và hai cạnh chứa hai dây cung của đường tròn đó."
+      },
+      {
+        "heading": "Liên hệ giữa góc và cung",
+        "text": "Số đo của một góc nội tiếp bằng một nửa số đo của cung bị chắn. Các góc nội tiếp chắn cùng một cung thì bằng nhau."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Tính góc từ cung",
+        "prompt": "Góc $BAC$ nội tiếp chắn cung $BC$ có số đo $100^\\circ$. Tính góc $BAC$.",
+        "steps": [
+          "Áp dụng định lý: số đo góc nội tiếp bằng nửa số đo cung bị chắn.",
+          "$\\widehat{BAC}=100^\\circ:2$."
+        ],
+        "answer": "$\\widehat{BAC}=50^\\circ$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "goc-1",
+        "prompt": "Góc nội tiếp chắn nửa đường tròn có số đo bằng:",
+        "options": ["$45^\\circ$", "$90^\\circ$", "$180^\\circ$"],
+        "correctIndex": 1,
+        "explanation": "Nửa đường tròn có số đo $180^\\circ$. Góc nội tiếp bằng $180^\\circ:2=90^\\circ$."
+      }
+    ]
+  },
+  {
+    "id": "tu-giac-noi-tiep",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "hinh-hoc",
+    "title": "Tứ giác nội tiếp",
+    "summary": "Nhận biết tứ giác có bốn đỉnh nằm trên một đường tròn.",
+    "kind": "lesson",
+    "durationMinutes": 20,
+    "order": 7,
+    "status": "draft",
+    "theory": [
+      {
+        "heading": "Tổng hai góc đối",
+        "text": "Trong tứ giác nội tiếp, tổng số đo hai góc đối bằng $180^\\circ$."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Tìm góc đối diện",
+        "prompt": "Tứ giác $ABCD$ nội tiếp, $\\widehat{ABC}=75^\\circ$. Tìm $\\widehat{ADC}$.",
+        "steps": [
+          "$\\widehat{ABC}+\\widehat{ADC}=180^\\circ$.",
+          "$\\widehat{ADC}=180^\\circ-75^\\circ$."
+        ],
+        "answer": "$105^\\circ$."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "tu-giac-1",
+        "prompt": "Một góc của tứ giác nội tiếp bằng $110^\\circ$. Góc đối diện bằng:",
+        "options": ["$110^\\circ$", "$70^\\circ$", "$90^\\circ$"],
+        "correctIndex": 1,
+        "explanation": "Hai góc đối có tổng $180^\\circ$, nên góc cần tìm bằng $70^\\circ$."
+      }
+    ]
+  },
+  {
+    "id": "doc-hieu-van-ban",
+    "gradeId": "9",
+    "subjectId": "ngu-van",
+    "topicId": "doc-hieu",
+    "title": "Tìm thông điệp từ chi tiết trong văn bản",
+    "summary": "Đọc chi tiết, đưa ra nhận xét và giải thích bằng dẫn chứng.",
+    "kind": "lesson",
+    "durationMinutes": 20,
+    "order": 1,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Chi tiết và thông điệp",
+        "text": "Chi tiết là những hình ảnh, hành động hoặc lời nói cụ thể. Để tìm thông điệp, kết nối các chi tiết và giải thích điều tác giả muốn gửi gắm."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Đọc một tình huống",
+        "prompt": "Lan ở lại sau buổi học để giúp bạn hiểu bài, dù trời đã mưa. Hành động ấy gợi ra điều gì?",
+        "steps": [
+          "Chi tiết: Lan dành thời gian giúp bạn và không bỏ về khi trời mưa.",
+          "Nhận xét: Lan quan tâm đến bạn, sẵn lòng chia sẻ điều mình biết."
+        ],
+        "answer": "Tình huống gợi thông điệp về sự sẻ chia và tinh thần giúp đỡ nhau trong học tập."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "doc-hieu-1",
+        "prompt": "Cách nào giúp một nhận xét về văn bản có sức thuyết phục?",
+        "options": [
+          "Chỉ nêu cảm xúc",
+          "Gắn nhận xét với chi tiết cụ thể",
+          "Kể lại toàn bộ văn bản"
+        ],
+        "correctIndex": 1,
+        "explanation": "Chi tiết cụ thể làm dẫn chứng cho nhận xét, giúp người đọc hiểu cơ sở của cách diễn giải."
+      }
+    ]
+  },
+  {
+    "id": "first-conditional",
+    "gradeId": "9",
+    "subjectId": "tieng-anh",
+    "topicId": "english-foundations",
+    "title": "First conditional",
+    "summary": "Nói về điều có thể xảy ra trong tương lai.",
+    "kind": "lesson",
+    "durationMinutes": 15,
+    "order": 1,
+    "status": "published",
+    "theory": [
+      {
+        "heading": "Câu điều kiện loại 1",
+        "text": "Dùng If + hiện tại đơn, will + động từ nguyên mẫu để nói về một điều kiện có thể xảy ra và kết quả của nó trong tương lai."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Một kế hoạch cho ngày mưa",
+        "prompt": "Hoàn thành: If it … (rain), we … (stay) at home.",
+        "steps": [
+          "Mệnh đề if dùng hiện tại đơn: it rains.",
+          "Mệnh đề kết quả dùng will + stay."
+        ],
+        "answer": "If it rains, we will stay at home."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "conditional-1",
+        "prompt": "If you study, you … the test.",
+        "options": ["will pass", "passed", "passing"],
+        "correctIndex": 0,
+        "explanation": "Mệnh đề kết quả dùng will + động từ nguyên mẫu: will pass."
+      }
+    ]
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "u1",
+    "name": "Nguyễn Phương Linh",
+    "email": "linh.np@example.com",
+    "role": "student",
+    "active": true,
+    "group": "Lớp 9A1"
+  },
+  {
+    "id": "u2",
+    "name": "Trần Minh Anh",
+    "email": "anh.tm@example.com",
+    "role": "student",
+    "active": true,
+    "group": "Lớp 9A1"
+  },
+  {
+    "id": "u3",
+    "name": "Lê Hoàng Nam",
+    "email": "nam.lh@example.com",
+    "role": "student",
+    "active": true,
+    "group": "Lớp 9A2"
+  },
+  {
+    "id": "u4",
+    "name": "Phạm Gia Hân",
+    "email": "han.pg@example.com",
+    "role": "student",
+    "active": false,
+    "group": "Lớp 9A3"
+  },
+  {
+    "id": "u5",
+    "name": "Nguyễn Thu Hà",
+    "email": "ha.nt@example.com",
+    "role": "teacher",
+    "active": true,
+    "group": "Tổ Toán"
+  },
+  {
+    "id": "u6",
+    "name": "Trần Quốc Bảo",
+    "email": "bao.tq@example.com",
+    "role": "teacher",
+    "active": true,
+    "group": "Tổ Toán"
+  },
+  {
+    "id": "u7",
+    "name": "Lê Minh Thư",
+    "email": "thu.lm@example.com",
+    "role": "teacher",
+    "active": true,
+    "group": "Tổ Toán"
+  },
+  {
+    "id": "u8",
+    "name": "Đỗ Khánh Ngọc",
+    "email": "ngoc.dk@example.com",
+    "role": "admin",
+    "active": true,
+    "group": "Quản trị nội dung"
+  }
+]

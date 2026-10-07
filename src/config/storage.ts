@@ -1,0 +1,14 @@
+/** Versioned browser repository keys. Keep existing names to preserve user data. */
+export const storageKeys = {
+  curriculumTopics: "genai-curriculum-topics-v1",
+  curriculumLessons: "genai-curriculum-lessons-v1",
+  completedLessons: "genai-curriculum-completed-v1",
+  studentGp: "genai-student-gp-v1",
+  dailyGp: "genai-student-daily-gp-v1",
+  studentGoals: "genai-student-goals-v1",
+  studentSchedule: "genai-student-schedule-v1",
+  teacherAssignments: "genai-k12-teacher-assignments-v1",
+  adminUsers: "genai-admin-users-v1",
+  practiceSession: "genai-practice-session-v1",
+  rewardRequests: "genai-reward-requests-v1",
+} as const;

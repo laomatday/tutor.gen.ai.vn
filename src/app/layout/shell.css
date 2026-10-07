@@ -1,0 +1,36 @@
+@reference "../../index.css";
+@layer components {
+  .app-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col border-r border-outline-variant bg-white transition-transform;
+    width: var(--sidebar-w);
+  }
+  .app-sidebar.is-open {
+    translate: 0;
+  }
+  .app-header {
+    @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-outline-variant bg-surface px-4 sm:px-6;
+    height: var(--header-h);
+  }
+  .app-main {
+    @apply min-h-screen px-4 pb-8 sm:px-6;
+    padding-top: calc(var(--header-h) + 1rem);
+  }
+  .app-frame {
+    min-width: 0;
+  }
+  .app-toast {
+    @apply fixed inset-x-4 z-60 rounded-2xl bg-inverse-surface px-4 py-3 text-sm text-inverse-on-surface shadow-lg sm:left-auto sm:max-w-md;
+    top: calc(var(--header-h) + 1rem);
+  }
+  @variant lg {
+    .app-sidebar {
+      translate: 0;
+    }
+    .app-frame {
+      padding-left: var(--sidebar-w);
+    }
+    .app-header {
+      left: var(--sidebar-w);
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "catalog": [
+    {
+      "id": "sticker",
+      "name": "Bộ Sticker Hologram genAi Toán học",
+      "cost": 350,
+      "stock": 42,
+      "unit": "bộ",
+      "badgeText": "Chống nước dán laptop",
+      "badgeIcon": "auto_awesome",
+      "description": "Lớp phủ cầu vồng ánh kim, bám dính cao dán laptop, bình nước, máy tính Casio fx-880BTG. Thiết kế độc quyền công thức lượng giác & định lý Vi-ét $x_1 + x_2 = -b/a$.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAWPrZI75OCsB0RtjFKiMI2uTddrdlUAzAYvulCr5lT7I-pB9TYhlRqg3Tln2PbqdfmcUukqruFNmbWA5LXYYj44w06__0E98gPNpYOYdOhSDbX9YetqjtpJmWAANYAi0sXXdZHOwGIYY8Vi60uzmmJK0H-a5pV_5nQqc5B-T0sE5ITaBkqpKoDCB8k0WZjBxr5y-2CwYz0gg6wYitPzi4i831wHneOh6XyWhAQCxX9",
+      "category": "stationery"
+    },
+    {
+      "id": "notebook",
+      "name": "Sổ tay Dot-grid & Bút Gel Muji cao cấp",
+      "cost": 650,
+      "stock": 18,
+      "unit": "cuốn",
+      "badgeText": "Khuyên dùng ôn thi",
+      "badgeIcon": "thumb_up",
+      "description": "Giấy định lượng 100gsm chống thấm mực chuyên biệt cho hình học không gian và phương trình đại số $y = ax^2$. Kèm bút gel Muji 0.5mm êm ái.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBsd-xjY159NMMzmSSTB-jYRXRnJdc0gRG8Cdro1EO9pyy5aiMq2rel80sh5fYsM8RojlmmaIoqxkgIrDOrXTGVB3KxLNZeuon3FxFzFGZQNZWJRIGaxBsWJBavNJOiFbsRZomXK93j3vHkMm1giJjfIPN1bZVZdTMTknhVzhJp13U296dT-325Ivqp31Luv1l9QtwJ6HoqlNXyOgscXR_z5ulhWJdsM_755S7dH174",
+      "category": "stationery",
+      "featured": true
+    },
+    {
+      "id": "keycap",
+      "name": "Nút phím cơ Artisan Keycap Toán học",
+      "cost": 1200,
+      "stock": 8,
+      "unit": "bộ",
+      "badgeText": "Profile Cherry tiêu chuẩn",
+      "badgeIcon": "keyboard",
+      "description": "Điểm nhấn bàn học công nghệ cho học sinh hệ Chuyên Toán. Đúc thủ công resin trong suốt chứa ký tự $\\int, \\pi, \\sqrt{x}$.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAmzOkl05Sspe8J0CFpkw8rYPNZPCHyI-CxDmrqlsm6zrwzdiUaRzwEDWJ0ZVRsX3GY82_wmN0oeamaxiMsCfg7SGBG9m1Y9UUkESLsEfpNflllDyAZZ68tQPj6gpQPULjsYfIAOAdFE8WVl4qbxAgwGor82hfKgR4BmPtnt-7H2FHWVrHS4DgQ7u3SDTEpWHUyVtHh1bAZH7T-KM2G2EfKdvHEuAu7iFvLZpG4yZat",
+      "category": "tech"
+    },
+    {
+      "id": "basketball",
+      "name": "Bóng rổ mini để bàn xả stress",
+      "cost": 1500,
+      "stock": 12,
+      "unit": "bộ",
+      "badgeText": "Xả stress sau 45p học",
+      "badgeIcon": "sports_basketball",
+      "description": "Thiết kế khung kim loại gấp gọn, lò xo bật nảy cao cấp. Giải tỏa áp lực học tập khoa học giữa các phiên luyện đề Pomodoro.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuA8aPQJn-uNjNpo0tq05PhgaoUIZtYLZjwnEOvEn9h1cgbgLmgNgMz8OsRFk73lopD3q_wxq7T4ivOMTgWVSDPVxwOSxeY5JeRvsMpvO31d3ysKS09ELH5moy5ApRD5YVr1xyFLuYUQ8cdt3t_OObR7RX0bE7dl6b853HlKx5WOzWhhR_6dDiXRq8pmrsA3xaUHcIRsRne9ohr_qf3cm7JEZ_N1TfLHk2-TPdQyvH4s",
+      "category": "tech"
+    },
+    {
+      "id": "blindbox",
+      "name": "Hộp quà bí ẩn Blind Box GenAi",
+      "cost": 1800,
+      "stock": 5,
+      "unit": "hộp",
+      "badgeText": "Phiên bản giới hạn",
+      "badgeIcon": "mystery",
+      "description": "Ngẫu nhiên 1 trong 4 mô hình linh vật Toán học kỷ nguyên AI + Thẻ bài may mắn \"Vào 10 Đỗ Nguyện Vọng 1\" mạ vàng.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAh_GLzpVV_6gMa0TxGdnV5xStixg9bRaVB9XUBvO-CaQl7ZtlDENmqSoGJ14KWcrajJeyKjiKDOkNyR47D5wIvtbYV6CWhDGmBsmzMYMsvZhzd2WoyYIdKGCGeU6ZUnT4E3Lw0VxDiIzvxTyu2d_I0xTzLaZlN0yX7C-OviHQ4Xx-dStcRRgGOhIgzwo91kOf7UkVRY8ZFOOv4tIyElaSATVI509eIMMawLqQvUA0d",
+      "category": "limited"
+    },
+    {
+      "id": "lamp",
+      "name": "Đèn học LED điều chỉnh ánh sáng USB",
+      "cost": 2400,
+      "stock": 15,
+      "unit": "chiếc",
+      "badgeText": "Ánh sáng điều chỉnh",
+      "badgeIcon": "visibility",
+      "description": "Ba chế độ nhiệt màu để điều chỉnh góc học tập trong các buổi ôn thi.",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAUpXCtKE_wLzp58jpRJ8uYxhB1XTiUFhhFb5ZqFTBe6uyPOGbTkg29KvWdTVzQ2jMwS9QQ1gfRfr0qyEsKVa6yCAACoNmRIK8psnrUiNbJj6N-r5cZKq33Yl67_ZjRQCOmZdFXNxIXt8kFSA67HQwrwGtMfaPowY6MgCScR1dLVBwBNXb7tpiCd0XIE-LffqoYauZr7uSfMndEEmB4TGMbAAutraupqzTuUi3MZrbc",
+      "category": "tech"
+    }
+  ],
+  "filters": [
+    { "id": "all", "label": "Tất cả quà" },
+    { "id": "ready", "label": "Đủ điểm đổi ngay" },
+    { "id": "tech", "label": "Góc bàn học & Công nghệ" },
+    { "id": "limited", "label": "Phiên bản giới hạn" }
+  ],
+  "flow": [
+    {
+      "title": "Chọn phần thưởng",
+      "description": "Kiểm tra số dư GP và chọn quà trong danh mục."
+    },
+    {
+      "title": "Xác nhận yêu cầu",
+      "description": "Nhập thông tin nhận quà và xác nhận số GP cần dùng."
+    },
+    {
+      "title": "Lưu trên trình duyệt",
+      "description": "Bản thử nghiệm trừ GP và lưu yêu cầu tại thiết bị này."
+    },
+    {
+      "title": "Theo dõi yêu cầu",
+      "description": "Xem lại lịch sử đổi quà mẫu ở cuối trang. Chưa có phê duyệt phụ huynh hoặc giao hàng."
+    }
+  ]
+}

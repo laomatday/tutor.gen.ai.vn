@@ -1,0 +1,44 @@
+[
+  {
+    "id": "can-thuc",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "title": "Căn thức",
+    "description": "Căn bậc hai, điều kiện xác định và phép biến đổi."
+  },
+  {
+    "id": "ham-so",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "title": "Hàm số & đồ thị",
+    "description": "Khám phá mối liên hệ giữa công thức và đồ thị."
+  },
+  {
+    "id": "phuong-trinh",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "title": "Phương trình & hệ phương trình",
+    "description": "Giải phương trình và vận dụng trong bài toán thực tế."
+  },
+  {
+    "id": "hinh-hoc",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "title": "Đường tròn",
+    "description": "Góc nội tiếp, cung và các mối quan hệ hình học."
+  },
+  {
+    "id": "doc-hieu",
+    "gradeId": "9",
+    "subjectId": "ngu-van",
+    "title": "Đọc hiểu văn bản",
+    "description": "Nhận diện chi tiết và thông điệp trong văn bản."
+  },
+  {
+    "id": "english-foundations",
+    "gradeId": "9",
+    "subjectId": "tieng-anh",
+    "title": "Everyday English",
+    "description": "Ngôn ngữ cho những tình huống hằng ngày."
+  }
+]

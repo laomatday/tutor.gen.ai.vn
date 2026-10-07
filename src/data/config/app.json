@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "name": "genAi Tutor",
+    "wordmark": "genAi",
+    "product": "Tutor",
+    "tagline": "Học tập cùng genAi",
+    "logoUrl": "https://uketwpczthkflsmoiocs.supabase.co/storage/v1/object/public/brand-assets/logo.png",
+    "description": "Không gian học tập cùng genAi: chọn lớp, môn học và khám phá từng bài qua lý thuyết, ví dụ minh họa và bài tập."
+  },
+  "locale": "vi-VN",
+  "timeZone": "Asia/Ho_Chi_Minh",
+  "rewards": {
+    "dailyLimit": 120,
+    "lessonCompletionGp": 20,
+    "initialBalance": 860,
+    "initialDailyEarned": 95
+  },
+  "feedback": {
+    "noticeDurationMs": 3500
+  }
+}

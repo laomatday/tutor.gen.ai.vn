@@ -1,0 +1,148 @@
+{
+  "assessment": {
+    "id": "HN10-09",
+    "title": "Đề mô phỏng tuyển sinh lớp 10",
+    "course": "Toán lớp 9",
+    "durationMinutes": 120,
+    "questionCount": 8,
+    "score": 6.2,
+    "maximumScore": 10,
+    "targetScore": 8,
+    "errors": [
+      {
+        "id": "1b",
+        "title": "Rút gọn biểu thức chứa căn",
+        "category": "Quên đối chiếu điều kiện",
+        "lostPoints": 0.5,
+        "wrong": "x=4 \\text{ (nhận)}",
+        "correct": "x\\ne 4 \\text{ (loại nghiệm)}",
+        "description": "Tìm được nghiệm nhưng chưa kiểm tra với điều kiện ban đầu $x\\ge 0, x\\ne 4$.",
+        "hint": "Trước khi kết luận nghiệm của $P=\\frac{\\sqrt{x}+2}{\\sqrt{x}-2}$, hãy kiểm tra $x=4$ có làm mẫu số bằng $0$ không.",
+        "lessonId": "rut-gon-can-thuc"
+      },
+      {
+        "id": "2",
+        "title": "Parabol và đường thẳng",
+        "category": "Nhầm dấu công thức Vi-ét",
+        "lostPoints": 0.5,
+        "wrong": "S=x_1+x_2=\\frac{b}{a}",
+        "correct": "S=-\\frac{b}{a}=-\\frac{-3}{1}=3",
+        "description": "Sai dấu ở tổng hai nghiệm dẫn đến kết quả sai trong biểu thức đối xứng $A=x_1^2+x_2^2-3x_1x_2$.",
+        "hint": "Tổng $S=x_1+x_2=-\\frac{b}{a}$ có dấu trừ; tích $P=x_1x_2=\\frac{c}{a}$ giữ nguyên dấu.",
+        "lessonId": "he-thuc-viete"
+      },
+      {
+        "id": "4",
+        "title": "Toán thực tế hình học",
+        "category": "Nhầm đơn vị thể tích",
+        "lostPoints": 0.6,
+        "wrong": "V=1.2\\text{ m}^3=120\\text{ lít}",
+        "correct": "1\\text{ m}^3=1000\\text{ dm}^3=1000\\text{ lít}",
+        "description": "Công thức thể tích hình trụ $V=\\pi R^2h$ đúng, nhưng kết quả quy đổi đơn vị lệch $10$ lần.",
+        "hint": "Hai đơn vị thể tích liền kề $\\text{m}^3\\to\\text{dm}^3\\to\\text{cm}^3$ hơn kém nhau $1000$ lần.",
+        "lessonId": null
+      }
+    ],
+    "skills": [
+      {
+        "id": "linear-system",
+        "title": "Hệ phương trình bậc nhất hai ẩn",
+        "earned": 1,
+        "maximum": 1,
+        "description": "Phương pháp cộng đại số và thế được trình bày đầy đủ.",
+        "lessonId": "he-phuong-trinh"
+      },
+      {
+        "id": "percentages",
+        "title": "Tỷ lệ phần trăm và lãi suất",
+        "earned": 0.9,
+        "maximum": 1,
+        "description": "Lập bảng đại lượng tốt, cần bổ sung đơn vị tiền tệ.",
+        "lessonId": null
+      },
+      {
+        "id": "viete",
+        "title": "Hệ thức Vi-ét và ứng dụng",
+        "earned": 0.45,
+        "maximum": 1,
+        "description": "Ôn lại dấu tổng, tích hai nghiệm và biến đổi biểu thức đối xứng.",
+        "lessonId": "he-thuc-viete"
+      },
+      {
+        "id": "circle",
+        "title": "Góc nội tiếp và đường tròn",
+        "earned": 0.5,
+        "maximum": 1,
+        "description": "Củng cố góc cùng chắn cung và cách chọn đường phụ.",
+        "lessonId": "goc-noi-tiep"
+      }
+    ],
+    "timeline": [
+      {
+        "from": 0,
+        "to": 30,
+        "label": "Làm bài quá nhanh",
+        "description": "Nên dành thời gian kiểm tra dấu và điều kiện.",
+        "tone": "warning"
+      },
+      {
+        "from": 30,
+        "to": 70,
+        "label": "Đại số ổn định",
+        "description": "Giữ nhịp giải hệ phương trình.",
+        "tone": "success"
+      },
+      {
+        "from": 70,
+        "to": 100,
+        "label": "Toán thực tế",
+        "description": "Chú ý đổi đơn vị ở kết luận.",
+        "tone": "primary"
+      },
+      {
+        "from": 100,
+        "to": 120,
+        "label": "Thiếu thời gian",
+        "description": "Cần chừa thời gian cho câu hình học cuối.",
+        "tone": "neutral"
+      }
+    ],
+    "plan": [
+      {
+        "fromDay": 1,
+        "toDay": 2,
+        "title": "Kiểm tra điều kiện và đơn vị",
+        "minutesPerDay": 25,
+        "description": "Luyện rút gọn căn thức, đối chiếu điều kiện xác định và đổi đơn vị thể tích.",
+        "lessonId": "rut-gon-can-thuc"
+      },
+      {
+        "fromDay": 3,
+        "toDay": 4,
+        "title": "Ghi nhớ hệ thức Vi-ét",
+        "minutesPerDay": 35,
+        "description": "Nhắc lại $S=-b/a$, $P=c/a$ và áp dụng cho các bài toán hai nghiệm.",
+        "lessonId": "he-thuc-viete"
+      },
+      {
+        "fromDay": 5,
+        "toDay": 6,
+        "title": "Củng cố hình học",
+        "minutesPerDay": 40,
+        "description": "Nhận biết góc nội tiếp cùng chắn cung và luyện cách kẻ đường phụ.",
+        "lessonId": "goc-noi-tiep"
+      },
+      {
+        "fromDay": 7,
+        "toDay": 7,
+        "title": "Tự kiểm tra lại",
+        "minutesPerDay": 60,
+        "description": "Làm lại các câu từng sai, ghi lại lỗi còn mắc và so sánh với bài trước.",
+        "lessonId": null
+      }
+    ]
+  },
+  "policy": {
+    "masteredRatio": 0.8
+  }
+}

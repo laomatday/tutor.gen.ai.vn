@@ -1,0 +1,197 @@
+{
+  "classes": [
+    {
+      "id": "9A1",
+      "gradeId": "9",
+      "subjectId": "toan",
+      "topic": "Hàm số & đồ thị",
+      "tone": "primary"
+    },
+    {
+      "id": "9A2",
+      "gradeId": "9",
+      "subjectId": "toan",
+      "topic": "Phương trình bậc hai",
+      "tone": "success"
+    },
+    {
+      "id": "9A3",
+      "gradeId": "9",
+      "subjectId": "toan",
+      "topic": "Hình học đường tròn",
+      "tone": "info"
+    }
+  ],
+  "students": [
+    {
+      "id": "s01",
+      "name": "Nguyễn Phương Linh",
+      "classId": "9A1",
+      "completion": 88,
+      "score": 8.5,
+      "focus": "Vận dụng đồ thị hàm số"
+    },
+    {
+      "id": "s02",
+      "name": "Trần Minh Anh",
+      "classId": "9A1",
+      "completion": 96,
+      "score": 9.2,
+      "focus": "Bài toán tổng hợp"
+    },
+    {
+      "id": "s03",
+      "name": "Lê Hoàng Nam",
+      "classId": "9A1",
+      "completion": 52,
+      "score": 5.8,
+      "focus": "Điều kiện xác định của căn thức"
+    },
+    {
+      "id": "s04",
+      "name": "Phạm Ngọc Hà",
+      "classId": "9A1",
+      "completion": 76,
+      "score": 7.6,
+      "focus": "Hệ số của parabol"
+    },
+    {
+      "id": "s05",
+      "name": "Vũ Quốc Bảo",
+      "classId": "9A1",
+      "completion": 45,
+      "score": 6.1,
+      "focus": "Quy tắc dấu và lũy thừa"
+    },
+    {
+      "id": "s06",
+      "name": "Đỗ Thuỳ Dương",
+      "classId": "9A1",
+      "completion": 91,
+      "score": 8.8,
+      "focus": "Bài toán thực tế về hàm số"
+    },
+    {
+      "id": "s07",
+      "name": "Bùi Đức Minh",
+      "classId": "9A2",
+      "completion": 82,
+      "score": 8.0,
+      "focus": "Hệ thức Viète"
+    },
+    {
+      "id": "s08",
+      "name": "Nguyễn Khánh Vy",
+      "classId": "9A2",
+      "completion": 93,
+      "score": 9.0,
+      "focus": "Phương trình chứa tham số"
+    },
+    {
+      "id": "s09",
+      "name": "Trần Gia Huy",
+      "classId": "9A2",
+      "completion": 48,
+      "score": 5.5,
+      "focus": "Công thức nghiệm phương trình"
+    },
+    {
+      "id": "s10",
+      "name": "Lê Bảo Ngọc",
+      "classId": "9A2",
+      "completion": 74,
+      "score": 7.3,
+      "focus": "Phân tích đa thức thành nhân tử"
+    },
+    {
+      "id": "s11",
+      "name": "Hoàng Nhật Minh",
+      "classId": "9A2",
+      "completion": 68,
+      "score": 6.9,
+      "focus": "Biệt thức delta"
+    },
+    {
+      "id": "s12",
+      "name": "Phạm Hải Yến",
+      "classId": "9A2",
+      "completion": 87,
+      "score": 8.4,
+      "focus": "Lập phương trình từ bài toán"
+    },
+    {
+      "id": "s13",
+      "name": "Võ Tuấn Kiệt",
+      "classId": "9A3",
+      "completion": 58,
+      "score": 6.2,
+      "focus": "Góc nội tiếp và góc ở tâm"
+    },
+    {
+      "id": "s14",
+      "name": "Đặng Minh Châu",
+      "classId": "9A3",
+      "completion": 94,
+      "score": 9.1,
+      "focus": "Chứng minh hình học nâng cao"
+    },
+    {
+      "id": "s15",
+      "name": "Nguyễn Anh Khoa",
+      "classId": "9A3",
+      "completion": 79,
+      "score": 7.8,
+      "focus": "Tứ giác nội tiếp"
+    },
+    {
+      "id": "s16",
+      "name": "Trần Diệu Linh",
+      "classId": "9A3",
+      "completion": 85,
+      "score": 8.2,
+      "focus": "Tiếp tuyến của đường tròn"
+    },
+    {
+      "id": "s17",
+      "name": "Lê Phúc An",
+      "classId": "9A3",
+      "completion": 42,
+      "score": 5.6,
+      "focus": "Đọc hình và xác định giả thiết"
+    },
+    {
+      "id": "s18",
+      "name": "Phan Thanh Trúc",
+      "classId": "9A3",
+      "completion": 72,
+      "score": 7.1,
+      "focus": "Quan hệ giữa dây và cung"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "a01",
+      "title": "Luyện tập hàm số bậc hai",
+      "classId": "9A1",
+      "dueOffsetDays": 2,
+      "description": "Hoàn thành 10 bài tập về parabol, xác định hệ số và đọc đồ thị. Trình bày các bước giải.",
+      "submitted": ["s01", "s02", "s04", "s06"]
+    },
+    {
+      "id": "a02",
+      "title": "Ôn tập công thức nghiệm",
+      "classId": "9A2",
+      "dueOffsetDays": 3,
+      "description": "Giải 8 phương trình bậc hai. Kiểm tra điều kiện và đối chiếu nghiệm bằng hệ thức Viète.",
+      "submitted": ["s07", "s08", "s12"]
+    },
+    {
+      "id": "a03",
+      "title": "Góc với đường tròn",
+      "classId": "9A3",
+      "dueOffsetDays": 5,
+      "description": "Vẽ hình và giải 6 bài tập về góc nội tiếp. Ghi rõ định lý được sử dụng trong từng bước.",
+      "submitted": ["s13", "s14", "s15", "s16", "s17", "s18"]
+    }
+  ]
+}

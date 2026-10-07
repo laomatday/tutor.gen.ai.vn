@@ -1,0 +1,39 @@
+{
+  "name": "genai-coach",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit && node scripts/check-architecture.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/run-tests.mjs",
+    "format": "prettier --write src tests scripts *.ts *.json *.html *.md",
+    "format:check": "prettier --check src tests scripts *.ts *.json *.html *.md",
+    "tokens:export": "node scripts/export-design-tokens.mjs",
+    "check": "npm run lint && npm run test && npm run format:check && npm run build"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/katex": "^0.16.8",
+    "@vitejs/plugin-react": "^6.1.1",
+    "katex": "^0.19.0",
+    "lucide-react": "^0.546.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}

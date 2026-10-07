@@ -1,0 +1,26 @@
+[
+  {
+    "id": "toan",
+    "name": "Toán",
+    "icon": "calculate",
+    "description": "Hiểu bản chất, rèn tư duy và giải quyết vấn đề."
+  },
+  {
+    "id": "ngu-van",
+    "name": "Ngữ văn",
+    "icon": "auto_stories",
+    "description": "Đọc sâu, cảm thụ và diễn đạt ý tưởng của mình."
+  },
+  {
+    "id": "tieng-anh",
+    "name": "Tiếng Anh",
+    "icon": "language",
+    "description": "Phát triển ngôn ngữ qua tình huống gần gũi."
+  },
+  {
+    "id": "tin-hoc",
+    "name": "Tin học",
+    "icon": "terminal",
+    "description": "Tư duy máy tính và kỹ năng trong thế giới số."
+  }
+]
