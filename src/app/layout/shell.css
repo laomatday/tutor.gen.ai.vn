@@ -1,4 +1,5 @@
 @reference "../../index.css";
+@reference "../../styles/tutor-theme.css";
 @reference "../../styles/tutor-compat.css";
 @layer components {
   .app-sidebar {
