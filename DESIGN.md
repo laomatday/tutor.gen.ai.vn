@@ -11,13 +11,14 @@ UI được đối chiếu với [laomatday/gen.ai.vn](https://github.com/laomat
 | `src/index.css`: `ui-popover`, `ui-menu-item`, `ui-segmented` | Menu nền đặc, mục được trỏ tới và mục đã chọn rõ ràng; nhóm lựa chọn dùng chung            |
 | `docs/design-system-and-pwa.md`                               | Một nguồn token; feature chỉ tổ chức bố cục; biểu tượng SVG cục bộ                         |
 
-Giữ nhịp giao diện của hệ thống: nền canvas, chữ navy/ink, teal cho điểm nhấn. Trạng thái thành công, lưu ý và lỗi dùng màu theo ý nghĩa. Không mở rộng sang chế độ tối hoặc PWA khi chưa có yêu cầu.
+Giữ nhịp giao diện của hệ thống: nền canvas, chữ navy/ink, teal cho điểm nhấn. Trạng thái thành công, lưu ý và lỗi dùng màu theo ý nghĩa. Tutor là PWA chính thức; manifest, icon, theme-color và trạng thái offline phải dùng cùng nguồn nhận diện genAi. Giao diện hiện ưu tiên light mode; không tự tạo palette khác.
 
 ## Một nguồn cho hình thức
 
 - `src/styles/tokens.css`: màu, font, kích thước control, bo góc, bóng, chiều cao header và lớp nổi. Đây là nguồn giá trị thiết kế duy nhất. Tên token cũ là lớp tương thích cho các màn hình hiện có.
 - `src/styles/primitives.css`: trạng thái và hình thức của thành phần dùng chung.
-- `src/components/ui`: ngữ nghĩa, tương tác và khả năng truy cập.
+- `src/components/ui`: ngữ nghĩa, tương tác và khả năng truy cập. Progress phải dùng native `<progress>` qua component `Progress`; không tự dựng `div role="progressbar"`.
+- `src/components/icons`: cùng Material Symbols Rounded SVG (weight 500) với `gen.ai.vn`; feature chỉ gọi qua `Icon`, không import thư viện icon khác.
 - `design-preview.html`: trang xem trước dùng component thật, mở ở `/design-preview.html` khi chạy dev server; không nằm trong điều hướng sản phẩm.
 - `design-tokens.json`: bản xuất tự động cho công cụ thiết kế; chạy `node scripts/export-design-tokens.mjs` sau khi sửa CSS. Không sửa JSON bằng tay.
 - Feature dùng utility cho bố cục (grid, flex, khoảng cách, độ rộng), không sao chép bộ class màu/viền/focus cho từng nút hoặc ô nhập.
@@ -62,10 +63,17 @@ Thanh tiến độ dùng `<progress className="ui-progress" value={value} max={t
 
 ## Tương tác cần giữ khi nâng cấp
 
-- Nút có vùng bấm ít nhất 44 px trong biến thể thông thường; trường nhập 16 px trên điện thoại để tránh iOS tự phóng to.
+- Nút có vùng bấm ít nhất 44 px trong biến thể thông thường; trường nhập 16 px trên điện thoại để tránh iOS tự phóng to. Cỡ chữ nhỏ nhất là caption 12 px.
 - Select: mũi tên mở/di chuyển, Home/End tới đầu/cuối, Enter/Space chọn, Escape bỏ thay đổi, Tab đóng và chuyển focus. Mục bị khóa không được chọn; gõ chữ có hỗ trợ tiếng Việt không dấu.
 - Select giữ control native ẩn để form có giá trị, validation, reset và ref. `onChange` nhận sự kiện từ control native thật. Popover neo theo viewport, đổi hướng khi thiếu chỗ và nằm trong top layer của dialog khi cần.
 - Phần thân hộp thoại cuộn; tiêu đề và hành động luôn thấy. Popover không bị cắt bởi vùng cuộn của trình biên soạn.
 - Tôn trọng `prefers-reduced-motion`; trạng thái focus không phụ thuộc hover.
 
 Khi thêm control, cập nhật nguồn chung, kiểm tra bàn phím + điện thoại và các màn hình đang dùng nó. Không tạo bản sao CSS trong feature để sửa riêng một màn hình.
+
+
+## Quy ước môi trường
+
+- Bộ chuyển vai trò Học sinh / Giáo viên / Quản trị chỉ xuất hiện trong DEV để kiểm thử UI. Production không trình bày role switch demo như một tính năng người dùng.
+- Màu PWA chuẩn: theme `#243C8F`, canvas `#F7FAFC`; artwork chỉ dùng navy → teal → cyan → sky của genAi.
+- `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, Lucide/import icon ngoài hệ, chữ dưới 12 px và progress bar tự dựng.
