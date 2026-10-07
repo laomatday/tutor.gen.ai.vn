@@ -70,15 +70,15 @@ export const TodayView: React.FC<TodayViewProps> = ({
 
   return (
     <div className="w-full space-y-6 pb-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="ui-page-header">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
+          <p className="ui-page-kicker">
             KHÔNG GIAN HỌC TẬP CỦA BẠN
           </p>
-          <h1 className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+          <h1 className="ui-page-title">
             Chào {studentProfile.name.split(" ").at(-1)}, cùng học tiếp nhé!
           </h1>
-          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+          <p className="ui-page-description">
             Hiểu từng bài. Vững từng bước. Tiến bộ mỗi ngày.
           </p>
         </div>
@@ -99,7 +99,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
       )}
 
       <div className="grid gap-5 xl:grid-cols-[1.65fr_1fr]">
-        <section className="overflow-hidden rounded-3xl border border-outline-variant bg-white shadow-sm">
+        <section className="overflow-hidden ui-learning-card">
           <div className="bg-secondary-container/45 p-5 sm:p-7">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-secondary">
@@ -172,7 +172,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
           </div>
         </section>
 
-        <section className="flex flex-col rounded-3xl border border-outline-variant bg-white p-5 sm:p-7">
+        <section className="flex flex-col ui-learning-card p-5 sm:p-7">
           <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-container-low text-primary">
             <Icon name="route" />
           </span>
@@ -206,7 +206,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
 
       <section
         aria-label="Tóm tắt học tập"
-        className="grid grid-cols-2 gap-4 rounded-3xl border border-outline-variant bg-white p-4 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-4 ui-learning-card p-4 lg:grid-cols-4"
       >
         {[
           {
@@ -348,7 +348,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
                     courseHref(topic.gradeId, topic.subjectId, topic.id),
                   )
                 }
-                className="group flex flex-col rounded-3xl border border-outline-variant bg-white p-5 text-left transition-colors hover:border-secondary/40 hover:bg-secondary-container/10"
+                className="group flex flex-col ui-learning-card p-5 text-left transition-colors hover:border-secondary/40 hover:bg-secondary-container/10"
               >
                 <div className="mb-5 flex w-full items-center justify-between">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-container-low text-primary">
@@ -384,7 +384,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
         </div>
       </section>
 
-      <section className="rounded-3xl border border-outline-variant bg-white p-5 sm:p-7">
+      <section className="ui-learning-card p-5 sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="mb-1 text-xs font-bold uppercase tracking-wider text-secondary">
