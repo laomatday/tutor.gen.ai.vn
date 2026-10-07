@@ -24,7 +24,7 @@ View your app in AI Studio: https://ai.studio/apps/cbc49f95-b7d2-476f-9808-c4c50
 - Giáo viên: `http://localhost:3000/giao-vien` — theo dõi lớp học, xem tiến độ học sinh và tạo bài tập.
 - Quản trị: `http://localhost:3000/quan-tri` — tìm kiếm, thêm/khóa hồ sơ người dùng và kiểm duyệt học liệu.
 
-Dùng bộ chuyển vai trò ở góc trên để chuyển không gian. Menu bên trái mở các trang con; đường dẫn hỗ trợ tải lại và nút quay lại của trình duyệt.
+Trong môi trường DEV có bộ chuyển vai trò ở góc trên để kiểm thử ba không gian. Production không hiển thị role switch demo. Menu bên trái mở các trang con; đường dẫn hỗ trợ tải lại và nút quay lại của trình duyệt.
 
 Hai không gian mới sử dụng dữ liệu minh họa. Bài tập, hồ sơ và trạng thái kiểm duyệt được lưu trong `localStorage` của trình duyệt. Bộ chuyển vai trò chỉ phục vụ trải nghiệm giao diện, chưa có đăng nhập, phân quyền phía máy chủ hay đồng bộ dữ liệu giữa người dùng. Thêm hồ sơ không tạo tài khoản đăng nhập; giao bài và duyệt nội dung không gửi thông báo thực tế.
 
@@ -39,7 +39,7 @@ Có thể chạy bằng Bun: `bun install` rồi `bun --bun run dev`. Kiểm tra
 - `/quan-tri/hoc-lieu`: chọn lớp, môn, chủ đề; tạo/sửa chủ đề và bài; biên soạn ba phần nội dung, lưu nháp, xem trước, xuất bản hoặc ngừng xuất bản. Bài được xuất bản chỉ khi đủ nội dung và đáp án. Các thay đổi dùng chung với giao diện học sinh trên cùng trình duyệt.
 - Dữ liệu và kiểm tra quyền học mẫu nằm trong `src/data/curriculum.ts`; trạng thái dùng chung tại `src/context/CurriculumContext.tsx`. Tiến độ chỉ ghi nhận sau khi trả lời đúng toàn bộ bài tập, phần thưởng ghi nhận một lần mỗi bài. Công thức vẫn được hiển thị trong nội dung, không dùng tên công nghệ làm tên môn hoặc tên tính năng.
 
-Giao diện tham khảo [gen.ai.vn](https://gen.ai.vn/) và [danh mục khóa học](https://gen.ai.vn/khoa-hoc): xanh navy/xanh ngọc, nền sáng, thẻ môn học và nút bo tròn. Đây vẫn là bản trải nghiệm phía trình duyệt; quyền học thật cần được kiểm tra ở máy chủ khi tích hợp backend.
+Giao diện dùng cùng design language với [gen.ai.vn](https://gen.ai.vn/): palette navy–teal–cyan–sky, Plus Jakarta Sans, Material Symbols Rounded SVG, semantic surface/control và PWA branding thống nhất. Đây vẫn là bản trải nghiệm phía trình duyệt; quyền học thật cần được kiểm tra ở máy chủ khi tích hợp backend.
 
 ### Bố cục tham khảo từ dự án cùng hệ thống
 
