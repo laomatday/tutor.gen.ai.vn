@@ -242,7 +242,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
 
                       {/* Progress bar if locked */}
                       {!badge.unlocked && (
-                        <Progress value={badge.progress} label={`Tiến độ huy hiệu ${badge.name}`} tone="accent" className="mt-1.5 h-1.5 w-full" />
+                        <Progress value={badge.progress} label={`Tiến độ huy hiệu ${badge.title}`} tone="accent" className="mt-1.5 h-1.5 w-full" />
                       )}
                     </div>
                   </div>
