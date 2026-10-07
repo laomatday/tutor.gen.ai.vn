@@ -1,0 +1,219 @@
+name: Live UI Audit
+
+on:
+  push:
+    branches:
+      - fix/ui-system-alignment
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Playwright library
+        run: npm install --no-save --ignore-scripts playwright@1.63.0
+
+      - name: Audit Railway production
+        env:
+          AUDIT_URL: https://tutorgenaivn-production.up.railway.app/hoc-bai
+        run: |
+          cat > /tmp/live-ui-audit.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const url = process.env.AUDIT_URL;
+          const out = '/tmp/ui-audit';
+          fs.mkdirSync(out, { recursive: true });
+
+          const candidates = [
+            '/usr/bin/google-chrome-stable',
+            '/usr/bin/google-chrome',
+            '/usr/bin/chromium',
+            '/usr/bin/chromium-browser',
+          ];
+          const executablePath = candidates.find(fs.existsSync);
+          if (!executablePath) throw new Error('No Chrome/Chromium executable found on runner');
+
+          const browser = await chromium.launch({
+            headless: true,
+            executablePath,
+            args: ['--no-sandbox', '--disable-dev-shm-usage'],
+          });
+
+          const viewports = [
+            { name: 'mobile-390', width: 390, height: 844 },
+            { name: 'tablet-768', width: 768, height: 1024 },
+            { name: 'desktop-1024', width: 1024, height: 900 },
+            { name: 'desktop-1440', width: 1440, height: 1000 },
+          ];
+
+          const report = [];
+          for (const vp of viewports) {
+            const context = await browser.newContext({
+              viewport: { width: vp.width, height: vp.height },
+              deviceScaleFactor: 1,
+            });
+            const page = await context.newPage();
+            const consoleMessages = [];
+            const requestFailures = [];
+            page.on('console', msg => consoleMessages.push({ type: msg.type(), text: msg.text() }));
+            page.on('pageerror', err => consoleMessages.push({ type: 'pageerror', text: String(err) }));
+            page.on('requestfailed', req => requestFailures.push({
+              url: req.url(),
+              method: req.method(),
+              failure: req.failure()?.errorText || 'unknown',
+            }));
+
+            let status = null;
+            let gotoError = null;
+            try {
+              const response = await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
+              status = response?.status() ?? null;
+            } catch (error) {
+              gotoError = String(error);
+            }
+            await page.waitForTimeout(1000);
+
+            const metrics = await page.evaluate(() => {
+              const visible = el => {
+                const r = el.getBoundingClientRect();
+                const s = getComputedStyle(el);
+                return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+              };
+              const interactive = [...document.querySelectorAll('button,a[href],input,select,textarea,summary')]
+                .filter(visible)
+                .map(el => {
+                  const r = el.getBoundingClientRect();
+                  const s = getComputedStyle(el);
+                  return {
+                    tag: el.tagName,
+                    text: (el.innerText || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().slice(0, 100),
+                    width: Math.round(r.width),
+                    height: Math.round(r.height),
+                    x: Math.round(r.x),
+                    y: Math.round(r.y),
+                    fontSize: parseFloat(s.fontSize),
+                  };
+                });
+              const tooSmall = interactive.filter(x => x.width < 44 || x.height < 44);
+              const tinyText = [...document.querySelectorAll('body *')]
+                .filter(visible)
+                .map(el => ({
+                  tag: el.tagName,
+                  text: (el.innerText || '').trim().slice(0, 80),
+                  fontSize: parseFloat(getComputedStyle(el).fontSize),
+                  className: typeof el.className === 'string' ? el.className : '',
+                }))
+                .filter(x => x.fontSize < 12)
+                .slice(0, 100);
+              const overflow = [...document.querySelectorAll('body *')]
+                .filter(visible)
+                .map(el => {
+                  const r = el.getBoundingClientRect();
+                  return {
+                    tag: el.tagName,
+                    text: (el.innerText || '').trim().slice(0, 80),
+                    className: typeof el.className === 'string' ? el.className : '',
+                    left: Math.round(r.left),
+                    right: Math.round(r.right),
+                    width: Math.round(r.width),
+                  };
+                })
+                .filter(x => x.right > innerWidth + 1 || x.left < -1)
+                .slice(0, 100);
+
+              const imgs = [...document.images].filter(visible).map(img => ({
+                alt: img.alt,
+                src: img.currentSrc || img.src,
+                complete: img.complete,
+                naturalWidth: img.naturalWidth,
+                naturalHeight: img.naturalHeight,
+              }));
+
+              return {
+                title: document.title,
+                href: location.href,
+                viewport: { width: innerWidth, height: innerHeight },
+                scrollWidth: document.documentElement.scrollWidth,
+                scrollHeight: document.documentElement.scrollHeight,
+                h1: [...document.querySelectorAll('h1')].filter(visible).map(x => x.innerText.trim()),
+                h2Count: [...document.querySelectorAll('h2')].filter(visible).length,
+                mainCount: [...document.querySelectorAll('main')].filter(visible).length,
+                visibleButtons: interactive.filter(x => x.tag === 'BUTTON').length,
+                tooSmall,
+                tinyText,
+                overflow,
+                brokenImages: imgs.filter(x => !x.complete || x.naturalWidth === 0),
+                bodyFont: getComputedStyle(document.body).fontFamily,
+                bodyBackground: getComputedStyle(document.body).backgroundColor,
+                bodyColor: getComputedStyle(document.body).color,
+                headings: [...document.querySelectorAll('h1,h2,h3')].filter(visible).slice(0,30).map(x => ({
+                  tag: x.tagName,
+                  text: x.innerText.trim().slice(0,100),
+                  fontSize: getComputedStyle(x).fontSize,
+                  color: getComputedStyle(x).color,
+                })),
+              };
+            });
+
+            const interactions = {};
+            if (vp.width < 1024) {
+              const menu = page.getByRole('button', { name: /mở menu/i }).first();
+              if (await menu.count()) {
+                interactions.mobileMenuBefore = await menu.getAttribute('aria-expanded');
+                await menu.click();
+                await page.waitForTimeout(200);
+                interactions.mobileMenuAfter = await menu.getAttribute('aria-expanded');
+                const nav = page.locator('#main-navigation');
+                interactions.mobileNavVisible = await nav.isVisible().catch(() => false);
+              }
+            }
+
+            await page.screenshot({ path: path.join(out, `${vp.name}.png`), fullPage: true });
+            report.push({
+              viewport: vp,
+              status,
+              gotoError,
+              consoleErrors: consoleMessages.filter(x => ['error','pageerror'].includes(x.type)),
+              consoleWarnings: consoleMessages.filter(x => x.type === 'warning'),
+              requestFailures,
+              metrics,
+              interactions,
+            });
+            await context.close();
+          }
+
+          fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2));
+          console.log(JSON.stringify(report.map(r => ({
+            viewport: r.viewport.name,
+            status: r.status,
+            gotoError: r.gotoError,
+            h1: r.metrics.h1,
+            scroll: [r.metrics.scrollWidth, r.metrics.viewport.width],
+            tooSmall: r.metrics.tooSmall.length,
+            tinyText: r.metrics.tinyText.length,
+            overflow: r.metrics.overflow.length,
+            brokenImages: r.metrics.brokenImages.length,
+            consoleErrors: r.consoleErrors.length,
+            requestFailures: r.requestFailures.length,
+            mobileMenu: r.interactions,
+          })), null, 2));
+
+          await browser.close();
+          JS
+          node /tmp/live-ui-audit.mjs
+
+      - name: Upload UI audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: railway-live-ui-audit
+          path: /tmp/ui-audit
+          retention-days: 3
