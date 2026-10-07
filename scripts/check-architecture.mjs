@@ -42,7 +42,7 @@ function visitDirectory(directory) {
       },
       {
         pattern: /#[\da-f]{3,8}\b|\b(?:rgb|rgba|hsl|hsla)\(/gi,
-        message: "Define colors in styles/tokens.css.",
+        message: "Define colors in the shared design system (src/index.css).",
       },
       {
         pattern:
@@ -92,6 +92,26 @@ visitDirectory("src");
 visitDirectory("scripts");
 visitDirectory("public");
 
+const indexCss = readFileSync("src/index.css", "utf8");
+if (
+  !/@theme\s+inline\s*\{[\s\S]*?--color-primary:\s*var\(--color-brand\);/.test(indexCss)
+) {
+  errors.push(
+    "src/index.css Tutor semantic aliases must be compiled in @theme inline so legacy utilities resolve to genAi tokens.",
+  );
+}
+
+const tutorCompatCss = readFileSync("src/styles/tutor-compat.css", "utf8");
+if (
+  !/dialog\.ui-dialog:not\(\[open\]\)\s*\{\s*display:\s*none;\s*\}/m.test(
+    tutorCompatCss,
+  )
+) {
+  errors.push(
+    "src/styles/tutor-compat.css must preserve native <dialog> closed-state display:none.",
+  );
+}
+
 for (const rootFile of ["index.html", "vite.config.ts"]) {
   const text = readFileSync(rootFile, "utf8");
   for (const match of text.matchAll(/#(?:1d4ed8|2563eb|3b82f6|38bdf8|0284c7)\b/gi)) {
@@ -104,6 +124,6 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    "Architecture checks passed: shared controls/progress/icons, semantic colors, 12px minimum text, central URLs/keys, isolated persistence.",
+    "Architecture checks passed: shared controls/progress/icons, compiled semantic aliases, native dialog closed state, semantic colors, 12px minimum text, central URLs/keys, isolated persistence.",
   );
 }
