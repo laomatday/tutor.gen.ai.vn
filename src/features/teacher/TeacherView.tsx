@@ -1,4 +1,4 @@
-import { Button, Input, Textarea, Select, Icon, Badge, Field, Alert } from '../../components/ui';
+import { Button, Input, Textarea, Select, Icon, Badge, Field, Alert, Progress } from "../../components/ui";
 import { TeacherAssignmentList } from './TeacherAssignmentList';
 import { TeacherDetailsDialog } from './TeacherDetailsDialog';
 import React, { useEffect, useRef, useState } from 'react';
@@ -176,7 +176,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
             {filteredStudents.map(student => <tr key={student.id} className="hover:bg-surface/80">
               <th scope="row" className="px-5 py-4 font-semibold text-on-surface">{student.name}</th>
               <td className="px-5 py-4 text-on-surface-variant">{student.classId}</td>
-              <td className="px-5 py-4"><div className="flex items-center gap-2"><div className="h-1.5 w-16 overflow-hidden rounded-full bg-surface-container"><div className={`h-full rounded-full ${needsSupport(student) ? 'bg-tertiary-fixed-dim' : 'bg-secondary'}`} style={{ width: `${student.completion}%` }} /></div><span className="text-xs text-on-surface-variant">{student.completion}%</span></div></td>
+              <td className="px-5 py-4"><div className="flex items-center gap-2"><Progress value={student.completion} label={`Tiến độ của ${student.name}`} tone="accent" className="h-1.5 w-16" /><span className="text-xs text-on-surface-variant">{student.completion}%</span></div></td>
               <td className="px-5 py-4 font-semibold text-primary">{student.score.toLocaleString(appConfig.locale, { minimumFractionDigits: 1 })}</td>
               <td className="px-5 py-4"><Badge tone={needsSupport(student) ? 'warning' : 'success'}>{needsSupport(student) ? 'Cần hỗ trợ' : 'Đúng tiến độ'}</Badge></td>
               <td className="px-5 py-4"><Button variant="ghost" size="icon" type="button" onClick={() => setActiveStudent(student)}  aria-label={`Xem tiến độ ${student.name}`}><Icon name="open_in_new" className="text-lg" /></Button></td>
