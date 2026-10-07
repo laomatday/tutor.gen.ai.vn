@@ -295,7 +295,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
       <a
         key={item.id}
         {...lessonLink(item)}
-        className="group flex h-full flex-col rounded-3xl border border-outline-variant bg-white p-5 text-left transition-colors hover:border-secondary/45 hover:bg-surface-container-low/25 sm:p-6"
+        className="group flex h-full flex-col ui-learning-card p-5 text-left transition-colors hover:border-secondary/45 hover:bg-surface-container-low/25 sm:p-6"
       >
         <div className="mb-4 flex items-center justify-between gap-3">
           <span
@@ -682,7 +682,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
 
       {owned && !lesson && (
         <>
-          <header className="flex flex-wrap items-end justify-between gap-4 rounded-3xl border border-outline-variant bg-white p-6 sm:p-8">
+          <header className="flex flex-wrap items-end justify-between gap-4 ui-learning-card p-6 sm:p-8">
             <div className="max-w-2xl">
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
                 Chương trình đã đăng ký
@@ -707,7 +707,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
           </header>
           <section
             aria-label="Lọc chương trình học"
-            className="rounded-3xl border border-outline-variant bg-white p-4 sm:p-5"
+            className="ui-learning-card p-4 sm:p-5"
           >
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative min-w-0 basis-full sm:flex-1 sm:basis-auto">
@@ -857,7 +857,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               )}
             </section>
             <aside className="space-y-5">
-              <section className="rounded-3xl border border-outline-variant bg-white p-5">
+              <section className="ui-learning-card p-5">
                 <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
                   Học theo nhịp của bạn
                 </p>
@@ -916,7 +916,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
 
       {lesson && (
         <>
-          <header className="rounded-3xl border border-outline-variant bg-white p-6 sm:p-8">
+          <header className="ui-learning-card p-6 sm:p-8">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">
                 {lesson.kind === "problem-type" ? "Dạng bài" : "Bài học"} ·{" "}
@@ -954,7 +954,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
           </header>
           <div
             ref={readerToolbarRef}
-            className="sticky top-[var(--header-h)] z-30 overflow-hidden rounded-2xl border border-outline-variant bg-white/95 shadow-sm backdrop-blur-sm"
+            className="sticky top-[var(--header-h)] z-30 overflow-hidden ui-card rounded-2xl/95 shadow-sm backdrop-blur-sm"
           >
             <nav
               aria-label="Các bước của bài học"
@@ -984,7 +984,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
             </div>
             <Progress value={readingPosition} label="Vị trí đọc trong phần hiện tại" tone="accent" className="h-0.5 rounded-none" />
           </div>
-          <details className="rounded-2xl border border-outline-variant bg-white p-4 xl:hidden">
+          <details className="ui-card rounded-2xl p-4 xl:hidden">
             <summary className="cursor-pointer text-sm font-bold text-primary">
               Trong phần này · {readingSections.length} mục
             </summary>
@@ -993,7 +993,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
             </div>
           </details>
           <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
-            <div className="min-w-0 rounded-3xl border border-outline-variant bg-white">
+            <div className="min-w-0 ui-learning-card">
               <div ref={readingSurfaceRef} className="p-5 sm:p-7 lg:p-8">
                 {location.stage === "theory" && (
                   <section aria-labelledby="lesson-theory-title">
@@ -1335,7 +1335,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               </div>
             </div>
             <aside className="space-y-5 xl:sticky xl:top-44 xl:max-h-[calc(100dvh-12rem)] xl:overflow-y-auto xl:pr-1">
-              <section className="hidden rounded-3xl border border-outline-variant bg-white p-5 xl:block">
+              <section className="hidden ui-learning-card p-5 xl:block">
                 <p className="mb-1 text-xs font-bold uppercase tracking-wider text-secondary">
                   {stages[stageIndex].title}
                 </p>
@@ -1349,7 +1349,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                 </p>
               </section>
               {relatedLessons.length > 0 && (
-                <section className="rounded-3xl border border-outline-variant bg-white p-5">
+                <section className="ui-learning-card p-5">
                   <p className="mb-1 text-xs font-bold uppercase tracking-wider text-secondary">
                     Tiếp nối kiến thức
                   </p>
