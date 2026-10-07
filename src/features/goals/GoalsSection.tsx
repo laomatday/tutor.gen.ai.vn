@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Icon, Modal, Input, Select } from "../../components/ui";
+import { Button, Icon, Modal, Input, Select, Progress } from "../../components/ui";
 import {
   defaultDailyGoals,
   defaultWeeklyGoals,
@@ -195,19 +195,7 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
           </span>
         </div>
 
-        <div
-          role="progressbar"
-          aria-label={`Tiến độ mục tiêu ${activeTimeframe}`}
-          aria-valuenow={percentage}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          className="h-2.5 overflow-hidden rounded-full bg-white shadow-inner"
-        >
-          <div
-            className="h-full rounded-full transition-all duration-500 bg-secondary"
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
+        <Progress value={percentage} label={`Tiến độ mục tiêu ${activeTimeframe}`} tone="accent" className="h-2.5 bg-white" />
       </div>
 
       {/* Goals List */}
