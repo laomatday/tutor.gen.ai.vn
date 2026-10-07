@@ -1,3 +1,4 @@
+@import "./fonts.css";
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 @import "./styles/tokens.css";
@@ -10,7 +11,10 @@
   button:not(:disabled), select, summary { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
   dialog::backdrop { background: var(--color-overlay); backdrop-filter: blur(4px); }
-  * { scrollbar-width: thin; scrollbar-color: var(--color-scrollbar) transparent; }
+  html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  /* Match genAi chrome: keep scrolling, hide the visual scrollbar gutter. */
+  html, body, * { scrollbar-width: none; -ms-overflow-style: none; }
+  *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 }
 
 .katex { font-size: 1.05em !important; }
