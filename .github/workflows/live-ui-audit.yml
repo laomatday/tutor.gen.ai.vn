@@ -23,7 +23,7 @@ jobs:
         env:
           AUDIT_URL: https://tutorgenaivn-production.up.railway.app/hoc-bai
         run: |
-          cat > /tmp/live-ui-audit.mjs <<'JS'
+          cat > live-ui-audit.mjs <<'JS'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
           import path from 'node:path';
@@ -208,7 +208,7 @@ jobs:
 
           await browser.close();
           JS
-          node /tmp/live-ui-audit.mjs
+          node ./live-ui-audit.mjs
 
       - name: Upload UI audit
         if: always()
