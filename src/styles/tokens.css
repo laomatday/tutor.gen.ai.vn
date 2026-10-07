@@ -33,7 +33,7 @@
   --color-on-info-container: #004b74;
   --color-scrollbar: #b7c1ca;
   --color-overlay: rgb(13 26 41 / 48%);
-  --font-sans: "Plus Jakarta Sans Variable", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --radius-control: 0.75rem;
   --radius-card: 1.5rem;
   --radius-popover: 1rem;
@@ -112,7 +112,7 @@
   --font-body-lg: var(--font-sans);
   --font-body-sm: var(--font-sans);
   --font-label-md: var(--font-sans);
-  --font-code-formula: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-code-formula: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-headline-lg: var(--font-sans);
   --font-headline-xl: var(--font-sans);
   --font-headline-xl-mobile: var(--font-sans);
