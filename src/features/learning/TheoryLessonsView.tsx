@@ -4,7 +4,7 @@ import {
   navigateTo,
   ordinaryLinkClick as ordinaryClick,
 } from "../../app/navigation";
-import { Button, Input, Select, Icon, buttonStyles } from "../../components/ui";
+import { Button, Input, Select, Icon, buttonStyles, Progress } from "../../components/ui";
 import { appConfig } from "../../config/app";
 import { routePath } from "../../config/routes";
 import React, { useEffect, useState } from "react";
@@ -520,19 +520,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   <span className="text-base">%</span>
                 </span>
               </div>
-              <div
-                role="progressbar"
-                aria-label="Tiến độ khóa học đã đăng ký"
-                aria-valuenow={progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                className="mt-4 h-2 overflow-hidden rounded-full bg-white"
-              >
-                <div
-                  className="h-full rounded-full bg-secondary transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              <Progress value={progress} label="Tiến độ khóa học đã đăng ký" tone="accent" className="mt-4 h-2 bg-white" />
               <p className="mt-3 text-xs text-on-surface-variant">
                 Đã hoàn thành {finishedCount}/{registeredLessons.length} bài học
               </p>
@@ -994,19 +982,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               <span>Vị trí đọc · {stages[stageIndex].title}</span>
               <span className="tabular-nums">{readingPosition}%</span>
             </div>
-            <div
-              role="progressbar"
-              aria-label="Vị trí đọc trong phần hiện tại"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={readingPosition}
-              className="h-0.5 bg-surface-container"
-            >
-              <div
-                className="h-full bg-secondary transition-[width] duration-150"
-                style={{ width: `${readingPosition}%` }}
-              />
-            </div>
+            <Progress value={readingPosition} label="Vị trí đọc trong phần hiện tại" tone="accent" className="h-0.5 rounded-none" />
           </div>
           <details className="rounded-2xl border border-outline-variant bg-white p-4 xl:hidden">
             <summary className="cursor-pointer text-sm font-bold text-primary">
