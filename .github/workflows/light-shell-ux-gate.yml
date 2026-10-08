@@ -1,0 +1,212 @@
+name: Light Shell UX Gate
+
+on:
+  push:
+    branches:
+      - fix/light-shell-fluid-layout
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install and build
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+      - name: Install Playwright
+        run: npm install --no-save --ignore-scripts playwright@1.63.0
+      - name: Start preview
+        run: |
+          bunx vite preview --host 127.0.0.1 --port 4173 > /tmp/light-shell-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/replay >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/light-shell-preview.log
+          exit 1
+      - name: Browser audit
+        run: |
+          cat > light-shell-audit.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const out='/tmp/light-shell-audit';
+          fs.mkdirSync(out,{recursive:true});
+          const executablePath=['/usr/bin/google-chrome-stable','/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'].find(fs.existsSync);
+          if(!executablePath) throw new Error('No Chromium');
+          const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox','--disable-dev-shm-usage']});
+          const failures=[];
+          const report={};
+
+          const parseRgb=(value)=>{
+            const nums=value.match(/[\d.]+/g)?.slice(0,3).map(Number) || [0,0,0];
+            return nums;
+          };
+          const isLight=(value)=>{
+            const [r,g,b]=parseRgb(value);
+            return (r+g+b)/3 > 215;
+          };
+
+          {
+            const context=await browser.newContext({viewport:{width:1920,height:1080}});
+            const page=await context.newPage();
+            const pageErrors=[]; const badResponses=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('response',r=>{if(r.status()>=400) badResponses.push({url:r.url(),status:r.status()});});
+
+            await page.goto('http://127.0.0.1:4173/replay',{waitUntil:'networkidle',timeout:45000});
+            await page.locator('h1').first().waitFor({state:'visible',timeout:10000});
+            await page.evaluate(()=>{
+              localStorage.setItem('genai-student-sidebar-pinned-v1','false');
+              localStorage.removeItem('genai-student-recent-routes-v1');
+              document.documentElement.classList.remove('dark');
+            });
+            await page.reload({waitUntil:'networkidle'});
+            await page.locator('h1').first().waitFor({state:'visible'});
+
+            const read=()=>page.evaluate(()=>{
+              const rail=document.querySelector('.student-icon-rail');
+              const panel=document.querySelector('.student-sidebar-panel');
+              const header=document.querySelector('.gemini-header');
+              const frame=document.querySelector('.app-frame--student');
+              const main=document.querySelector('.app-main--student');
+              const pageEl=document.querySelector('.learning-os-page');
+              const logo=document.querySelector('.student-logo-trigger');
+              return {
+                railBg:rail?getComputedStyle(rail).backgroundColor:null,
+                panelBg:panel?getComputedStyle(panel).backgroundColor:null,
+                headerBg:header?getComputedStyle(header).backgroundColor:null,
+                railWidth:rail?Math.round(rail.getBoundingClientRect().width):0,
+                panelWidth:panel?Math.round(panel.getBoundingClientRect().width):0,
+                panelVisible:panel?getComputedStyle(panel).visibility==='visible'&&getComputedStyle(panel).opacity!=='0':false,
+                framePadding:frame?Math.round(parseFloat(getComputedStyle(frame).paddingLeft)):0,
+                headerLeft:header?Math.round(parseFloat(getComputedStyle(header).left)):0,
+                mainWidth:main?Math.round(main.getBoundingClientRect().width):0,
+                learningWidth:pageEl?Math.round(pageEl.getBoundingClientRect().width):0,
+                scrollWidth:document.documentElement.scrollWidth,
+                viewport:innerWidth,
+                logoExpanded:logo?.getAttribute('aria-expanded'),
+                pinned:localStorage.getItem('genai-student-sidebar-pinned-v1'),
+                recent:localStorage.getItem('genai-student-recent-routes-v1'),
+              };
+            });
+
+            const initial=await read();
+            if(!isLight(initial.railBg||'')) failures.push('desktop: light rail is not light '+initial.railBg);
+            if(!isLight(initial.headerBg||'')) failures.push('desktop: light header is not light '+initial.headerBg);
+            if(initial.railWidth!==60) failures.push('desktop: expected 60px rail, got '+initial.railWidth);
+            if(initial.panelVisible) failures.push('desktop: panel should be closed initially');
+            if(initial.framePadding!==60||initial.headerLeft!==60) failures.push('desktop: collapsed shell offset invalid '+JSON.stringify(initial));
+            if(initial.learningWidth<1650) failures.push('desktop: learning content still too narrow '+initial.learningWidth);
+            if(initial.scrollWidth!==initial.viewport) failures.push('desktop: horizontal overflow');
+
+            const logo=page.getByRole('button',{name:/mở sidebar/i}).first();
+            if(!(await logo.count())) failures.push('desktop: logo sidebar trigger missing');
+            else await logo.click();
+            await page.waitForTimeout(250);
+            const opened=await read();
+            if(!opened.panelVisible) failures.push('desktop: clicking logo did not open sidebar');
+            if(opened.panelWidth!==288) failures.push('desktop: panel width expected 288, got '+opened.panelWidth);
+            if(opened.framePadding!==348||opened.headerLeft!==348) failures.push('desktop: open panel did not shift header/content '+JSON.stringify(opened));
+            if(!isLight(opened.panelBg||'')) failures.push('desktop: opened panel is not light '+opened.panelBg);
+            if(!await page.getByText('Đã ghim',{exact:true}).isVisible()) failures.push('desktop: pinned section missing');
+            if(!await page.getByText('Gần đây',{exact:true}).isVisible()) failures.push('desktop: recent section missing');
+
+            const pin=page.getByRole('button',{name:/giữ sidebar mở/i}).first();
+            if(!(await pin.count())) failures.push('desktop: pin toggle missing');
+            else await pin.click();
+            await page.waitForTimeout(200);
+            const pinned=await read();
+            if(pinned.pinned!=='true'||!pinned.panelVisible) failures.push('desktop: pin state failed '+JSON.stringify(pinned));
+
+            await page.getByRole('button',{name:/knowledge map/i}).first().click();
+            await page.locator('h1').first().waitFor({state:'visible',timeout:10000});
+            await page.waitForTimeout(200);
+            const afterNav=await read();
+            if(!afterNav.panelVisible||afterNav.pinned!=='true') failures.push('desktop: pinned panel closed on navigation');
+
+            await page.reload({waitUntil:'networkidle'});
+            await page.locator('h1').first().waitFor({state:'visible'});
+            await page.waitForTimeout(200);
+            const afterReload=await read();
+            if(!afterReload.panelVisible||afterReload.pinned!=='true') failures.push('desktop: pinned panel did not survive reload');
+            const sidebarText=await page.locator('.student-sidebar-panel').innerText();
+            if(!sidebarText.includes('Knowledge Map')) failures.push('desktop: recent Knowledge Map entry missing');
+
+            const logoClose=page.getByRole('button',{name:/đóng sidebar/i}).first();
+            if(!(await logoClose.count())) failures.push('desktop: close logo trigger missing');
+            else await logoClose.click();
+            await page.waitForTimeout(220);
+            const closed=await read();
+            if(closed.panelVisible||closed.pinned==='true'||closed.framePadding!==60) failures.push('desktop: logo close/unpin failed '+JSON.stringify(closed));
+
+            await page.keyboard.press(process.platform==='darwin'?'Meta+K':'Control+K');
+            const focused=await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'));
+            if(focused!=='Tìm bài học, chủ đề hoặc câu hỏi') failures.push('desktop: Ctrl/Cmd+K did not focus search');
+            if(!(await page.getByText('Deep Focus',{exact:true}).count())) failures.push('desktop: Deep Focus action missing');
+
+            await page.screenshot({path:out+'/desktop-replay-light.png',fullPage:true});
+            await logo.click();
+            await page.waitForTimeout(200);
+            await page.screenshot({path:out+'/desktop-replay-sidebar-open.png',fullPage:true});
+
+            if(pageErrors.length) failures.push('desktop page errors '+JSON.stringify(pageErrors));
+            if(badResponses.length) failures.push('desktop bad responses '+JSON.stringify(badResponses));
+            report.desktop={initial,opened,pinned,afterNav,afterReload,closed,focused};
+            await context.close();
+          }
+
+          {
+            const context=await browser.newContext({viewport:{width:390,height:844}});
+            const page=await context.newPage();
+            await page.goto('http://127.0.0.1:4173/replay',{waitUntil:'networkidle',timeout:45000});
+            await page.locator('h1').first().waitFor({state:'visible'});
+            const headerBg=await page.locator('.gemini-header').evaluate(el=>getComputedStyle(el).backgroundColor);
+            if(!isLight(headerBg)) failures.push('mobile: light header is not light '+headerBg);
+            const menu=page.getByRole('button',{name:/mở menu/i}).first();
+            if(!(await menu.count())) failures.push('mobile: menu trigger missing');
+            else await menu.click();
+            await page.waitForTimeout(150);
+            const mobile=await page.evaluate(()=>{
+              const sidebar=document.querySelector('.app-sidebar--student');
+              const pin=document.querySelector('.student-sidebar-pin-row');
+              const bottom=document.querySelector('.student-bottom-nav');
+              return {
+                sidebarBg:sidebar?getComputedStyle(sidebar).backgroundColor:null,
+                sidebarWidth:sidebar?Math.round(sidebar.getBoundingClientRect().width):0,
+                pinDisplay:pin?getComputedStyle(pin).display:null,
+                bottomVisible:bottom?getComputedStyle(bottom).display!=='none':false,
+                scrollWidth:document.documentElement.scrollWidth,
+                viewport:innerWidth,
+              };
+            });
+            if(!isLight(mobile.sidebarBg||'')) failures.push('mobile: drawer is not light '+mobile.sidebarBg);
+            if(mobile.pinDisplay!=='none') failures.push('mobile: desktop pin control should be hidden');
+            if(!mobile.bottomVisible) failures.push('mobile: bottom nav missing');
+            if(mobile.scrollWidth!==mobile.viewport) failures.push('mobile: horizontal overflow');
+            await page.screenshot({path:out+'/mobile-replay-drawer.png',fullPage:true});
+            report.mobile={headerBg,...mobile};
+            await context.close();
+          }
+
+          fs.writeFileSync(out+'/report.json',JSON.stringify({report,failures},null,2));
+          console.log(JSON.stringify({report,failures},null,2));
+          await browser.close();
+          if(failures.length){console.error('\nFAILURES\n'+failures.join('\n'));process.exit(1);}
+          JS
+          node light-shell-audit.mjs
+      - name: Upload audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: light-shell-ux-audit
+          path: /tmp/light-shell-audit
+          retention-days: 3
