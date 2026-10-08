@@ -87,6 +87,21 @@ export function validateCurriculumData(
     }
     topicOrders.add(lesson.order);
 
+    if (lesson.thumbnailUrl !== undefined && lesson.thumbnailUrl !== null && !lesson.thumbnailUrl.trim()) {
+      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' có thumbnailUrl rỗng.` });
+    }
+
+    const blockIds = new Set<string>();
+    for (const block of lesson.contentBlocks ?? []) {
+      if (!block.id || blockIds.has(block.id)) {
+        errors.push({ scope: 'content-blocks', id: lesson.id, message: `Content block '${block.id}' trong bài '${lesson.id}' bị trùng hoặc thiếu id.` });
+      }
+      blockIds.add(block.id);
+      if (block.type === 'image' && (!block.imageUrl.trim() || !block.alt.trim())) {
+        errors.push({ scope: 'content-blocks', id: lesson.id, message: `Image block trong bài '${lesson.id}' phải có imageUrl và alt.` });
+      }
+    }
+
     const exerciseIds = new Set<string>();
     for (const exercise of lesson.exercises) {
       if (!exercise.id || exerciseIds.has(exercise.id)) {
