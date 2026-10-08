@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, Badge, Button, Card, Icon, Modal } from '../../components/ui';
+import { StudentPageHeader, StudentSignalStrip, StudentSectionHeader } from '../../components/student/StudentExperience';
 import { appConfig } from '../../config/app';
 import { storageKeys } from '../../config/storage';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -17,15 +18,29 @@ interface RewardsStoreViewProps {
 
 function RewardWallet({ balance, dailyGp }: { balance: number; dailyGp: number }) {
   const limit = appConfig.rewards.dailyLimit;
-  return <Card className="p-5 sm:p-6">
-    <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-      <div className="max-w-xl"><Badge tone="primary">Ghi nhận nỗ lực học tập</Badge><h1 className="mt-4 text-2xl font-bold tracking-tight text-primary sm:text-3xl">Kho quà thành tích</h1><p className="mt-3 text-sm leading-7 text-on-surface-variant">Tích lũy GP qua việc hoàn thành bài học và tự giải bài tập.</p></div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:min-w-96">
-        <div className="rounded-xl bg-surface-container-low p-4"><p className="flex items-center justify-between gap-4 text-sm text-on-surface-variant">Số dư GP <Icon name="account_balance_wallet" /></p><p className="mt-3 text-3xl font-bold text-primary">{balance.toLocaleString(appConfig.locale)} <span className="text-base font-medium">GP</span></p><p className="mt-2 text-xs text-secondary">Sẵn sàng đổi quà mẫu</p></div>
-        <div className="rounded-xl bg-surface-container-low p-4"><p className="text-sm text-on-surface-variant">GP nhận hôm nay</p><p className="mt-3 text-2xl font-bold">{dailyGp}<span className="text-sm font-medium text-on-surface-variant"> / {limit} GP</span></p><progress className="ui-progress mt-3 w-full accent-secondary" max={100} value={rewardProgress(dailyGp, limit)} aria-label="Hạn mức GP nhận hôm nay" /><p className="mt-1 text-xs text-on-surface-variant">Còn {Math.max(0, limit - dailyGp)} GP trong hạn mức</p></div>
-      </div>
-    </div>
-  </Card>;
+  const remaining = Math.max(0, limit - dailyGp);
+  return <>
+    <StudentPageHeader
+      eyebrow="Mastery rewards"
+      icon="workspace_premium"
+      title="Nỗ lực học tập phải được nhìn thấy."
+      description="GP là tín hiệu ghi nhận hành vi học tốt: hoàn thành mission, tự giải và tự sửa lỗi. Phần thưởng là lớp trải nghiệm sau cùng, không phải mục tiêu học tập chính."
+      meta={
+        <span className="inline-flex items-center gap-2 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
+          <Icon name="auto_awesome" />
+          Mastery identity đang hoạt động
+        </span>
+      }
+    />
+    <StudentSignalStrip
+      items={[
+        { icon: "account_balance_wallet", label: "Số dư", value: `${balance.toLocaleString(appConfig.locale)} GP` },
+        { icon: "bolt", label: "GP hôm nay", value: `${dailyGp}/${limit}` },
+        { icon: "target", label: "Còn có thể nhận", value: `${remaining} GP` },
+        { icon: "workspace_premium", label: "Identity", value: "Problem Solver" },
+      ]}
+    />
+  </>;
 }
 
 export function RewardsStoreView({ gpBalance, dailyGp, onNavigate, onSpendGp }: RewardsStoreViewProps) {
@@ -47,13 +62,25 @@ export function RewardsStoreView({ gpBalance, dailyGp, onNavigate, onSpendGp }: 
     return true;
   };
 
-  return <div className="space-y-6 pb-8">
+  return <div className="learning-os-page">
     <RewardWallet balance={gpBalance} dailyGp={dailyGp} />
-    <Card className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6"><div><h2 className="flex items-center gap-2 font-bold"><Icon name="redeem" className="text-secondary" />Trải nghiệm đổi quà</h2><p className="mt-2 text-sm text-on-surface-variant">Danh mục và yêu cầu hiện dùng dữ liệu mẫu, được lưu trên trình duyệt.</p></div><Button variant="secondary" onClick={() => setShowFlow(true)}><Icon name="account_tree" />Xem quy trình</Button></Card>
+    <section className="signal-card signal-card--accent">
+      <StudentSectionHeader
+        eyebrow="Reward loop"
+        title="Học trước. Nhận tín hiệu mastery. Phần thưởng đến sau."
+        description="Danh mục hiện là dữ liệu mẫu được lưu trên thiết bị. Tutor ưu tiên hành vi học tốt hơn việc tích điểm đơn thuần."
+        action={<Button variant="secondary" onClick={() => setShowFlow(true)}><Icon name="account_tree" />Xem quy trình</Button>}
+      />
+    </section>
     {storageError && <Alert tone="warning">{storageError}</Alert>}
     {confirmation && <div role="status"><Alert tone="success">{confirmation}</Alert></div>}
     <section aria-labelledby="reward-catalog-heading" className="space-y-5">
-      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center"><h2 id="reward-catalog-heading" className="text-xl font-bold">Chọn phần thưởng</h2><div className="flex flex-wrap gap-2" role="group" aria-label="Lọc phần thưởng">{rewardFilters.map(option => <Button key={option.id} variant={filter === option.id ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(option.id)} aria-pressed={filter === option.id}>{option.label}{option.id === 'ready' ? ` (${readyCount})` : ''}</Button>)}</div></div>
+      <StudentSectionHeader
+        eyebrow="Reward catalog"
+        title="Chọn phần thưởng"
+        description="Chỉ hiển thị những phần thưởng phù hợp với số dư và trạng thái hiện tại."
+        action={<div className="flex flex-wrap gap-2" role="group" aria-label="Lọc phần thưởng">{rewardFilters.map(option => <Button key={option.id} variant={filter === option.id ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(option.id)} aria-pressed={filter === option.id}>{option.label}{option.id === 'ready' ? ` (${readyCount})` : ''}</Button>)}</div>}
+      />
       <p className="text-sm text-on-surface-variant" role="status">{rewards.length} phần thưởng · Số dư khả dụng {gpBalance.toLocaleString(appConfig.locale)} GP</p>
       {rewards.length ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{rewards.map(item => <RewardCard key={item.id} item={item} balance={gpBalance} stock={availableStock(item, requests)} onRedeem={() => setSelectedItem(item)} onPractice={() => onNavigate('tu-giai')} />)}</div> :
         <Card className="space-y-4 p-8 text-center"><Icon name="redeem" className="text-3xl text-on-surface-variant" /><h3 className="font-semibold">Chưa có phần thưởng phù hợp</h3><p className="text-sm text-on-surface-variant">Tích lũy thêm GP hoặc xem toàn bộ danh mục.</p><Button variant="secondary" onClick={() => setFilter('all')}>Xem tất cả quà</Button></Card>}
