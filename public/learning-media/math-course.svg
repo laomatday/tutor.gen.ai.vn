@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="t d">
+<title id="t">Toán học trực quan</title><desc id="d">Hình minh họa trục tọa độ, hình học và ký hiệu toán theo màu genAi.</desc>
+<rect width="1200" height="700" rx="48" fill="#F2F7FF"/><circle cx="930" cy="170" r="190" fill="#DFF8F5"/>
+<g stroke="#243C8F" stroke-width="10" stroke-linecap="round" fill="none"><path d="M140 540H760"/><path d="M240 600V120"/><path d="M260 505C360 340 455 260 575 240s190 45 245 170"/></g>
+<g fill="#19B7A5"><circle cx="390" cy="355" r="18"/><circle cx="575" cy="240" r="18"/><circle cx="745" cy="335" r="18"/></g>
+<path d="M850 470l110-205 125 205z" fill="#fff" stroke="#243C8F" stroke-width="10"/>
+<circle cx="960" cy="330" r="54" fill="#19B7A5" opacity=".18"/>
+<text x="120" y="110" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#243C8F">Think • Visualize • Solve</text>
+</svg>

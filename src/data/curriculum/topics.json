@@ -39,6 +39,17 @@
     "gradeId": "9",
     "subjectId": "tieng-anh",
     "title": "Everyday English",
-    "description": "Ngôn ngữ cho những tình huống hằng ngày."
+    "description": "Ngôn ngữ cho những tình huống hằng ngày.",
+    "cardImageUrl": "/learning-media/english-rainy-day.svg",
+    "heroImageUrl": "/learning-media/english-rainy-day.svg"
+  },
+  {
+    "id": "school-life",
+    "gradeId": "9",
+    "subjectId": "tieng-anh",
+    "title": "School life",
+    "description": "Hội thoại, lời mời và hoạt động ở trường.",
+    "cardImageUrl": "/learning-media/english-club.svg",
+    "heroImageUrl": "/learning-media/english-club.svg"
   }
 ]

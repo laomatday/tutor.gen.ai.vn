@@ -35,7 +35,11 @@
       {
         "id": "can-bac-hai-1",
         "prompt": "Biểu thức $\\sqrt{x-2}$ xác định khi nào?",
-        "options": ["$x \\ge 2$", "$x \\le 2$", "$x > 0$"],
+        "options": [
+          "$x \\ge 2$",
+          "$x \\le 2$",
+          "$x > 0$"
+        ],
         "correctIndex": 0,
         "explanation": "Điều kiện $x - 2 \\ge 0$ tương đương $x \\ge 2$."
       }
@@ -78,14 +82,22 @@
       {
         "id": "rut-gon-1",
         "prompt": "Rút gọn $\\sqrt{50} + \\sqrt{8}$.",
-        "options": ["$7\\sqrt{2}$", "$\\sqrt{58}$", "$3\\sqrt{2}$"],
+        "options": [
+          "$7\\sqrt{2}$",
+          "$\\sqrt{58}$",
+          "$3\\sqrt{2}$"
+        ],
         "correctIndex": 0,
         "explanation": "$\\sqrt{50}=5\\sqrt{2}$ và $\\sqrt{8}=2\\sqrt{2}$, nên tổng bằng $7\\sqrt{2}$."
       },
       {
         "id": "rut-gon-2",
         "prompt": "Giá trị của $\\sqrt{81}$ là bao nhiêu?",
-        "options": ["$-9$", "$9$", "$\\pm 9$"],
+        "options": [
+          "$-9$",
+          "$9$",
+          "$\\pm 9$"
+        ],
         "correctIndex": 1,
         "explanation": "Căn bậc hai số học luôn không âm nên $\\sqrt{81}=9$."
       }
@@ -128,14 +140,22 @@
       {
         "id": "ham-so-1",
         "prompt": "Hàm số $y=-3x^2$ có đồ thị như thế nào?",
-        "options": ["Parabol mở lên", "Parabol mở xuống", "Đường thẳng"],
+        "options": [
+          "Parabol mở lên",
+          "Parabol mở xuống",
+          "Đường thẳng"
+        ],
         "correctIndex": 1,
         "explanation": "Vì $a=-3<0$, parabol mở xuống."
       },
       {
         "id": "ham-so-2",
         "prompt": "Parabol $y=ax^2$ đi qua $A(2;8)$. Giá trị của $a$ là:",
-        "options": ["$4$", "$-2$", "$2$"],
+        "options": [
+          "$4$",
+          "$-2$",
+          "$2$"
+        ],
         "correctIndex": 2,
         "explanation": "Thay tọa độ vào ta được $8=a\\times 2^2=4a$, nên $a=2$."
       }
@@ -178,7 +198,11 @@
       {
         "id": "he-1",
         "prompt": "Hệ $x+y=5$ và $x-y=1$ có nghiệm nào?",
-        "options": ["$(2;3)$", "$(3;2)$", "$(4;1)$"],
+        "options": [
+          "$(2;3)$",
+          "$(3;2)$",
+          "$(4;1)$"
+        ],
         "correctIndex": 1,
         "explanation": "Cộng hai phương trình được $2x=6$, nên $x=3$ và $y=2$."
       }
@@ -221,7 +245,11 @@
       {
         "id": "viete-1",
         "prompt": "Hai nghiệm của $x^2-7x+10=0$ có tổng bằng:",
-        "options": ["$-7$", "$10$", "$7$"],
+        "options": [
+          "$-7$",
+          "$10$",
+          "$7$"
+        ],
         "correctIndex": 2,
         "explanation": "Theo Vi-ét, $x_1+x_2=-b/a=-(-7)/1=7$."
       }
@@ -263,7 +291,11 @@
       {
         "id": "goc-1",
         "prompt": "Góc nội tiếp chắn nửa đường tròn có số đo bằng:",
-        "options": ["$45^\\circ$", "$90^\\circ$", "$180^\\circ$"],
+        "options": [
+          "$45^\\circ$",
+          "$90^\\circ$",
+          "$180^\\circ$"
+        ],
         "correctIndex": 1,
         "explanation": "Nửa đường tròn có số đo $180^\\circ$. Góc nội tiếp bằng $180^\\circ:2=90^\\circ$."
       }
@@ -301,7 +333,11 @@
       {
         "id": "tu-giac-1",
         "prompt": "Một góc của tứ giác nội tiếp bằng $110^\\circ$. Góc đối diện bằng:",
-        "options": ["$110^\\circ$", "$70^\\circ$", "$90^\\circ$"],
+        "options": [
+          "$110^\\circ$",
+          "$70^\\circ$",
+          "$90^\\circ$"
+        ],
         "correctIndex": 1,
         "explanation": "Hai góc đối có tổng $180^\\circ$, nên góc cần tìm bằng $70^\\circ$."
       }
@@ -381,9 +417,206 @@
       {
         "id": "conditional-1",
         "prompt": "If you study, you … the test.",
-        "options": ["will pass", "passed", "passing"],
+        "options": [
+          "will pass",
+          "passed",
+          "passing"
+        ],
         "correctIndex": 0,
         "explanation": "Mệnh đề kết quả dùng will + động từ nguyên mẫu: will pass."
+      }
+    ],
+    "thumbnailUrl": "/learning-media/english-rainy-day.svg",
+    "heroImageUrl": "/learning-media/english-rainy-day.svg",
+    "contentBlocks": [
+      {
+        "id": "eng-rain-image",
+        "type": "image",
+        "imageUrl": "/learning-media/english-rainy-day.svg",
+        "alt": "Hai học sinh chuẩn bị kế hoạch cho một ngày mưa",
+        "caption": "What will you do if it rains?"
+      },
+      {
+        "id": "eng-rain-context",
+        "type": "paragraph",
+        "heading": "A rainy-day plan",
+        "text": "Mai and Alex are planning Saturday. The weather may change, so they make a plan for both possibilities.",
+        "format": "plain"
+      },
+      {
+        "id": "eng-rain-vocab",
+        "type": "vocabulary",
+        "title": "Words to use",
+        "items": [
+          {
+            "term": "rain",
+            "meaning": "mưa",
+            "example": "If it rains, we will stay inside."
+          },
+          {
+            "term": "stay at home",
+            "meaning": "ở nhà",
+            "example": "We will stay at home and watch a film."
+          },
+          {
+            "term": "umbrella",
+            "meaning": "ô / dù",
+            "example": "Take an umbrella if you go outside."
+          }
+        ]
+      },
+      {
+        "id": "eng-rain-dialogue",
+        "type": "dialogue",
+        "title": "Listen with your eyes",
+        "lines": [
+          {
+            "speaker": "Mai",
+            "text": "If it rains, what will you do?"
+          },
+          {
+            "speaker": "Alex",
+            "text": "I will stay at home and finish my project."
+          },
+          {
+            "speaker": "Mai",
+            "text": "If it is sunny, we will go to the park."
+          }
+        ]
+      },
+      {
+        "id": "eng-rain-rule",
+        "type": "callout",
+        "tone": "info",
+        "title": "Pattern",
+        "text": "Use: If + present simple, will + base verb. Example: If it rains, we will stay at home.",
+        "format": "plain"
+      }
+    ]
+  },
+  {
+    "id": "school-club-invitation",
+    "gradeId": "9",
+    "subjectId": "tieng-anh",
+    "topicId": "school-life",
+    "title": "Joining a school club",
+    "summary": "Luyện cách mời, đồng ý và từ chối lịch sự trong hội thoại ở trường.",
+    "kind": "lesson",
+    "durationMinutes": 18,
+    "order": 1,
+    "status": "published",
+    "thumbnailUrl": "/learning-media/english-club.svg",
+    "heroImageUrl": "/learning-media/english-club.svg",
+    "contentBlocks": [
+      {
+        "id": "club-image",
+        "type": "image",
+        "imageUrl": "/learning-media/english-club.svg",
+        "alt": "Các học sinh trò chuyện ở câu lạc bộ trường",
+        "caption": "Would you like to join our club?"
+      },
+      {
+        "id": "club-context",
+        "type": "paragraph",
+        "heading": "A real school situation",
+        "text": "A classmate invites you to join the school media club. You want to ask for more information before deciding.",
+        "format": "plain"
+      },
+      {
+        "id": "club-vocab",
+        "type": "vocabulary",
+        "title": "Useful phrases",
+        "items": [
+          {
+            "term": "Would you like to ...?",
+            "meaning": "Bạn có muốn ... không?",
+            "example": "Would you like to join our club?"
+          },
+          {
+            "term": "Sounds great!",
+            "meaning": "Nghe tuyệt đấy!",
+            "example": "Sounds great! What time does it start?"
+          },
+          {
+            "term": "I’d love to, but ...",
+            "meaning": "Mình rất muốn, nhưng ...",
+            "example": "I’d love to, but I have basketball practice."
+          }
+        ]
+      },
+      {
+        "id": "club-dialogue",
+        "type": "dialogue",
+        "title": "Club invitation",
+        "lines": [
+          {
+            "speaker": "Nina",
+            "text": "Would you like to join the media club?"
+          },
+          {
+            "speaker": "Minh",
+            "text": "Sounds great! What do you do there?"
+          },
+          {
+            "speaker": "Nina",
+            "text": "We make short videos and interview students."
+          },
+          {
+            "speaker": "Minh",
+            "text": "I’d love to join. When do you meet?"
+          }
+        ]
+      },
+      {
+        "id": "club-bullets",
+        "type": "bullets",
+        "title": "Your speaking mission",
+        "items": [
+          "Invite a friend to one school activity.",
+          "Ask one follow-up question.",
+          "Accept or decline politely."
+        ]
+      }
+    ],
+    "theory": [
+      {
+        "heading": "Friendly invitations",
+        "text": "Use “Would you like to ...?” for a polite invitation."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Make the invitation warmer",
+        "prompt": "Turn “Join our club.” into a friendly invitation.",
+        "steps": [
+          "Start with Would you like to...",
+          "Use a base verb after to."
+        ],
+        "answer": "Would you like to join our club?"
+      }
+    ],
+    "exercises": [
+      {
+        "id": "club-1",
+        "prompt": "Which sentence is a polite invitation?",
+        "options": [
+          "You join our club.",
+          "Would you like to join our club?",
+          "You must join our club."
+        ],
+        "correctIndex": 1,
+        "explanation": "Would you like to ...? is a common polite invitation."
+      },
+      {
+        "id": "club-2",
+        "prompt": "Which response politely declines an invitation?",
+        "options": [
+          "No.",
+          "I’d love to, but I have practice.",
+          "Never."
+        ],
+        "correctIndex": 1,
+        "explanation": "It acknowledges the invitation and gives a reason."
       }
     ]
   }

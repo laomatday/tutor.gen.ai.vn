@@ -8,11 +8,24 @@ export interface Grade {
   label: string;
 }
 
+export interface SubjectCapabilities {
+  math?: boolean;
+  images?: boolean;
+  audio?: boolean;
+  vocabulary?: boolean;
+  dialogue?: boolean;
+  code?: boolean;
+}
+
 export interface Subject {
   id: string;
   name: string;
   icon: string;
   description: string;
+  cardImageUrl?: string | null;
+  heroImageUrl?: string | null;
+  capabilities?: SubjectCapabilities;
+  theme?: Record<string, string>;
 }
 
 export type LessonStage = 'theory' | 'examples' | 'exercises';
@@ -31,7 +44,66 @@ export interface Topic {
   subjectId: string;
   title: string;
   description: string;
+  cardImageUrl?: string | null;
+  heroImageUrl?: string | null;
 }
+
+export type ContentTextFormat = 'plain' | 'auto' | 'math';
+
+export type LessonContentBlock =
+  | {
+      id: string;
+      type: 'paragraph';
+      heading?: string;
+      text: string;
+      format?: ContentTextFormat;
+    }
+  | {
+      id: string;
+      type: 'image';
+      imageUrl: string;
+      alt: string;
+      caption?: string;
+    }
+  | {
+      id: string;
+      type: 'math';
+      formula: string;
+      label?: string;
+      display?: boolean;
+    }
+  | {
+      id: string;
+      type: 'callout';
+      tone?: 'info' | 'success' | 'warning';
+      title?: string;
+      text: string;
+      format?: ContentTextFormat;
+    }
+  | {
+      id: string;
+      type: 'vocabulary';
+      title?: string;
+      items: Array<{ term: string; meaning: string; example?: string }>;
+    }
+  | {
+      id: string;
+      type: 'dialogue';
+      title?: string;
+      lines: Array<{ speaker: string; text: string; translation?: string }>;
+    }
+  | {
+      id: string;
+      type: 'bullets';
+      title?: string;
+      items: string[];
+    }
+  | {
+      id: string;
+      type: 'quote';
+      text: string;
+      attribution?: string;
+    };
 
 export interface LessonTheoryBlock {
   heading: string;
@@ -64,6 +136,10 @@ export interface Lesson {
   durationMinutes: number;
   order: number;
   status: 'draft' | 'published';
+  thumbnailUrl?: string | null;
+  heroImageUrl?: string | null;
+  contentBlocks?: LessonContentBlock[];
+  media?: Array<{ type: string; url: string; role?: string; alt?: string }>;
   theory: LessonTheoryBlock[];
   examples: LessonExample[];
   exercises: LessonExercise[];

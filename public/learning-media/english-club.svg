@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="t d">
+<title id="t">School club invitation</title><desc id="d">Nhóm học sinh trò chuyện trước bảng câu lạc bộ ở trường.</desc>
+<rect width="1200" height="700" rx="48" fill="#F7FAFC"/><rect x="650" y="90" width="410" height="300" rx="34" fill="#243C8F"/>
+<text x="715" y="190" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#fff">MEDIA CLUB</text><text x="715" y="250" font-family="Arial,sans-serif" font-size="28" fill="#BDF0EA">Create • Speak • Share</text>
+<circle cx="250" cy="280" r="82" fill="#F0BE98"/><circle cx="480" cy="270" r="82" fill="#D7A47D"/>
+<path d="M120 650V430q130-115 260 0v220" fill="#19B7A5"/><path d="M355 650V420q130-115 260 0v230" fill="#243C8F"/>
+<rect x="110" y="90" width="470" height="110" rx="36" fill="#fff" stroke="#D8E1EC" stroke-width="4"/><text x="155" y="158" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#243C8F">Would you like to join?</text>
+</svg>

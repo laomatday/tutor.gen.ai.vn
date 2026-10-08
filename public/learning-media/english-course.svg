@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="t d">
+<title id="t">Everyday English</title><desc id="d">Hai khung hội thoại và các từ tiếng Anh minh họa hoạt động giao tiếp.</desc>
+<rect width="1200" height="700" rx="48" fill="#ECFBF9"/><circle cx="970" cy="115" r="180" fill="#E7F2FF"/>
+<rect x="110" y="150" width="430" height="250" rx="42" fill="#fff" stroke="#243C8F" stroke-width="8"/><path d="M170 400l-55 85 125-55" fill="#fff" stroke="#243C8F" stroke-width="8"/>
+<rect x="650" y="270" width="430" height="245" rx="42" fill="#243C8F"/><path d="M1000 515l70 70-135-45" fill="#243C8F"/>
+<text x="170" y="250" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#243C8F">Hello!</text><text x="170" y="315" font-family="Arial,sans-serif" font-size="30" fill="#53647A">How are you today?</text>
+<text x="710" y="375" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#fff">Sounds great!</text><text x="710" y="435" font-family="Arial,sans-serif" font-size="28" fill="#BDF0EA">Let’s talk.</text>
+<g fill="#19B7A5"><circle cx="580" cy="150" r="18"/><circle cx="610" cy="200" r="10"/><circle cx="570" cy="235" r="8"/></g>
+</svg>
