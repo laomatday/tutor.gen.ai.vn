@@ -14,7 +14,7 @@
 
 ### Tutor Pilot (dữ liệu học tập theo tài khoản)
 
-- Truy cập `/pilot` để dùng khu vực thử nghiệm có xác thực Supabase Auth và phân quyền bằng RLS. **Pilot không tự đăng ký tài khoản**; cần điều phối viên cấp tài khoản và phê duyệt tham gia phù hợp trước khi học sinh đăng nhập.
+- Khu vực `/pilot` **mặc định bị tắt**; chỉ mở khi người vận hành đặt `VITE_TUTOR_PILOT_ENABLED=true` ở môi trường đã hoàn thành kiểm tra RLS và consent. Cờ trên trình duyệt chỉ điều khiển UI, quyền thực tế vẫn do Auth/RLS máy chủ xác thực. **Pilot không tự đăng ký tài khoản**; cần điều phối viên cấp tài khoản và phê duyệt tham gia phù hợp trước khi học sinh đăng nhập.
 - Pilot chạy tách biệt với các route bản trải nghiệm `/`, `/hoc-bai`, `/tu-giai`, `/replay` vốn vẫn dùng dữ liệu minh họa/localStorage. Không gộp hoặc báo cáo chung kết quả hai chế độ.
 - Trạng thái bài hoàn thành, quiz, GP và skill evidence của pilot do Postgres lưu. Nháp Focus Studio được đồng bộ giữa thiết bị nhưng tự chấm lời giải bằng bộ kiểm tra ở client **không phải chứng nhận năng lực**.
 - Trước khi thử nghiệm có học sinh thật: phải chạy kiểm tra RLS bằng các tài khoản có vai trò riêng, xác minh đồng ý tham gia, đánh giá học thuật từng bài và kiểm tra quy định bảo vệ dữ liệu trẻ em.
