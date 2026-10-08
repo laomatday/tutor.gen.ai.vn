@@ -97,11 +97,21 @@ export default function App() {
   const studentSidebarVisible = isStudent && (studentSidebarPinned || menu.open);
 
   const toggleStudentSidebar = () => {
+    const desktop =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 1024px)").matches;
+
+    if (!desktop) {
+      menu.setOpen((value) => !value);
+      return;
+    }
+
     if (studentSidebarPinned) {
       setStudentSidebarPinned(false);
       menu.setOpen(false);
       return;
     }
+
     menu.setOpen((value) => !value);
   };
 
