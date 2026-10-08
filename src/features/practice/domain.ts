@@ -1,7 +1,44 @@
 import { practicePolicy } from './data';
 
 export type AnswerCheck = { valid: boolean; message: string };
-export type PracticeSession = { input: string; openedHints: number[]; rewarded: boolean };
+export type PracticeEvent = {
+  id: string;
+  at: number;
+  kind: "start" | "hint" | "check" | "submit";
+  detail: string;
+  input?: string;
+  valid?: boolean;
+};
+
+export type PracticeSession = {
+  input: string;
+  openedHints: number[];
+  rewarded: boolean;
+  problemId?: string;
+  startedAt?: number;
+  events?: PracticeEvent[];
+};
+
+export function createPracticeSession(problemId: string, at = Date.now()): PracticeSession {
+  return { problemId, startedAt: at, input: "", openedHints: [], rewarded: false,
+    events: [{ id: `${at}-start`, at, kind: "start", detail: "Bắt đầu phiên làm bài." }] };
+}
+
+export function appendPracticeEvent(
+  session: PracticeSession,
+  kind: PracticeEvent["kind"],
+  detail: string,
+  valid?: boolean,
+  at = Date.now(),
+): PracticeSession {
+  const previous = session.events ?? [];
+  const event: PracticeEvent = { id: `${at}-${previous.length}`, at, kind, detail };
+  if (kind === "check" || kind === "submit") {
+    event.input = session.input;
+    event.valid = valid;
+  }
+  return { ...session, events: [...previous, event].slice(-60) };
+}
 
 export function isPracticeSession(value: unknown): value is PracticeSession {
   if (!value || typeof value !== 'object') return false;
@@ -9,7 +46,15 @@ export function isPracticeSession(value: unknown): value is PracticeSession {
   return typeof session.input === 'string' && session.input.length <= practicePolicy.inputLimit &&
     typeof session.rewarded === 'boolean' && Array.isArray(session.openedHints) &&
     session.openedHints.every(id => Number.isInteger(id) && id >= 1 && id <= 3) &&
-    new Set(session.openedHints).size === session.openedHints.length;
+    new Set(session.openedHints).size === session.openedHints.length &&
+    (session.problemId === undefined || typeof session.problemId === "string") &&
+    (session.startedAt === undefined || Number.isFinite(session.startedAt)) &&
+    (session.events === undefined || (Array.isArray(session.events) &&
+      session.events.every(event => !!event && typeof event.id === "string" &&
+        Number.isFinite(event.at) && ["start", "hint", "check", "submit"].includes(event.kind) &&
+        typeof event.detail === "string" &&
+        (event.input === undefined || typeof event.input === "string") &&
+        (event.valid === undefined || typeof event.valid === "boolean"))));
 }
 
 export function autonomyReward(base: number, openedEarly: number): number {
