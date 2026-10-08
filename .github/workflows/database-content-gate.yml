@@ -111,14 +111,19 @@ jobs:
           {
             const context=await browser.newContext({viewport:{width:1440,height:1000}});
             const page=await context.newPage();
+            const mapRequests=[];
+            page.on('request',r=>mapRequests.push(r.url()));
             const res=await page.goto('http://127.0.0.1:4173/hoc-bai',{waitUntil:'networkidle',timeout:45000});
             await page.locator('h1').first().waitFor({state:'visible'});
-            await page.getByText(/Knowledge Universe · Live DB/i).waitFor({state:'visible',timeout:10000});
-            const text=await page.locator('body').innerText();
-            const imgs=await page.locator('section[aria-label="Môn học đã đăng ký"] img').count();
+            const liveDbMarker=page.getByText(/Knowledge Universe.*Live DB/i).first();
+            await liveDbMarker.waitFor({state:'visible',timeout:10000});
+            const subjectRegion=page.locator('section[aria-label="Môn học đã đăng ký"]');
+            const subjectText=await subjectRegion.innerText();
+            const imgs=await subjectRegion.locator('img').count();
             if(res?.status()!==200) failures.push('map: not 200');
-            if(!text.includes('Live DB')) failures.push('map: database source marker missing; likely fallback');
-            if(!text.includes('Toán')||!text.includes('Tiếng Anh')) failures.push('map: enrolled subject switcher incomplete');
+            if(!(await liveDbMarker.isVisible())) failures.push('map: database source marker missing; likely fallback');
+            if(!mapRequests.some(u=>u.includes('supabase.co/rest/v1/tutor_subjects'))) failures.push('map: Supabase subjects request missing');
+            if(!subjectText.includes('Toán')||!subjectText.includes('Tiếng Anh')) failures.push('map: enrolled subject switcher incomplete');
             if(imgs<2) failures.push(`map: expected illustrated subject cards, got ${imgs}`);
             await page.screenshot({path:`${out}/map-subjects.png`,fullPage:true});
             await context.close();
