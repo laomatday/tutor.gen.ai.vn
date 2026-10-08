@@ -9,8 +9,14 @@
       {
         "gradeId": "9",
         "subjectId": "toan"
+      },
+      {
+        "gradeId": "9",
+        "subjectId": "tieng-anh"
       }
     ]
   },
-  "initialCompletedLessonIds": ["can-bac-hai"]
+  "initialCompletedLessonIds": [
+    "can-bac-hai"
+  ]
 }
