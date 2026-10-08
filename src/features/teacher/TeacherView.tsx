@@ -93,7 +93,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
   }
 
 
-  return <div className="w-full space-y-6 pb-10">
+  return <div className="teacher-workspace w-full space-y-6 pb-10">
     <div className="ui-page-header">
       <div>
         <p className="ui-page-kicker">Không gian giáo viên</p>
@@ -109,7 +109,7 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
     </div>
     {storageError && <Alert tone="danger">{storageError}</Alert>}
 
-    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+    <div className="teacher-metrics grid gap-3">
       {[
         { label: 'Lớp đang phụ trách', value: classes.length, icon: 'school', detail: teachingProgramLabel },
         { label: 'Học sinh', value: students.length, icon: 'groups', detail: `Trong ${classes.length} lớp minh họa` },
@@ -122,8 +122,8 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
       </div>)}
     </div>
 
-    {section === 'overview' && <div className="grid gap-5 lg:grid-cols-3">
-      <section className="relative overflow-hidden rounded-2xl bg-primary p-6 text-white lg:col-span-2">
+    {section === 'overview' && <div className="teacher-overview grid gap-5">
+      <section className="teacher-priority relative overflow-hidden rounded-2xl bg-primary p-6 text-white">
         <div className="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full border-[28px] border-white/5" />
         <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-secondary-fixed"><Icon name="insights" className="text-lg" />Ưu tiên hỗ trợ</p>
         <h2 className="max-w-md text-2xl font-bold leading-snug">Một chút hỗ trợ đúng lúc,<br />thêm tự tin cho {supportStudents.length} học sinh.</h2>

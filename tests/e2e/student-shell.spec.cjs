@@ -134,7 +134,7 @@ test("Student shell: reduced motion and teacher/admin mobile drawers remain avai
 });
 
 for (const width of [360, 1440]) {
-  test(`Student shell: compact context switches courses and navigates back at ${width}px`, async ({
+  test(`Student shell: in-content course navigation and lesson context at ${width}px`, async ({
     page,
   }) => {
     const { profile } = require("../../src/data/demo/student.json");
@@ -155,8 +155,9 @@ for (const width of [360, 1440]) {
         item.status === "published",
     );
     const header = page.locator(".app-header");
+    const context = page.locator("#main-content .student-course-context");
     const courseSelector = (course) =>
-      header.getByRole("combobox", {
+      context.getByRole("combobox", {
         name: `${course.label} · Chuyển môn học`,
         exact: true,
       });
@@ -174,10 +175,9 @@ for (const width of [360, 1440]) {
 
     await page.setViewportSize({ width, height: 900 });
     await page.goto(math.path);
+    await expect(context).toBeVisible();
     await expect(courseSelector(math)).toBeVisible();
-    await expect(page.locator("#main-content .app-breadcrumbs")).toHaveCount(0);
-
-    // The header selector supports keyboard navigation and keeps focus after selection.
+    await expect(header.locator(".student-header-context")).toHaveCount(0);
     await courseSelector(math).click();
     await expect(page.getByRole("option")).toHaveText(
       courses.map((course) => course.label),
@@ -191,7 +191,7 @@ for (const width of [360, 1440]) {
     await page.getByRole("option", { name: math.label, exact: true }).click();
     await expectCourseRoute(math);
 
-    const backToSubjects = header.getByRole("link", {
+    const backToSubjects = context.getByRole("link", {
       name: "Quay lại Môn học",
       exact: true,
     });
@@ -200,10 +200,7 @@ for (const width of [360, 1440]) {
     await expect(page).toHaveURL(
       (url) => url.pathname === "/hoc-bai" && url.search === "",
     );
-    await expect(header.locator(".student-header-context")).toHaveText(
-      "Môn học",
-    );
-    await expect(header.getByRole("combobox")).toHaveCount(0);
+    await expect(context).toHaveCount(0);
 
     await page.goto(
       `/hoc-bai?${new URLSearchParams({
@@ -214,29 +211,28 @@ for (const width of [360, 1440]) {
         stage: "theory",
       })}`,
     );
-    await expect(header.locator(".student-header-context__current")).toHaveText(
-      lesson.title,
-    );
-    const backToCourse = header.getByRole("link", {
-      name: `Quay lại ${math.label}`,
-      exact: true,
+    await expect(header.locator(".student-header-context")).toHaveCount(0);
+    await expect(context).toHaveCount(0);
+    const breadcrumb = page.getByRole("navigation", {
+      name: "Vị trí trong chương trình học",
     });
-    await expect(backToCourse).toHaveAttribute("href", math.path);
-    await backToCourse.click();
+    await expect(breadcrumb).toBeVisible();
+    await expect(page.locator("#main-content h1")).toHaveCount(1);
+    await breadcrumb.getByRole("button", {
+      name: subjects.find((subject) => subject.id === math.subjectId).name,
+      exact: true,
+    }).click();
     await expectCourseRoute(math);
-    await expect(page.locator("#main-content .app-breadcrumbs")).toHaveCount(0);
 
-    const layout = await header.evaluate((element) => ({
+    const layout = await page.locator(".app-header").evaluate((element) => ({
       viewport: document.documentElement.clientWidth,
       overflow: document.documentElement.scrollWidth - window.innerWidth,
       controls: Array.from(element.querySelectorAll("button, a"))
         .map((control) => control.getBoundingClientRect())
         .filter((rect) => rect.width > 0 && rect.height > 0)
         .map((rect) => ({
-          left: rect.left,
-          right: rect.right,
-          width: rect.width,
-          height: rect.height,
+          left: rect.left, right: rect.right,
+          width: rect.width, height: rect.height,
         })),
     }));
     expect(layout.overflow).toBeLessThanOrEqual(1);

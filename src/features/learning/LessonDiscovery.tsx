@@ -51,7 +51,7 @@ function DiscoveryActivity({
   function retry() {
     setChecked(false);
     setSelection(null);
-    firstOptionRef.current?.focus();
+    requestAnimationFrame(() => firstOptionRef.current?.focus());
   }
   return (
     <section
@@ -97,6 +97,7 @@ function DiscoveryActivity({
                     type="radio"
                     name={`${id}-answer`}
                     value={index}
+                    aria-label={`${String.fromCharCode(65 + index)}. ${option}`}
                     checked={selection === index}
                     onChange={() => setSelection(index)}
                   />

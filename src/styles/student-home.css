@@ -1507,3 +1507,35 @@
     }
   }
 }
+
+
+/* Adaptive Home: keep the next learning action visible even with a pinned rail. */
+@layer components {
+  .home-hub { max-width: 100rem; margin-inline: auto; }
+  .home-top-grid { grid-template-columns: minmax(0, 1fr); }
+  @container student-home (min-width: 78rem) {
+    .home-top-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 21.25rem);
+    }
+  }
+  @container student-home (max-width: 56rem) {
+    .home-exploration .home-mission {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .home-journey-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .home-rhythm.ui-card {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  @container student-home (max-width: 35rem) {
+    .home-main-action {
+      width: 100%;
+      min-height: 48px;
+      justify-content: center;
+    }
+    .home-mood-tabs { max-width: 100%; }
+  }
+}

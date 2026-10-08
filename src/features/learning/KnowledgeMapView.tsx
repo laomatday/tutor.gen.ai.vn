@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   Badge,
   Button,
@@ -157,10 +157,63 @@ function KnowledgeMapOverview({
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<TopicFilter>("all");
   const [view, setView] = useState<"path" | "map" | "list">("path");
+  const [mapExpanded, setMapExpanded] = useState(false);
+  const [detailsSheetOpen, setDetailsSheetOpen] = useState(false);
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const details = useRef<HTMLElement>(null);
+  const sheetReturn = useRef<HTMLElement | null>(null);
+  const openDetailsSheet = (trigger: HTMLElement) => {
+    sheetReturn.current = trigger;
+    setDetailsSheetOpen(true);
+    requestAnimationFrame(() => details.current?.focus({ preventScroll: true }));
+  };
+  const closeDetailsSheet = () => {
+    setDetailsSheetOpen(false);
+    requestAnimationFrame(() => sheetReturn.current?.focus());
+  };
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const previousOverflow = document.body.style.overflow;
+    const viewport = window.matchMedia("(min-width: 768px)");
+    const onViewport = () => {
+      if (viewport.matches) {
+        setDetailsSheetOpen(false);
+        setMapExpanded(false);
+      }
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        if (detailsSheetOpen) closeDetailsSheet();
+        else setMapExpanded(false);
+        return;
+      }
+      if (event.key !== "Tab" || !detailsSheetOpen) return;
+      const focusables = Array.from(details.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? []).filter((item) => item.getClientRects().length > 0);
+      const first = focusables[0], last = focusables.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === details.current)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    viewport.addEventListener("change", onViewport);
+    onViewport();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+      viewport.removeEventListener("change", onViewport);
+    };
+  }, [mapExpanded, detailsSheetOpen]);
   const drag = useRef<{
     x: number;
     y: number;
@@ -278,7 +331,7 @@ function KnowledgeMapOverview({
   }
 
   return (
-    <div className="learning-os-page discovery-page knowledge-explore">
+    <div className="learning-os-page discovery-page knowledge-explore" data-map-expanded={mapExpanded}>
       <header className="knowledge-banner">
         <div>
           <div className="discovery-badges">
@@ -402,7 +455,11 @@ function KnowledgeMapOverview({
                 ] as const
               }
               value={view}
-              onChange={setView}
+              onChange={(next) => {
+                setView(next);
+                setMapExpanded(false);
+                setDetailsSheetOpen(false);
+              }}
               label="Cách xem môn học"
               variant="pill"
             />
@@ -599,12 +656,27 @@ function KnowledgeMapOverview({
               </section>
               <div className="knowledge-layout">
                 <div className="knowledge-map-column">
-                  <Card className="knowledge-map">
+                  <Card className="knowledge-map" data-map-expanded={mapExpanded}>
                     <div className="knowledge-map-heading">
                       <div>
                         <h2>Bản đồ khám phá</h2>
                         <p>Mỗi chủ đề là một điểm đến mới.</p>
                       </div>
+                      {view === "map" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="knowledge-map-fullscreen-toggle"
+                          aria-pressed={mapExpanded}
+                          onClick={() => {
+                            setDetailsSheetOpen(false);
+                            setMapExpanded((value) => !value);
+                          }}
+                        >
+                          <Icon name={mapExpanded ? "close" : "hub"} />
+                          {mapExpanded ? "Thu nhỏ" : "Toàn màn hình"}
+                        </Button>
+                      )}
                     </div>
                     <div className="knowledge-map__toolbar">
                       <span>
@@ -783,7 +855,10 @@ function KnowledgeMapOverview({
                                       top: `${y / 6}%`,
                                     }}
                                     data-state={state}
-                                    onClick={() => setFocusedId(topic.id)}
+                                    onClick={(event) => {
+                                      setFocusedId(topic.id);
+                                      if (mapExpanded) openDetailsSheet(event.currentTarget);
+                                    }}
                                     aria-pressed={focus?.id === topic.id}
                                   >
                                     <span className="knowledge-topic-node__orb">
@@ -926,15 +1001,21 @@ function KnowledgeMapOverview({
                           variant="secondary"
                           size="sm"
                           className="knowledge-details-jump"
-                          onClick={() => {
-                            details.current?.focus({ preventScroll: true });
-                            details.current?.scrollIntoView({
-                              block: "start",
-                              behavior: window.matchMedia(
-                                "(prefers-reduced-motion: reduce)",
-                              ).matches
-                                ? "auto"
-                                : "smooth",
+                          onClick={(event) => {
+                            if (mapExpanded) {
+                              openDetailsSheet(event.currentTarget);
+                              return;
+                            }
+                            requestAnimationFrame(() => {
+                              details.current?.focus({ preventScroll: true });
+                              details.current?.scrollIntoView({
+                                block: "start",
+                                behavior: window.matchMedia(
+                                  "(prefers-reduced-motion: reduce)",
+                                ).matches
+                                  ? "auto"
+                                  : "smooth",
+                              });
                             });
                           }}
                         >
@@ -1015,8 +1096,26 @@ function KnowledgeMapOverview({
                   ref={details}
                   tabIndex={-1}
                   className="knowledge-details"
+                  data-sheet-open={detailsSheetOpen}
+                  role={mapExpanded && detailsSheetOpen ? "dialog" : undefined}
+                  aria-modal={mapExpanded && detailsSheetOpen ? true : undefined}
+                  inert={mapExpanded && !detailsSheetOpen}
                   aria-label="Thông tin chủ đề"
                 >
+                  {mapExpanded && detailsSheetOpen && (
+                    <div className="knowledge-details-sheet-header">
+                      <strong>Chủ đề đang khám phá</strong>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={closeDetailsSheet}
+                        aria-label="Đóng thông tin chủ đề"
+                      >
+                        <Icon name="close" />
+                        Đóng
+                      </Button>
+                    </div>
+                  )}
                   <Card className="knowledge-topic-node-panel">
                     {focus ? (
                       <>

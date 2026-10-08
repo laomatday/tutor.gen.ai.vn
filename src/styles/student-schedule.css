@@ -1012,3 +1012,19 @@
     }
   }
 }
+
+
+/* Compact calendar: tap-friendly dates without cutting off weekly views. */
+@layer components {
+  @container schedule (max-width: 34rem) {
+    .schedule-day {
+      min-width: 44px;
+      scroll-snap-align: center;
+    }
+    .schedule-days {
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+    }
+    .schedule-editor { max-width: calc(100vw - 24px); }
+  }
+}
