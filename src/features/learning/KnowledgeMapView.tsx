@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Icon, Input } from "../../components/ui";
+import { Button, Card, Icon, Input, Progress } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
 import { getCourseProgress, lessonHref, ownedPublishedLessons, studentProfile } from "../curriculum";
 import { normalizeSearch } from "../../lib/search";
@@ -58,67 +58,143 @@ function KnowledgeMapOverview({ onNavigate }: { onNavigate: (path: string) => vo
       subject: subjects.find((subject) => subject.id === enrollment.subjectId),
       progress: getCourseProgress(lessons, topics, completedLessonIds, enrollment),
     }))
-    .filter((item) => Boolean(item.subject) && item.progress.total > 0);
+    .filter((item) => item.subject && item.progress.total > 0);
   const selected = enrolled.find((item) => item.subject?.id === requested) ?? enrolled[0];
-  const progress = selected?.progress;
-  const currentTopics = selected ? topics.filter((topic) => topic.gradeId === selected.enrollment.gradeId && topic.subjectId === selected.enrollment.subjectId) : [];
+  const currentTopics = selected
+    ? topics.filter((topic) =>
+      topic.gradeId === selected.enrollment.gradeId
+      && topic.subjectId === selected.enrollment.subjectId
+      && selected.progress.lessons.some((lesson) => lesson.topicId === topic.id))
+    : [];
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const focus = currentTopics.find((topic) => topic.id === focusedId)
+    ?? currentTopics.find((topic) =>
+      selected?.progress.lessons.some((lesson) => lesson.topicId === topic.id && !completedLessonIds.includes(lesson.id)))
+    ?? currentTopics[0];
+  const topicLessonSet = (id: string) => selected?.progress.lessons.filter((lesson) => lesson.topicId === id) ?? [];
+  const completed = (id: string) => topicLessonSet(id).filter((lesson) => completedLessonIds.includes(lesson.id)).length;
+  const focusedLessons = focus ? topicLessonSet(focus.id) : [];
+  const focusedDone = focus ? completed(focus.id) : 0;
+  const next = focusedLessons.find((lesson) => !completedLessonIds.includes(lesson.id)) ?? focusedLessons[0];
+  const positions = currentTopics.map((topic, index) => {
+    const angle = (index / Math.max(1, currentTopics.length)) * Math.PI * 2 - Math.PI / 2;
+    return { topic, x: 50 + 36 * Math.cos(angle), y: 50 + 36 * Math.sin(angle) };
+  });
   return (
-    <div className="learning-os-page learning-mvp-page">
-      <header className="learning-mvp-page-heading">
-        <p className="learning-mvp-kicker">LỘ TRÌNH HỌC TẬP</p>
-        <h1>Lộ trình của bạn</h1>
-        <p>Chọn một chủ đề để học lý thuyết, xem ví dụ và luyện bài tập. Tiến độ tính từ các bài đã hoàn thành.</p>
-      </header>
-      <nav aria-label="Chọn môn học" className="flex flex-wrap gap-2">
+    <div className="learning-os-page ai-v3-page advanced-workspace">
+      <section className="ai-v3-page-banner advanced-map-banner">
+        <div>
+          <p className="ai-v3-eyebrow">BẢN ĐỒ TRI THỨC · LỘ TRÌNH THỰC TẾ</p>
+          <h1>Knowledge Universe <span>/ Môn học</span></h1>
+          <p>Khám phá chủ đề và bài học đã xuất bản. Các đường nối thể hiện cùng một khóa học, không phải quan hệ tiên quyết do AI suy luận.</p>
+        </div>
+      </section>
+
+      <nav aria-label="Chọn môn học" className="ai-v3-subject-tabs">
         {enrolled.map((item) => (
-          <Button key={item.enrollment.subjectId} variant="surface" aria-current={selected?.enrollment.subjectId === item.enrollment.subjectId ? "page" : undefined}
-            className="learning-mvp-subject-tab" onClick={() => onNavigate(`/hoc-bai?grade=${item.enrollment.gradeId}&subject=${item.enrollment.subjectId}`)}>
-            <Icon name={item.subject!.icon}/>{item.subject!.name}
+          <Button key={item.enrollment.subjectId} variant="surface"
+            aria-current={selected?.enrollment.subjectId === item.enrollment.subjectId ? "page" : undefined}
+            className={"ai-v3-subject-tab " + (selected?.enrollment.subjectId === item.enrollment.subjectId ? "is-active" : "")}
+            onClick={() => onNavigate("/hoc-bai?grade=" + item.enrollment.gradeId + "&subject=" + item.enrollment.subjectId)}>
+            <Icon name={item.subject!.icon} /><span><strong>{item.subject!.name} · Lớp {item.enrollment.gradeId}</strong><small>{item.progress.completed}/{item.progress.total} bài đã học</small></span>
           </Button>
         ))}
       </nav>
-      {selected ? <>
-        <section className="learning-mvp-card">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-lg font-bold text-brand">{selected.subject!.name} · Lớp {selected.enrollment.gradeId}</h2>
-            <strong className="text-lg text-brand">{progress!.percent}%</strong>
-          </div>
-          <div className="learning-mvp-progress mt-3"><span style={{width:`${progress!.percent}%`}}/></div>
-          <p className="mt-2 text-xs text-ink-600">{progress!.completed}/{progress!.total} bài đã hoàn thành</p>
-        </section>
-        <div className="grid gap-3 lg:grid-cols-2">
-          {currentTopics.map((topic) => {
-            const items = progress!.lessons.filter((lesson) => lesson.topicId === topic.id);
-            if (!items.length) return null;
-            const completed = items.filter((lesson) => completedLessonIds.includes(lesson.id)).length;
-            const next = items.find((lesson) => !completedLessonIds.includes(lesson.id)) ?? items[0];
-            return <section className="learning-mvp-card" key={topic.id}>
-              <p className="learning-mvp-kicker">{completed}/{items.length} BÀI HOÀN THÀNH</p>
-              <h2 className="mt-2 text-xl font-bold text-brand">{topic.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-ink-600">{topic.description}</p>
-              <ol className="mt-4 space-y-2">
-                {items.map((lesson) => <li key={lesson.id}>
-                  <Button variant="ghost" className="learning-mvp-lesson" onClick={() => onNavigate(lessonHref(lesson))}>
-                    <Icon name={completedLessonIds.includes(lesson.id) ? "check_circle" : "menu_book"} />
-                    <span className="flex-1 text-left">{lesson.title}</span>
-                    <Icon name="chevron_right" />
-                  </Button>
-                </li>)}
-              </ol>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Button size="sm" onClick={() => onNavigate(lessonHref(next))}>
-                  {completed === items.length ? "Ôn lại chủ đề" : "Bắt đầu học"} <Icon name="arrow_forward" />
-                </Button>
-                {items.some((lesson) => lesson.id === practiceProblem.lessonId) && (
-                  <Button size="sm" variant="secondary" onClick={() => onNavigate(`/tu-giai?problem=${practiceProblem.id}`)}>
-                    Luyện tập parabol
-                  </Button>
-                )}
+      {!selected ? (
+        <Card className="p-6">
+          <h2 className="font-bold text-brand">Chưa có khóa học được xuất bản</h2>
+          <p className="mt-2 text-sm text-ink-600">Hãy đăng ký môn học hoặc chờ học liệu được xuất bản để xem bản đồ.</p>
+        </Card>
+      ) : (
+        <>
+          <section className="ai-v3-legend">
+            <strong>Trạng thái lộ trình</strong>
+            <span className="ai-v3-legend__item" data-state="mastered"><i/><b>Hoàn thành chủ đề</b></span>
+            <span className="ai-v3-legend__item" data-state="current"><i/><b>Đang chọn</b></span>
+            <span className="ai-v3-legend__item"><i/><b>Chưa hoàn thành</b></span>
+            <span className="ml-auto text-sm font-semibold text-brand">{selected.progress.completed}/{selected.progress.total} bài đã hoàn thành</span>
+          </section>
+          <div className="ai-v3-map-layout">
+            <section className="ai-v3-map-shell" aria-label="Sơ đồ kiến thức tương tác">
+              <div className="ai-v3-map-shell__head">
+                <div>
+                  <p className="ai-v3-eyebrow"><Icon name="hub"/> SƠ ĐỒ CHỦ ĐỀ</p>
+                  <h2>{selected.subject!.name} · Lớp {selected.enrollment.gradeId}</h2>
+                  <p>Chạm vào từng nút để xem bài học, tiến độ và hoạt động tiếp theo.</p>
+                </div>
+                <span className="ai-v3-status">{currentTopics.length} chủ đề · {selected.progress.total} bài</span>
               </div>
-            </section>;
-          })}
-        </div>
-      </> : <div className="learning-mvp-card">Chưa có môn học đã đăng ký được xuất bản.</div>}
+              <div className="advanced-graph-viewport">
+                <div className="ai-v3-knowledge-graph advanced-graph">
+                  <svg aria-hidden="true" className="absolute inset-0 h-full w-full" viewBox="0 0 1000 550" preserveAspectRatio="none">
+                    {positions.map(({topic,x,y}) => (
+                      <path key={topic.id} d={"M500 275 L" + x*10 + " " + y*5.5}
+                        className={"ai-v3-map-edge " + (topic.id === focus?.id ? "" : "ai-v3-map-edge--soft")}/>
+                    ))}
+                  </svg>
+                  <div className="ai-v3-map-core">
+                    <Icon name="school"/>
+                    <strong>{selected.subject!.name}</strong>
+                    <small>{selected.progress.percent}% đã hoàn thành</small>
+                  </div>
+                  {positions.map(({ topic, x, y }) => {
+                    const items = topicLessonSet(topic.id);
+                    const done = completed(topic.id);
+                    const state = items.length && done === items.length ? "mastered" : focus?.id === topic.id ? "current" : "untouched";
+                    return (
+                      <Button key={topic.id} variant="surface" data-state={state}
+                        className="ai-v3-map-node"
+                        style={{left:x+"%",top:y+"%"}}
+                        onClick={() => setFocusedId(topic.id)}
+                        aria-pressed={focus?.id === topic.id}
+                        aria-label={topic.title + " — " + done + "/" + items.length + " bài hoàn thành"}>
+                        <span className="ai-v3-map-node__orb"><Icon name={done === items.length ? "check" : "menu_book"}/></span>
+                        <strong>{topic.title}</strong><small>{done}/{items.length} bài</small>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="ai-v3-map-footer">
+                <span><Icon name="info"/> Dữ liệu từ chương trình đang mở</span>
+                <span>Chủ đề đang chọn: <strong>{focus?.title ?? "Chưa có"}</strong></span>
+              </div>
+            </section>
+            <aside className="ai-v3-card ai-v3-node-panel" aria-label="Thông tin chủ đề">
+              {focus ? (
+                <>
+                  <p className="ai-v3-eyebrow"><Icon name="account_tree"/> CHỦ ĐỀ ĐANG CHỌN</p>
+                  <h2 className="ai-v3-section-title">{focus.title}</h2>
+                  <p className="ai-v3-section-copy">{focus.description}</p>
+                  <div className="ai-v3-node-score mt-5">
+                    <span>Tiến độ bài học</span><strong>{focusedLessons.length ? Math.round(focusedDone / focusedLessons.length * 100) : 0}%</strong>
+                    <Progress className="mt-3" tone="accent" value={focusedDone} max={focusedLessons.length||1} label={"Hoàn thành chủ đề " + focus.title}/>
+                    <small>{focusedDone}/{focusedLessons.length} bài đã hoàn thành</small>
+                  </div>
+                  <div className="ai-v3-node-section mt-5">
+                    <h3><Icon name="menu_book"/> Bài học trong chủ đề</h3>
+                    <ul>
+                      {focusedLessons.map((lesson) => (
+                        <li key={lesson.id}>
+                          <Icon name={completedLessonIds.includes(lesson.id)?"check_circle":"radio_button_unchecked"}/>
+                          <span className="min-w-0 flex-1">{lesson.title}</span>
+                          <Button variant="ghost" size="sm" aria-label={"Mở " + lesson.title} onClick={() => onNavigate(lessonHref(lesson))}><Icon name="arrow_forward"/></Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  {next && <Button className="mt-5 w-full" onClick={() => onNavigate(lessonHref(next))}>{focusedDone===focusedLessons.length?"Ôn lại chủ đề":"Học bài tiếp theo"} <Icon name="arrow_forward"/></Button>}
+                  {focusedLessons.some((lesson)=>lesson.id===practiceProblem.lessonId) && (
+                    <Button variant="secondary" className="mt-2 w-full" onClick={() => onNavigate("/tu-giai?problem="+practiceProblem.id)}>Luyện tập parabol</Button>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-ink-600">Chưa có chủ đề nào trong môn học này.</p>
+              )}
+            </aside>
+          </div>
+        </>
+      )}
     </div>
   );
 }
