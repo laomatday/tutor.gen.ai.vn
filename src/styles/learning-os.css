@@ -150,6 +150,7 @@
 
   /* AI Pulse V3 product language */
   .ai-v3-page { @apply space-y-5; }
+  .ai-v3-page small { font-size: 12px; }
   .ai-v3-eyebrow { @apply flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.11em] text-accent-strong; }
   .ai-v3-section-title { @apply mt-1 text-xl font-extrabold tracking-tight text-brand sm:text-2xl; }
   .ai-v3-section-copy { @apply mt-1 text-sm leading-6 text-ink-500; }
