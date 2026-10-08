@@ -158,7 +158,7 @@ test("Focus Studio: log only real attempts and reveal mathematical model after v
 test("Home → Luyện tập → Nộp bài → Xem lại", async ({ page }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Mỗi ngày, khám phá một điều mới." }),
+    page.getByRole("heading", { name: "Hôm nay", exact: true }),
   ).toBeVisible();
   await page.getByRole("tab", { name: "Luyện một bài", exact: true }).click();
   await page
