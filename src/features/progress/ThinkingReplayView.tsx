@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Icon } from "../../components/ui";
+import { Button, Icon, Select } from "../../components/ui";
 import { storageKeys } from "../../config/storage";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { useCurriculum } from "../../context/CurriculumContext";
@@ -73,9 +73,9 @@ export function ThinkingReplayView({ onNavigate }: Props) {
           <span className="flex-1 text-sm font-semibold text-ink-600">{cursor + 1}/{events.length} sự kiện · {lastEvent ? elapsed(lastEvent.at) : "00:00"}</span>
           <label className="flex items-center gap-2 text-sm">
             Tốc độ
-            <select className="ui-field ui-field-sm" value={speed} onChange={(event) => setSpeed(Number(event.target.value))}>
+            <Select className="ui-field ui-field-sm" value={speed} onChange={(event) => setSpeed(Number(event.target.value))}>
               <option value={0.75}>0.75×</option><option value={1}>1×</option><option value={1.5}>1.5×</option><option value={2}>2×</option>
-            </select>
+            </Select>
           </label>
         </div>
         <input type="range" className="mt-4 w-full accent-primary" aria-label="Vị trí phát lại"

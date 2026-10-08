@@ -121,6 +121,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
     .sort((a, b) => a.order - b.order);
   const completion = getCourseProgress(lessons, topics, completedLessonIds);
   const progress = completion.percent;
+  const finishedCount = completion.completed;
   const resumeLesson =
     registeredLessons.find((item) => !completedLessonIds.includes(item.id)) ||
     registeredLessons[0];

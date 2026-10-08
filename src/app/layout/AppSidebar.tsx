@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import { Button, Icon } from "../../components/ui";
+import { Button, Icon, Progress } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
 import { appConfig } from "../../config/app";
@@ -92,9 +92,7 @@ export function AppSidebar({
               <span className="text-xs font-semibold">Bài học đã hoàn thành</span>
               <strong className="text-sm">{progress}%</strong>
             </div>
-            <div className="student-sidebar-progress__track" role="progressbar" aria-label="Tiến độ hoàn thành" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <span style={{ width: `${progress}%` }} />
-            </div>
+            <Progress value={progress} label="Tiến độ hoàn thành" tone="accent" className="student-sidebar-progress__track" />
             <small>{balance} GP · Dữ liệu minh họa</small>
           </div>
           <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile">
