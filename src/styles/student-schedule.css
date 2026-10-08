@@ -102,7 +102,7 @@
     gap: 8px;
     overflow-x: auto;
     padding: 3px;
-    scrollbar-width: thin;
+    scrollbar-width: none;
   }
   .schedule-day.ui-btn {
     position: relative;
@@ -200,7 +200,7 @@
     white-space: nowrap;
     margin-bottom: 18px;
     padding: 2px 2px 0;
-    scrollbar-width: thin;
+    scrollbar-width: none;
     border-bottom: 1px solid var(--schedule-border);
   }
   .schedule-filters .ui-tab {

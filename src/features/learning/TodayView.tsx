@@ -473,12 +473,41 @@ export function TodayView({
           className="home-milestones home-trio-card home-milestones-card"
           aria-labelledby="home-progress-title"
         >
-                <div className="home-progress-intro">
-                  <span className="home-panel-icon">
+                <div
+                  className="home-progress-intro cursor-pointer select-none group"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() =>
+                    onNavigate(
+                      courseHref(
+                        missionEnrollment.gradeId,
+                        missionEnrollment.subjectId,
+                      ),
+                    )
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      onNavigate(
+                        courseHref(
+                          missionEnrollment.gradeId,
+                          missionEnrollment.subjectId,
+                        ),
+                      );
+                    }
+                  }}
+                  aria-label={`Mở môn ${missionSubject?.name ?? "học"} lớp ${missionEnrollment.gradeId}`}
+                >
+                  <span className="home-panel-icon transition-transform group-hover:scale-105 group-active:scale-95">
                     <Icon name="route" />
                   </span>
-                  <div className="home-progress-header-info">
-                    <h2 id="home-progress-title">Chặng tiếp theo của bạn</h2>
+                  <div className="home-progress-header-info flex-1 min-w-0">
+                    <h2
+                      id="home-progress-title"
+                      className="group-hover:text-brand transition-colors"
+                    >
+                      Chặng tiếp theo của bạn
+                    </h2>
                     <p>
                       {missionSubject?.name ?? "Môn học"} · Lớp{" "}
                       {missionEnrollment.gradeId}
@@ -489,21 +518,12 @@ export function TodayView({
                       </strong>
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    className="home-course-roadmap-btn"
-                    onClick={() =>
-                      onNavigate(
-                        courseHref(
-                          missionEnrollment.gradeId,
-                          missionEnrollment.subjectId,
-                        ),
-                      )
-                    }
+                  <span
+                    className="home-progress-intro-arrow ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-400 group-hover:bg-brand/10 group-hover:text-brand group-hover:translate-x-0.5 transition-all"
+                    aria-hidden="true"
                   >
-                    Xem lộ trình
                     <Icon name="arrow_forward" />
-                  </Button>
+                  </span>
                 </div>
                 <CourseLearningPath
                   path={coursePath}

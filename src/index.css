@@ -280,8 +280,33 @@
     outline-color: var(--color-focus-soft);
   }
 
-  /* Keep scrollbars available: essential for long learning materials and data tables. */
-  html { scrollbar-gutter: stable; }
+  /* Bỏ toàn bộ thanh scroll trong toàn bộ ứng dụng, vẫn giữ khả năng cuộn */
+  html,
+  body {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+}
+
+/* Bỏ toàn bộ thanh scroll trong toàn bộ ứng dụng */
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
 }
 
 /* ==========================================================================
