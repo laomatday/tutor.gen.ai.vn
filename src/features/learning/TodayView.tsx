@@ -281,6 +281,26 @@ export function TodayView({
                         {nextLesson?.summary ??
                           "Khám phá lý thuyết qua ví dụ thực tế và các câu tự luyện."}
                       </p>
+                    </div>
+                    <div className="home-action-footer">
+                      <Button
+                        className="home-primary-start-btn"
+                        variant="primary"
+                        onClick={() =>
+                          onNavigate(
+                            nextLesson
+                              ? lessonHref(nextLesson)
+                              : routePath("hoc-bai"),
+                          )
+                        }
+                      >
+                        <Icon name="play_arrow" />
+                        <span>
+                          {nextLesson ? "Bắt đầu bài học" : "Chọn chủ đề"}
+                        </span>
+                        <Icon name="arrow_forward" />
+                      </Button>
+                    </div>
                       {nextLesson && (
                         <div className="home-action-steps">
                           {[
@@ -306,26 +326,6 @@ export function TodayView({
                           ))}
                         </div>
                       )}
-                    </div>
-                    <div className="home-action-footer">
-                      <Button
-                        className="home-primary-start-btn"
-                        variant="primary"
-                        onClick={() =>
-                          onNavigate(
-                            nextLesson
-                              ? lessonHref(nextLesson)
-                              : routePath("hoc-bai"),
-                          )
-                        }
-                      >
-                        <Icon name="play_arrow" />
-                        <span>
-                          {nextLesson ? "Bắt đầu bài học" : "Chọn chủ đề"}
-                        </span>
-                        <Icon name="arrow_forward" />
-                      </Button>
-                    </div>
                   </div>
                 )}
 
