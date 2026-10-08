@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { getCourseProgress, INITIAL_LESSONS, INITIAL_TOPICS, lessonHref } from "../src/features/curriculum";
 import { studentRoutes } from "../src/config/routes";
 import { readRoute } from "../src/app/navigation";
@@ -69,4 +70,15 @@ test("practice link is eligible only for the matching published lesson", () => {
 test("dynamic student schedule and admin icons are registered", () => {
   for(const session of initialScheduleSessions) assert.ok(ICONS[session.subjectIcon], session.subjectIcon);
   for(const name of ["translate","science","biotech","lock_open"]) assert.ok(ICONS[name], name);
+});
+
+test("sidebar navigation uses chevrons, not hamburger icons", () => {
+  const sidebar = readFileSync("src/app/layout/AppSidebar.tsx", "utf8");
+  const header = readFileSync("src/app/layout/AppHeader.tsx", "utf8");
+  const css = readFileSync("src/app/layout/shell.css", "utf8");
+  for (const source of [sidebar, header]) assert.doesNotMatch(source, /<Icon\s+name=["']menu["']/);
+  assert.match(sidebar, /student-sidebar-edge-toggle/);
+  assert.match(sidebar, /"chevron_left"\s*:\s*"chevron_right"/);
+  assert.match(header, /"chevron_left"\s*:\s*"chevron_right"/);
+  assert.match(css, /\.app-sidebar--student\s+\.student-sidebar-edge-toggle/);
 });

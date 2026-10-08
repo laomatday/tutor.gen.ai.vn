@@ -55,8 +55,9 @@ export function AppHeader({ role, menuOpen, menuRef, onMenu, onNavigate, onOpenP
             aria-expanded={menuOpen}
             aria-controls="main-navigation"
             className="app-header__menu lg:hidden"
+            title={menuOpen ? "Đóng menu học tập" : "Mở menu học tập"}
           >
-            <Icon name="menu" />
+            <Icon name={menuOpen ? "chevron_left" : "chevron_right"} />
           </Button>
           <span className="app-header__context">{appConfig.brand.name}</span>
         </div>
@@ -118,7 +119,7 @@ export function AppHeader({ role, menuOpen, menuRef, onMenu, onNavigate, onOpenP
       <div className="flex min-w-0 items-center gap-2">
         <Button ref={menuRef} variant="ghost" size="icon" onClick={onMenu}
           aria-label="Mở menu" aria-expanded={menuOpen} aria-controls="main-navigation" className="lg:hidden">
-          <Icon name="menu" />
+          <Icon name="chevron_right" />
         </Button>
         <BrandLogo compact showProduct={false} className="hidden sm:inline-flex md:hidden" />
         <span className="app-header__context hidden md:inline">{role === "Giáo viên" ? "Không gian giáo viên" : "Không gian quản trị"}</span>

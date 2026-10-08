@@ -74,10 +74,19 @@ test("Reference shell: desktop sidebar, breadcrumb, and collapsed rail", async (
   await expect(nav.getByRole("button", {name:"Môn học"})).toBeVisible();
   await expect(sidebar).toHaveCSS("background-color","rgb(255, 255, 255)");
   expect(Math.round((await sidebar.boundingBox()).width)).toBe(288);
-  await sidebar.getByRole("button", {name:"Thu gọn menu"}).click();
-  await expect(sidebar).toHaveClass(/app-sidebar--student/);
+  const handle = sidebar.getByRole("button", {name:"Thu gọn thanh bên"});
+  await expect(handle).toBeVisible();
+  await expect(handle).toHaveAttribute("aria-expanded","true");
+  const toggleBox = await handle.boundingBox();
+  const sideBox = await sidebar.boundingBox();
+  expect(toggleBox.x + toggleBox.width / 2).toBeGreaterThan(sideBox.width - 5);
+  await handle.click();
   await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
-  await sidebar.getByRole("button", {name:"Mở rộng menu"}).click();
+  await expect(sidebar.getByRole("button", {name:"Phần thưởng"})).toBeVisible();
+  await expect(sidebar.getByRole("button", {name:"Mở rộng thanh bên"})).toHaveAttribute("aria-expanded","false");
+  await page.reload();
+  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
+  await sidebar.getByRole("button", {name:"Mở rộng thanh bên"}).click();
   await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(288);
 });
 
@@ -88,6 +97,11 @@ test("Reference shell: mobile drawer preserves navigation and focus", async ({pa
   await toggle.click();
   const sidebar = page.locator("#main-navigation");
   await expect(sidebar).toHaveClass(/is-open/);
+  await expect(sidebar.getByRole("button",{name:"Đóng menu"})).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(sidebar).not.toHaveClass(/is-open/);
+  await expect(toggle).toBeFocused();
+  await toggle.click();
   await expect(sidebar.getByRole("button",{name:"Đóng menu"})).toBeFocused();
   await sidebar.getByRole("button",{name:"Đóng menu"}).click();
   await expect(sidebar).not.toHaveClass(/is-open/);
