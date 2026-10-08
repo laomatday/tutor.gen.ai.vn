@@ -534,7 +534,7 @@
       "$1\\sqrt{2}$"
     ],
     "correctIndex": 0,
-    "explanation": "Vì 8 = 2² × 2, ta có √8 = 2√2.",
+    "explanation": "Vì 8 = 2² × 2, ta có √8 = 2√2. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 2,
@@ -561,7 +561,7 @@
       "$2\\sqrt{2}$"
     ],
     "correctIndex": 1,
-    "explanation": "Vì 18 = 3² × 2, ta có √18 = 3√2.",
+    "explanation": "Vì 18 = 3² × 2, ta có √18 = 3√2. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 3,
@@ -588,7 +588,7 @@
       "$3\\sqrt{3}$"
     ],
     "correctIndex": 2,
-    "explanation": "Vì 48 = 4² × 3, ta có √48 = 4√3.",
+    "explanation": "Vì 48 = 4² × 3, ta có √48 = 4√3. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 4,
@@ -615,7 +615,7 @@
       "$5\\sqrt{3}$"
     ],
     "correctIndex": 3,
-    "explanation": "Vì 75 = 5² × 3, ta có √75 = 5√3.",
+    "explanation": "Vì 75 = 5² × 3, ta có √75 = 5√3. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 5,
@@ -642,7 +642,7 @@
       "$1\\sqrt{5}$"
     ],
     "correctIndex": 0,
-    "explanation": "Vì 20 = 2² × 5, ta có √20 = 2√5.",
+    "explanation": "Vì 20 = 2² × 5, ta có √20 = 2√5. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 2,
@@ -669,7 +669,7 @@
       "$2\\sqrt{5}$"
     ],
     "correctIndex": 1,
-    "explanation": "Vì 45 = 3² × 5, ta có √45 = 3√5.",
+    "explanation": "Vì 45 = 3² × 5, ta có √45 = 3√5. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 3,
@@ -696,7 +696,7 @@
       "$3\\sqrt{6}$"
     ],
     "correctIndex": 2,
-    "explanation": "Vì 96 = 4² × 6, ta có √96 = 4√6.",
+    "explanation": "Vì 96 = 4² × 6, ta có √96 = 4√6. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 4,
@@ -723,7 +723,7 @@
       "$5\\sqrt{6}$"
     ],
     "correctIndex": 3,
-    "explanation": "Vì 150 = 5² × 6, ta có √150 = 5√6.",
+    "explanation": "Vì 150 = 5² × 6, ta có √150 = 5√6. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 5,
@@ -750,7 +750,7 @@
       "$1\\sqrt{7}$"
     ],
     "correctIndex": 0,
-    "explanation": "Vì 28 = 2² × 7, ta có √28 = 2√7.",
+    "explanation": "Vì 28 = 2² × 7, ta có √28 = 2√7. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 2,
@@ -777,7 +777,7 @@
       "$2\\sqrt{7}$"
     ],
     "correctIndex": 1,
-    "explanation": "Vì 63 = 3² × 7, ta có √63 = 3√7.",
+    "explanation": "Vì 63 = 3² × 7, ta có √63 = 3√7. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 3,
@@ -804,7 +804,7 @@
       "$3\\sqrt{10}$"
     ],
     "correctIndex": 2,
-    "explanation": "Vì 160 = 4² × 10, ta có √160 = 4√10.",
+    "explanation": "Vì 160 = 4² × 10, ta có √160 = 4√10. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 4,
@@ -831,7 +831,7 @@
       "$5\\sqrt{10}$"
     ],
     "correctIndex": 3,
-    "explanation": "Vì 250 = 5² × 10, ta có √250 = 5√10.",
+    "explanation": "Vì 250 = 5² × 10, ta có √250 = 5√10. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 5,
@@ -858,7 +858,7 @@
       "$1\\sqrt{11}$"
     ],
     "correctIndex": 0,
-    "explanation": "Vì 44 = 2² × 11, ta có √44 = 2√11.",
+    "explanation": "Vì 44 = 2² × 11, ta có √44 = 2√11. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 2,
@@ -885,7 +885,7 @@
       "$2\\sqrt{11}$"
     ],
     "correctIndex": 1,
-    "explanation": "Vì 99 = 3² × 11, ta có √99 = 3√11.",
+    "explanation": "Vì 99 = 3² × 11, ta có √99 = 3√11. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 3,
@@ -912,7 +912,7 @@
       "$3\\sqrt{13}$"
     ],
     "correctIndex": 2,
-    "explanation": "Vì 208 = 4² × 13, ta có √208 = 4√13.",
+    "explanation": "Vì 208 = 4² × 13, ta có √208 = 4√13. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 4,
@@ -939,7 +939,7 @@
       "$5\\sqrt{13}$"
     ],
     "correctIndex": 3,
-    "explanation": "Vì 325 = 5² × 13, ta có √325 = 5√13.",
+    "explanation": "Vì 325 = 5² × 13, ta có √325 = 5√13. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 5,
@@ -966,7 +966,7 @@
       "$1\\sqrt{14}$"
     ],
     "correctIndex": 0,
-    "explanation": "Vì 56 = 2² × 14, ta có √56 = 2√14.",
+    "explanation": "Vì 56 = 2² × 14, ta có √56 = 2√14. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 2,
@@ -993,7 +993,7 @@
       "$2\\sqrt{14}$"
     ],
     "correctIndex": 1,
-    "explanation": "Vì 126 = 3² × 14, ta có √126 = 3√14.",
+    "explanation": "Vì 126 = 3² × 14, ta có √126 = 3√14. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 3,
@@ -1020,7 +1020,7 @@
       "$3\\sqrt{15}$"
     ],
     "correctIndex": 2,
-    "explanation": "Vì 240 = 4² × 15, ta có √240 = 4√15.",
+    "explanation": "Vì 240 = 4² × 15, ta có √240 = 4√15. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 4,
@@ -1047,7 +1047,7 @@
       "$5\\sqrt{15}$"
     ],
     "correctIndex": 3,
-    "explanation": "Vì 375 = 5² × 15, ta có √375 = 5√15.",
+    "explanation": "Vì 375 = 5² × 15, ta có √375 = 5√15. Phần dưới dấu căn không còn thừa số chính phương.",
     "check": {
       "kind": "radical-simplify",
       "k": 5,

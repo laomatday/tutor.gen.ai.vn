@@ -26,7 +26,7 @@ export function buildBank(){
   bank.push(make(`m9-radical-simplify-${String(i+1).padStart(2,"0")}`,"math9-radical-simplification",
    `Rút gọn biểu thức $\sqrt{${n}}$ (kết quả ở dạng căn tối giản).`,`$${k}\sqrt{${a}}$`,
    [`$${k+1}\sqrt{${a}}$`,`$\sqrt{${k*a}}$`,`$${k-1}\sqrt{${a}}$`],
-   `Vì ${n} = ${k}² × ${a}, ta có √${n} = ${k}√${a}.`,
+   `Vì ${n} = ${k}² × ${a}, ta có √${n} = ${k}√${a}. Phần dưới dấu căn không còn thừa số chính phương.`,
    {kind:"radical-simplify",k,m:a,n},["RAD_SQUARE_FACTOR","RAD_MULTIPLIER"],i));
  }
  for(let i=0;i<20;i++){
