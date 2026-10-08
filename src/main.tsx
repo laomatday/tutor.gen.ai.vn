@@ -9,5 +9,6 @@ import './styles/workspace-responsive.css';
 import {createRoot} from 'react-dom/client';
 import App from './app/App';
 import {CurriculumProvider} from './context/CurriculumContext';
+import {TutorAuthProvider} from './features/pilot/TutorAuthContext';
 
-createRoot(document.getElementById('root')!).render(<CurriculumProvider><App /></CurriculumProvider>);
+createRoot(document.getElementById('root')!).render(<TutorAuthProvider><CurriculumProvider><App /></CurriculumProvider></TutorAuthProvider>);
