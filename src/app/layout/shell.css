@@ -193,7 +193,7 @@
   .student-sidebar-section__label {
     margin: 0 0 9px;
     padding: 0 8px;
-    color: #788496;
+    color: var(--color-ink-600);
     font-size: 12px;
     line-height: 1.4;
     font-weight: 500;
@@ -260,7 +260,7 @@
   }
 
   .student-sidebar-row__text small {
-    color: #718099;
+    color: var(--color-ink-600);
     font-size: 12px;
     line-height: 1.25;
     font-weight: 400;
@@ -391,7 +391,7 @@
   }
 
   .app-header__breadcrumb-parent { flex-shrink: 0; }
-  .app-header__breadcrumb-chevron { font-size: 17px; flex-shrink: 0; color: #677487; }
+  .app-header__breadcrumb-chevron { font-size: 17px; flex-shrink: 0; color: var(--color-ink-600); }
   .app-header__breadcrumb strong {
     color: var(--color-brand);
     font-weight: 700;
