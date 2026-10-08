@@ -280,21 +280,8 @@
     outline-color: var(--color-focus-soft);
   }
 
-  /* No visible scrollbars anywhere. Content still scrolls by wheel,
-     trackpad, touch and keyboard; hiding the bar also removes the layout
-     shift and the stray gutter it drew inside rounded dialogs. */
-  html,
-  body,
-  * {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  *::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-  }
+  /* Keep scrollbars available: essential for long learning materials and data tables. */
+  html { scrollbar-gutter: stable; }
 }
 
 /* ==========================================================================

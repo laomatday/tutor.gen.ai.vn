@@ -1,272 +1,151 @@
 import { useRef, useState } from "react";
-import { MathLatex, RichMathText, normalizeToLatex } from "../../components/MathLatex";
+import { RichMathText } from "../../components/MathLatex";
 import { Alert, Button, Field, Icon, Textarea } from "../../components/ui";
+import { useCurriculum } from "../../context/CurriculumContext";
 import { appConfig } from "../../config/app";
-import { routePath } from "../../config/routes";
 import { storageKeys } from "../../config/storage";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { studentProfile } from "../learning/data/student";
-import { formulaTools, practicePolicy, practiceProblem } from "./data";
+import { getCourseProgress } from "../curriculum";
+import { formulaTools, getPracticeProblem, practicePolicy } from "./data";
 import {
-  autonomyReward,
-  isPracticeSession,
-  verifySampleAnswer,
-  type AnswerCheck,
-  type PracticeSession,
+  appendPracticeEvent, autonomyReward, createPracticeSession,
+  isPracticeSession, verifySampleAnswer, type AnswerCheck, type PracticeSession,
 } from "./domain";
 
-interface SelfSolveViewProps {
+interface Props {
   onEarnGp: (amount: number, reason: string) => void;
   onNavigate?: (path: string) => void;
 }
 
-export function SelfSolveView({ onEarnGp, onNavigate }: SelfSolveViewProps) {
+export function SelfSolveView({ onEarnGp, onNavigate }: Props) {
+  const id = new URLSearchParams(window.location.search).get("problem");
+  const problem = getPracticeProblem(id || undefined);
+  const { lessons, topics, completedLessonIds } = useCurriculum();
+  const progress = getCourseProgress(lessons, topics, completedLessonIds);
   const [session, setSession, storageError] = useLocalStorage<PracticeSession>(
-    storageKeys.practiceSession,
-    { input: practiceProblem.initialInput, openedHints: [1], rewarded: false },
+    storageKeys.practiceSessionV2,
+    createPracticeSession(problem.id),
     isPracticeSession,
   );
   const [check, setCheck] = useState<AnswerCheck | null>(null);
-  const [activeTool, setActiveTool] = useState("formula");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const submittedRef = useRef(session.rewarded);
-  const openedEarly = session.openedHints.filter((id) => id !== 1).length;
-  const reward = autonomyReward(appConfig.rewards.lessonCompletionGp, openedEarly);
+  const textarea = useRef<HTMLTextAreaElement>(null);
+  const rewardRef = useRef(session.rewarded);
+  const activeSession = session.problemId === problem.id ? session : createPracticeSession(problem.id);
+  const usedHints = activeSession.openedHints.length;
+  const reward = autonomyReward(appConfig.rewards.lessonCompletionGp, usedHints);
 
   const updateInput = (input: string) => {
-    setSession((previous) => ({ ...previous, input }));
+    setSession((current) => ({ ...current, problemId: problem.id, input }));
     setCheck(null);
   };
-
-  const insertFormula = (formula: string) => {
-    const textarea = textareaRef.current;
-    const start = textarea?.selectionStart ?? session.input.length;
-    const end = textarea?.selectionEnd ?? start;
-    const insertion = ` ${formula} `;
-    updateInput(
-      `${session.input.slice(0, start)}${insertion}${session.input.slice(end)}`.slice(
-        0,
-        practicePolicy.inputLimit,
-      ),
-    );
+  const showHint = (hint: { id: number; title: string }) => {
+    if (activeSession.openedHints.includes(hint.id)) return;
+    setSession((current) => {
+      const next = { ...current, openedHints: [...current.openedHints, hint.id] };
+      return appendPracticeEvent(next, "hint", `Mở gợi ý ${hint.id}: ${hint.title}`);
+    });
+  };
+  const inspect = () => {
+    const result = verifySampleAnswer(activeSession.input, problem.point);
+    setCheck(result);
+    setSession((current) => appendPracticeEvent(current, "check", result.message, result.valid));
+  };
+  const submit = () => {
+    const result = verifySampleAnswer(activeSession.input, problem.point);
+    setCheck(result);
+    setSession((current) => ({
+      ...appendPracticeEvent(current, "submit", result.message, result.valid),
+      rewarded: current.rewarded || result.valid,
+    }));
+    if (result.valid && !rewardRef.current) {
+      rewardRef.current = true;
+      onEarnGp(reward, `Hoàn thành: ${problem.title}`);
+    }
+  };
+  const reset = () => {
+    setSession((current) => ({ ...createPracticeSession(problem.id), rewarded: current.rewarded }));
+    setCheck(null);
+    requestAnimationFrame(() => textarea.current?.focus());
+  };
+  const insertFormula = (value: string) => {
+    const input = textarea.current;
+    const start = input?.selectionStart ?? activeSession.input.length;
+    const end = input?.selectionEnd ?? start;
+    updateInput(`${activeSession.input.slice(0, start)}${value}${activeSession.input.slice(end)}`.slice(0, practicePolicy.inputLimit));
     requestAnimationFrame(() => {
-      textarea?.focus();
-      textarea?.setSelectionRange(start + insertion.length, start + insertion.length);
+      input?.focus();
+      input?.setSelectionRange(start + value.length, start + value.length);
     });
   };
 
-  const inspect = () => setCheck(verifySampleAnswer(session.input, practiceProblem.point));
-
-  const submit = () => {
-    const result = verifySampleAnswer(session.input, practiceProblem.point);
-    setCheck(result);
-    if (!result.valid || submittedRef.current) return;
-    submittedRef.current = true;
-    setSession((previous) => ({ ...previous, rewarded: true }));
-    onEarnGp(reward, `Hoàn thành ${practiceProblem.label}: ${practiceProblem.title}`);
-  };
-
-  const state = check?.valid || session.rewarded ? "success" : check ? "warning" : "active";
-
   return (
-    <div className="learning-os-page ai-v3-page">
-      <section className="ai-v3-page-banner ai-v3-page-banner--studio">
-        <div>
-          <p className="ai-v3-eyebrow">Focus Studio · Live Reasoning</p>
-          <h1>Focus Studio</h1>
-          <p>Giải bài cùng AI, rèn tư duy từng bước — không chỉ tìm ra đáp án mà hiểu sâu con đường đi tới đáp án.</p>
-        </div>
-        <img src="/learning-media/learning-horizon.svg" alt="" />
-      </section>
-
+    <div className="learning-os-page learning-mvp-page">
+      <header className="learning-mvp-page-heading">
+        <p className="learning-mvp-kicker">LUYỆN TẬP · {problem.course}</p>
+        <h1>Tự giải bài tập</h1>
+        <p>Viết các bước giải của bạn, nhận phản hồi từ bộ kiểm tra toán học và xem lại những lần thử. Đây chưa phải chức năng chấm bài bằng AI.</p>
+      </header>
       {storageError && <Alert tone="warning">{storageError}</Alert>}
-
-      <section className="ai-v3-studio-statusbar">
-        <span className="ai-v3-status ai-v3-status--primary"><i />Focus Studio Live</span>
-        <span><Icon name="psychology" />Tự giác chủ động · Không giải hộ</span>
-        <span className="ai-v3-status ai-v3-status--success"><Icon name="shield" />Socratic Guard: Đang bật</span>
-        <span className="ml-auto font-mono font-bold text-brand"><Icon name="timer" />18:45 / 25:00</span>
-        {onNavigate && <Button variant="secondary" size="sm" onClick={() => onNavigate(routePath("replay"))}><Icon name="history" />Replay Mode</Button>}
-      </section>
-
-      <section className="ai-v3-tool-ribbon" aria-label="Công cụ Focus Studio">
-        {[
-          ["formula", "functions", "Công thức toán"],
-          ["sketch", "gesture", "Bút phác thảo"],
-          ["graph", "show_chart", "Parabol tương tác"],
-          ["tiles", "grid_view", "Algebra Tiles"],
-          ["note", "edit_note", "Ghi chú nhanh"],
-        ].map(([id, icon, label]) => (
-          <Button
-            key={id}
-            variant="surface"
-            aria-pressed={activeTool === id}
-            className={activeTool === id ? "ai-v3-tool is-active" : "ai-v3-tool"}
-            onClick={() => setActiveTool(id)}
-          >
-            <Icon name={icon} />{label}
-          </Button>
-        ))}
-      </section>
-
-      <div className="ai-v3-studio-layout">
-        <main className="space-y-4">
-          <section className="ai-v3-card ai-v3-problem-card">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="ai-v3-status ai-v3-status--primary"><Icon name="target" />Đề bài</span>
-              <span className="ai-v3-status">Tuyển sinh lớp 10</span>
-              <span className="ai-v3-status">{practiceProblem.topic}</span>
-              <span className="ml-auto hidden font-mono text-xs text-ink-500 sm:inline">ID: TS10-ALG-0492</span>
-            </div>
-            <h2 className="mt-4 text-xl font-bold leading-8 text-brand">
-              <RichMathText text={practiceProblem.statement} />
-            </h2>
+      <div className="learning-mvp-studio-grid">
+        <div className="space-y-4">
+          <section className="learning-mvp-card">
+            <p className="learning-mvp-kicker">{problem.label} · {problem.topic}</p>
+            <h2 className="mt-2 text-xl font-bold text-brand">{problem.title}</h2>
+            <div className="mt-4 text-base leading-8"><RichMathText text={problem.statement} /></div>
+            <p className="mt-3 text-xs text-ink-500">Mã bài: {problem.id} · {progress.completed}/{progress.total} bài học đã hoàn thành</p>
           </section>
 
-          <section className="ai-v3-reasoning-canvas">
-            <div className="ai-v3-card__head">
-              <div><p className="ai-v3-eyebrow"><Icon name="gesture" /> Quá trình tư duy & lời giải của bạn</p><h2 className="ai-v3-section-title">Reasoning Canvas</h2></div>
-              <span className="text-xs text-accent-strong"><Icon name="cloud_done" />Tự động lưu</span>
+          <section className="learning-mvp-card">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl font-bold text-brand">Bài làm của bạn</h2>
+              <span className="text-xs text-ink-600"><Icon name="save" className="inline h-4 w-4" /> Lưu trên trình duyệt</span>
             </div>
-
-            <div className="ai-v3-reasoning-step" data-state="neutral">
-              <span className="ai-v3-step-number">1</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3"><strong>Lần thử đầu tiên của bạn</strong><code>t = 00:42</code></div>
-                <div className="mt-3 rounded-2xl bg-surface-page p-4 font-mono text-base text-brand">
-                  x² − 5x + 6 = 0<br />⇒ (x − 1)(x + 6) = 0
-                </div>
-              </div>
+            <Field label="Trình bày từng phép biến đổi" hint="Ví dụ: thế tọa độ, rút gọn, tìm hệ số và kiểm tra điều kiện. Không cần viết lại đề.">
+              <Textarea ref={textarea} rows={8} value={activeSession.input} maxLength={practicePolicy.inputLimit}
+                placeholder="Viết bước giải đầu tiên của bạn tại đây…"
+                onChange={(event) => updateInput(event.target.value)} className="min-h-44 font-mono text-base" />
+            </Field>
+            <div className="mt-3 flex flex-wrap gap-2" role="toolbar" aria-label="Chèn ký hiệu toán học">
+              {formulaTools.map((tool) => (
+                <Button key={tool.label} variant="secondary" size="sm" onClick={() => insertFormula(tool.value)}
+                  title={tool.title}>{tool.label}</Button>
+              ))}
             </div>
+            {check && <div role="status" className="mt-4"><Alert tone={check.valid ? "success" : "warning"}>{check.message}</Alert></div>}
+            <div className="mt-5 flex flex-wrap gap-2 border-t border-ink-100 pt-5">
+              <Button onClick={submit}><Icon name="send" /> Nộp bài</Button>
+              <Button variant="secondary" onClick={inspect}><Icon name="fact_check" /> Kiểm tra bước giải</Button>
+              <Button variant="ghost" onClick={reset}><Icon name="restart_alt" /> Làm bài mới</Button>
+              {onNavigate && <Button variant="ghost" onClick={() => onNavigate(`/replay?problem=${problem.id}`)}><Icon name="history" /> Xem lại bài làm</Button>}
+            </div>
+            {activeSession.rewarded && <p className="mt-3 text-xs text-ink-600">Bạn đã nhận thưởng hoàn thành bài mẫu này. Làm lại không cộng điểm lần thứ hai.</p>}
+          </section>
+        </div>
 
-            <div className="ai-v3-reasoning-step" data-state={check && !check.valid ? "danger" : "neutral"}>
-              <span className="ai-v3-step-number">2</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3"><strong>AI kiểm tra consistency</strong><code>t = 01:15</code></div>
-                <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_260px]">
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="font-semibold text-danger-700">Có vẻ chưa đúng!</p>
-                    <p className="mt-2 text-sm leading-6 text-ink-600">Khi nhân ngược lại, hệ số giữa chưa khớp với đề bài. Hãy kiểm tra cả <strong>tổng</strong> và <strong>tích</strong> của cặp số.</p>
+        <aside className="space-y-4" aria-label="Hỗ trợ làm bài">
+          <section className="learning-mvp-card">
+            <h2 className="text-lg font-bold text-brand">Gợi ý theo mức độ</h2>
+            <p className="mt-2 text-sm text-ink-600">Chỉ mở khi cần. Gợi ý không đưa sẵn đáp án.</p>
+            <div className="mt-4 space-y-3">
+              {problem.hints.map((hint) => {
+                const shown = activeSession.openedHints.includes(hint.id);
+                return <div key={hint.id} className="learning-mvp-hint">
+                  <div className="flex items-center justify-between gap-2">
+                    <strong className="text-sm">{hint.id}. {hint.title}</strong>
+                    <Button size="sm" variant="ghost" aria-expanded={shown} onClick={() => showHint(hint)}>
+                      {shown ? "Đã mở" : "Mở gợi ý"}
+                    </Button>
                   </div>
-                  <div className="rounded-2xl bg-danger-50 p-4 text-sm leading-6 text-danger-800">
-                    <b>Gợi ý Socratic</b><br />Hai số nào có tích bằng 6 và tổng bằng −5?
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="ai-v3-reasoning-step" data-state="active">
-              <span className="ai-v3-step-number">3</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3"><strong>Bạn tự suy nghĩ và thử lại</strong><code>live</code></div>
-                <div className="mt-3 rounded-2xl border border-brand/10 bg-white p-4">
-                  <Field label="Reasoning trace" htmlFor="step-2-input" hint="Viết từng phép biến đổi; AI đọc trace thay vì chỉ đọc đáp án cuối.">
-                    <Textarea
-                      id="step-2-input"
-                      ref={textareaRef}
-                      value={session.input}
-                      maxLength={practicePolicy.inputLimit}
-                      rows={5}
-                      readOnly={session.rewarded}
-                      onChange={(event) => updateInput(event.target.value)}
-                      aria-invalid={check ? !check.valid : undefined}
-                      className="mt-2 min-h-32 font-mono text-base"
-                    />
-                  </Field>
-                  {activeTool === "formula" && (
-                    <div className="mt-3 flex flex-wrap gap-2" role="toolbar" aria-label="Chèn ký hiệu toán học">
-                      {formulaTools.map((tool) => (
-                        <Button key={tool.label} variant="secondary" size="sm" title={tool.title} onClick={() => insertFormula(tool.value)} disabled={session.rewarded}>{tool.label}</Button>
-                      ))}
-                    </div>
-                  )}
-                  <div className="mt-4 rounded-xl bg-surface-page p-3">
-                    <span className="text-xs font-semibold text-ink-500">Live math preview</span>
-                    <div className="mt-2 overflow-x-auto text-lg"><MathLatex formula={normalizeToLatex(session.input)} /></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="ai-v3-reasoning-step" data-state={state === "success" ? "success" : "neutral"}>
-              <span className="ai-v3-step-number">4</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3"><strong>Hoàn thành lời giải</strong><code>{state === "success" ? "100%" : "pending"}</code></div>
-                {check && <div role="status" className="mt-3"><Alert tone={check.valid ? "success" : "warning"}>{check.message}</Alert></div>}
-                {!check && <p className="mt-3 text-sm text-ink-500">Kiểm tra bước hiện tại để AI xác nhận consistency trước khi nộp.</p>}
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-5">
-              <div className="flex flex-wrap gap-2">
-                <Button variant="ghost" disabled={session.rewarded} onClick={() => updateInput(practiceProblem.initialInput)}><Icon name="undo" />Đặt lại</Button>
-                <Button variant="secondary" disabled={session.rewarded} onClick={inspect}><Icon name="fact_check" />Kiểm tra bước</Button>
-              </div>
-              <Button onClick={submit} disabled={session.rewarded}><Icon name={session.rewarded ? "verified" : "send"} />{session.rewarded ? "Đã hoàn thành" : "Nộp reasoning"}</Button>
+                  {shown && <div className="mt-3 text-sm leading-6 text-ink-700"><RichMathText text={hint.text} /></div>}
+                </div>;
+              })}
             </div>
           </section>
-
-          <section className="ai-v3-card">
-            <div className="ai-v3-card__head">
-              <div><p className="ai-v3-eyebrow"><Icon name="grid_view" /> Trực quan hóa với Algebra Tiles</p><h2 className="ai-v3-section-title">Mô hình diện tích hình chữ nhật</h2></div>
-              <Button variant="secondary">Mở công cụ trực quan <Icon name="arrow_forward" /></Button>
-            </div>
-            <div className="ai-v3-tiles-grid">
-              <div className="ai-v3-algebra-tiles">
-                <div className="tile-x2">x²</div><div className="tile-x">−3x</div><div className="tile-y">−2x</div><div className="tile-n">+6</div>
-              </div>
-              <div className="space-y-3">
-                <div className="rounded-2xl bg-white p-4"><b className="text-brand">Giải thích</b><p className="mt-2 text-sm leading-6 text-ink-600">Hình chữ nhật có kích thước (x − 2) × (x − 3). Cộng bốn vùng diện tích thu được x² − 5x + 6.</p></div>
-                <div className="rounded-2xl bg-accent/8 p-4 text-sm text-accent-strong"><Icon name="lightbulb" /> Nhìn hình giúp liên kết cấu trúc đại số với trực quan.</div>
-              </div>
-            </div>
+          <section className="learning-mvp-card">
+            <h2 className="text-base font-bold text-brand">Phiên học này</h2>
+            <p className="mt-2 text-sm text-ink-600">{Math.max(0,(activeSession.events?.length ?? 1)-1)} hành động đã ghi nhận · {usedHints} gợi ý đã mở.</p>
+            <p className="mt-2 text-xs text-ink-500">Mọi sự kiện chỉ lưu trên thiết bị. Không có bộ máy AI đang theo dõi suy nghĩ của học sinh.</p>
           </section>
-        </main>
-
-        <aside className="space-y-4">
-          <section className="ai-v3-card ai-v3-guide-panel">
-            <div className="ai-v3-card__head">
-              <div><p className="ai-v3-eyebrow"><Icon name="smart_toy" /> AI Pulse & Cognitive Guide</p><h2 className="ai-v3-section-title">Trợ lý đúng lúc, không giải hộ.</h2></div>
-              <span className="h-2 w-2 rounded-full bg-success-500" />
-            </div>
-
-            <div className="ai-v3-sketchnote">
-              <span>AI Sketchnote</span>
-              <strong>PHÂN TÍCH NHÂN TỬ</strong>
-              <code>x² − 5x + 6 = 0</code>
-              <div className="grid grid-cols-2 gap-2"><i>Tổng = −5</i><i>Tích = 6</i></div>
-              <b>(x − 2)(x − 3)</b>
-            </div>
-
-            <div className="ai-v3-node-section">
-              <h3><Icon name="timeline" />Live Reasoning Trace</h3>
-              <ul>
-                <li className="is-good"><Icon name="check_circle" />Nhận diện dạng bài <small>00:12</small></li>
-                <li className={check && !check.valid ? "is-gap" : ""}><Icon name="error" />Thử phân tích nhân tử <small>00:42</small></li>
-                <li><Icon name="auto_awesome" />AI gợi ý Socratic <small>01:15</small></li>
-                <li className={check?.valid ? "is-good" : ""}><Icon name="verified" />Tự kiểm tra cặp số <small>03:02</small></li>
-              </ul>
-            </div>
-
-            <div className="ai-v3-node-section">
-              <h3><Icon name="question_answer" />Gợi ý câu hỏi Socratic</h3>
-              <div className="space-y-2">
-                {["Hai số nào có tích bằng 6?","Làm thế nào để tổng của chúng bằng −5?","Em có thể kiểm tra lại bằng cách nhân ra không?"].map((q,i) => (
-                  <Button key={q} variant="surface" className="w-full justify-between rounded-xl border border-ink-100 px-3 py-2 text-left text-xs"><span><b>{i+1}.</b> {q}</span><Icon name="arrow_forward" /></Button>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="ai-v3-card ai-v3-profile-mini">
-            <img src={studentProfile.avatarUrl} alt={studentProfile.name} referrerPolicy="no-referrer" />
-            <div><strong>{studentProfile.name}</strong><small>{studentProfile.levelLabel}</small></div>
-            <div className="ml-auto text-right"><b>92%</b><small>Tự sửa lỗi</small></div>
-          </section>
-
-          {(session.rewarded || check?.valid) && onNavigate && (
-            <Button className="w-full justify-between" onClick={() => onNavigate(routePath("replay"))}>Mở Thinking Replay <Icon name="arrow_forward" /></Button>
-          )}
         </aside>
       </div>
     </div>

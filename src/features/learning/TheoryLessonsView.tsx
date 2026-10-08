@@ -1,3 +1,4 @@
+import { getCourseProgress } from "../curriculum/selectors";
 import { useReadingPosition } from "./useReadingPosition";
 import { normalizeSearch } from "../../lib/search";
 import {
@@ -116,16 +117,10 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
     ? courseTopics.find((item) => item.id === lesson.topicId)
     : undefined;
   const registeredLessons = lessons
-    .filter(
-      (item) => validPublished(item) && canStudy(item.gradeId, item.subjectId),
-    )
+    .filter(item => validPublished(item) && canStudy(item.gradeId, item.subjectId))
     .sort((a, b) => a.order - b.order);
-  const finishedCount = registeredLessons.filter((item) =>
-    completedLessonIds.includes(item.id),
-  ).length;
-  const progress = registeredLessons.length
-    ? Math.round((finishedCount / registeredLessons.length) * 100)
-    : 0;
+  const completion = getCourseProgress(lessons, topics, completedLessonIds);
+  const progress = completion.percent;
   const resumeLesson =
     registeredLessons.find((item) => !completedLessonIds.includes(item.id)) ||
     registeredLessons[0];
