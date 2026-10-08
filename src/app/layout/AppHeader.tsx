@@ -1,5 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { Button, Icon } from "../../components/ui";
+import { Button, Icon, Input } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
 import { roles, roleHome, routePath, type UserRole } from "../../config/routes";
@@ -65,8 +65,9 @@ export function AppHeader({
             }}
           >
             <Icon name="search" className="student-command-search__icon" />
-            <input
+            <Input
               ref={searchRef}
+              type="search"
               aria-label="Tìm bài học, chủ đề hoặc câu hỏi"
               placeholder="Tìm bài học, chủ đề, hay nhập một câu hỏi..."
               className="student-command-search__input"
