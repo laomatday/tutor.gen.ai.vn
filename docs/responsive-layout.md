@@ -29,7 +29,7 @@ Giáo viên / quản trị: drawer dưới 1024px; fixed sidebar từ 1024px. Kh
 | Tính năng | Khi hẹp | Khi đủ rộng |
 | --- | --- | --- |
 | Home | Nhiệm vụ, nút Bắt đầu, tương tác, tiến độ xếp dọc | Cột nhiệm vụ + nhịp học khi workspace ≥78rem |
-| Knowledge Universe | Lộ trình mặc định; bản đồ mobile có full-screen và nút xem bài | Bản đồ + panel chủ đề khi workspace ≥72rem |
+| Knowledge Universe | Lộ trình mặc định; bản đồ mobile có full-screen và bottom sheet thông tin chủ đề có Escape/điều hướng bằng bàn phím | Bản đồ + panel chủ đề khi workspace ≥72rem |
 | Focus Studio | DOM: đề → editor/kiểm tra → gợi ý → tool dock → coach; tool dock mở theo yêu cầu | Editor + coach 320px khi workspace ≥68rem |
 | Thinking Replay | Player → timeline → phân tích | Timeline + phân tích khi workspace ≥70rem |
 | Bài học | 1 cột, stage tabs và điều hướng môn học bên trong | Khung đọc tối đa 72.5rem, TOC cạnh phải nếu đủ chỗ |
