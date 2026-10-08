@@ -70,8 +70,8 @@ export function StudentPageContext({
     : undefined;
   if (!selected || lesson) return null;
 
-  const backPath = lesson ? selected.href : routePath("hoc-bai");
-  const backLabel = lesson ? selected.label : "Môn học";
+  const backPath = routePath("hoc-bai");
+  const backLabel = "Môn học";
   return (
     <nav className="student-header-context student-course-context" aria-label="Điều hướng môn học">
       <a
@@ -91,11 +91,7 @@ export function StudentPageContext({
       <span className="student-header-context__divider" aria-hidden="true">
         /
       </span>
-      {lesson ? (
-        <span className="student-header-context__current" title={lesson.title}>
-          {lesson.title}
-        </span>
-      ) : courses.length > 1 ? (
+      {courses.length > 1 ? (
         <Select
           className="student-header-context__course"
           value={selected.href}
