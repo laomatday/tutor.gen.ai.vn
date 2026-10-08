@@ -12,6 +12,7 @@ import {
   quadraticValue,
   selectDialogueLab,
   selectMathLab,
+  type MathLabConfig,
 } from "./domain";
 import microLabs from "./data/microLabs.json";
 
@@ -50,7 +51,7 @@ test("math lab uses the published, enrolled, matching subject/topic/lesson", () 
 });
 
 test("math scripts are bounded, mathematically consistent and non-fabricated", () => {
-  const lab = microLabs.math;
+  const lab = microLabs.math as MathLabConfig;
   assert.equal(isMathLabValid(lab), true);
   assert.equal(isMathLabValid({ ...lab, stages: [{ ...lab.stages[0], correctIndex: 40 }] }), false);
   for (const stage of lab.stages) {
