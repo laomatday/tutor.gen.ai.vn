@@ -1,13 +1,17 @@
 import type { RefObject } from "react";
-import { Button, Icon, Progress } from "../../components/ui";
+import { Button, Icon } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
 import { appConfig } from "../../config/app";
 import {
-  roleHome, rolePresentation, studentRoutes, workspaceRoutes, workspacePath, type UserRole,
+  roleHome,
+  rolePresentation,
+  studentRoutes,
+  workspaceRoutes,
+  workspacePath,
+  type UserRole,
 } from "../../config/routes";
-import { studentProfile } from "../../features/curriculum";
-import { StudentAvatar } from "../../components/student/StudentAvatar";
+import { SidebarToggle } from "./SidebarToggle";
 
 interface Props {
   role: UserRole;
@@ -17,18 +21,24 @@ interface Props {
   closeRef: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
   onNavigate: (path: string) => void;
-  onOpenProfile?: () => void;
   nextLessonPath: string;
-  progress: number;
-  balance: number;
+  isDesktop: boolean;
   pinned?: boolean;
   onToggleSidebar?: () => void;
 }
 
 export function AppSidebar({
-  role, section, open, sidebarRef, closeRef, onClose,
-  onNavigate, onOpenProfile, nextLessonPath, progress, balance,
-  pinned = true, onToggleSidebar,
+  role,
+  section,
+  open,
+  sidebarRef,
+  closeRef,
+  onClose,
+  onNavigate,
+  nextLessonPath,
+  isDesktop,
+  pinned = true,
+  onToggleSidebar,
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
@@ -42,11 +52,26 @@ export function AppSidebar({
       >
         <div className="student-sidebar-panel__header">
           <Button
+            ref={closeRef}
             variant="ghost"
             className="student-sidebar-brand"
-            onClick={() => onNavigate(roleHome[role])}
-            aria-label="genAi Tutor — Về Hôm nay"
-            title="genAi Tutor"
+            onClick={onToggleSidebar}
+            aria-label={
+              isDesktop
+                ? pinned
+                  ? "Thu gọn menu"
+                  : "Mở rộng menu"
+                : "Đóng menu"
+            }
+            aria-expanded={isDesktop ? pinned : open}
+            aria-controls="main-navigation"
+            title={
+              isDesktop
+                ? pinned
+                  ? "Thu gọn menu"
+                  : "Mở rộng menu"
+                : "Đóng menu"
+            }
           >
             <img
               src={appConfig.brand.logoUrl}
@@ -55,34 +80,15 @@ export function AppSidebar({
               height={42}
               className="student-sidebar-brand__logo"
             />
-            <span className="student-sidebar-brand__copy">
+            <span className="student-sidebar-brand__copy" aria-hidden="true">
               <span className="student-sidebar-brand__name">
-                gen<span>Ai</span> <small>TUTOR</small>
+                {appConfig.brand.wordmark}{" "}
+                <small>{appConfig.brand.product}</small>
               </span>
-              <span className="student-sidebar-brand__tagline">Học tập cùng genAi</span>
+              <span className="student-sidebar-brand__tagline">
+                {appConfig.brand.tagline}
+              </span>
             </span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleSidebar}
-            aria-label={pinned ? "Thu gọn menu" : "Mở rộng menu"}
-            aria-expanded={pinned}
-            aria-controls="main-navigation"
-            className="student-sidebar-toggle hidden lg:inline-flex"
-            title={pinned ? "Thu gọn menu" : "Mở rộng menu"}
-          >
-            <Icon name={pinned ? "chevron_left" : "menu"} />
-          </Button>
-          <Button
-            ref={closeRef}
-            variant="ghost"
-            size="icon"
-            aria-label="Đóng menu"
-            onClick={onClose}
-            className="student-sidebar-close lg:hidden"
-          >
-            <Icon name="close" />
           </Button>
         </div>
 
@@ -95,11 +101,19 @@ export function AppSidebar({
           >
             <Icon name="play_arrow" className="student-sidebar-next__play" />
             <span className="student-sidebar-next__label">Tiếp tục học</span>
-            <Icon name="arrow_forward" className="student-sidebar-next__arrow" />
+            <Icon
+              name="arrow_forward"
+              className="student-sidebar-next__arrow"
+            />
           </Button>
 
-          <nav className="student-sidebar-navigation" aria-label="Các trang học tập">
-            <p className="student-sidebar-section__label" id="student-nav-core">HỌC TẬP</p>
+          <nav
+            className="student-sidebar-navigation"
+            aria-label="Các trang học tập"
+          >
+            <p className="student-sidebar-section__label" id="student-nav-core">
+              HỌC TẬP
+            </p>
             <div role="group" aria-labelledby="student-nav-core">
               {core.map((item) => (
                 <Button
@@ -111,17 +125,23 @@ export function AppSidebar({
                   title={item.label}
                   aria-label={item.label}
                 >
-                  <Icon name={item.icon} className="student-sidebar-row__icon" />
+                  <Icon
+                    name={item.icon}
+                    className="student-sidebar-row__icon"
+                  />
                   <span className="student-sidebar-row__text">
                     <strong>{item.label}</strong>
-                    {item.id === "hoc-bai" && (
-                      <small>Lớp · Môn · Chủ đề</small>
-                    )}
+                    {item.id === "hoc-bai" && <small>Lớp · Môn · Chủ đề</small>}
                   </span>
                 </Button>
               ))}
             </div>
-            <p className="student-sidebar-section__label" id="student-nav-other">CÁ NHÂN</p>
+            <p
+              className="student-sidebar-section__label"
+              id="student-nav-other"
+            >
+              CÁ NHÂN
+            </p>
             <div role="group" aria-labelledby="student-nav-other">
               {other.map((item) => (
                 <Button
@@ -133,7 +153,10 @@ export function AppSidebar({
                   title={item.label}
                   aria-label={item.label}
                 >
-                  <Icon name={item.icon} className="student-sidebar-row__icon" />
+                  <Icon
+                    name={item.icon}
+                    className="student-sidebar-row__icon"
+                  />
                   <span className="student-sidebar-row__text">
                     <strong>{item.label}</strong>
                   </span>
@@ -144,23 +167,11 @@ export function AppSidebar({
         </div>
 
         <div className="student-sidebar-panel__footer">
-          <div className="student-sidebar-progress">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold">Bài học đã hoàn thành</span>
-              <strong className="text-sm">{progress}%</strong>
-            </div>
-            <Progress value={progress} label="Tiến độ hoàn thành" tone="accent" className="student-sidebar-progress__track" />
-            <small>{balance} GP · Dữ liệu minh họa</small>
-          </div>
-          <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile">
-            <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-10 w-10 shrink-0 rounded-full" />
-            <span className="student-sidebar-profile__copy">
-              <strong>{studentProfile.name}</strong>
-              <small>Lớp {studentProfile.className}</small>
-            </span>
-            <Icon name="chevron_right" className="student-sidebar-profile__arrow" />
-          </Button>
-          <PWAInstallButton variant="ghost" size="sm" className="student-sidebar-install w-full justify-center" />
+          <PWAInstallButton
+            variant="ghost"
+            size="sm"
+            className="student-sidebar-install w-full justify-center"
+          />
         </div>
       </aside>
     );
@@ -179,22 +190,19 @@ export function AppSidebar({
       <div className="flex items-center justify-between gap-2 p-4">
         <Button
           variant="surface"
-          aria-label={`${appConfig.brand.name} — Trang chủ`}
           onClick={() => onNavigate(roleHome[role])}
           className="flex items-center gap-3 text-left"
         >
           <BrandLogo />
+          <span className="sr-only"> — Trang chủ</span>
         </Button>
-        <Button
+        <SidebarToggle
           ref={closeRef}
-          variant="ghost"
-          size="icon"
-          aria-label="Đóng menu"
+          expanded={open}
+          label="Đóng menu"
           onClick={onClose}
           className="lg:hidden"
-        >
-          <Icon name="close" />
-        </Button>
+        />
       </div>
 
       <div className="px-4 pb-4">
@@ -228,8 +236,12 @@ export function AppSidebar({
             >
               <Icon name={item.icon} className="shrink-0 text-xl" />
               <span className="min-w-0 flex-1 text-left">
-                <span className="block text-sm font-semibold">{item.label}</span>
-                <span className={`mt-0.5 block text-xs ${section === item.id ? "text-white" : "text-outline"}`}>
+                <span className="block text-sm font-semibold">
+                  {item.label}
+                </span>
+                <span
+                  className={`mt-0.5 block text-xs ${section === item.id ? "text-white" : "text-outline"}`}
+                >
                   {item.description}
                 </span>
               </span>

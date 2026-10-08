@@ -16,7 +16,5 @@
       }
     ]
   },
-  "initialCompletedLessonIds": [
-    "can-bac-hai"
-  ]
+  "initialCompletedLessonIds": []
 }

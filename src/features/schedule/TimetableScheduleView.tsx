@@ -1,776 +1,800 @@
-import React, { useState, useEffect } from "react";
-import { Button, Icon, Modal, Input, Select } from "../../components/ui";
-import { StudentPageHeader, StudentSignalStrip } from "../../components/student/StudentExperience";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
-  DAYS_OF_WEEK,
-  initialScheduleSessions,
-  type ScheduleSession,
-  type SessionType,
-} from "./types";
-import { browserStorage } from "../../lib/browserStorage";
-import { storageKeys } from "../../config/storage";
-import { studentProfile } from "../learning/data/student";
-import { courseHref } from "../curriculum";
+  Alert,
+  Badge,
+  Button,
+  Field,
+  Icon,
+  Input,
+  Modal,
+  Select,
+  Tabs,
+  Textarea,
+} from "../../components/ui";
+import { useCurriculum } from "../../context/CurriculumContext";
+import { appConfig } from "../../config/app";
+import { routePath } from "../../config/routes";
+import { localDayOfWeek } from "../../lib/dates";
+import {
+  lessonHref,
+  ownedPublishedLessons,
+  studentProfile,
+} from "../curriculum";
+import {
+  getNextScheduleSession,
+  getScheduleWeek,
+  selectScheduleSessions,
+  summarizeSchedule,
+  validateScheduleDraft,
+  type ScheduleDraft,
+} from "./domain";
+import { DAYS_OF_WEEK, type ScheduleSession, type SessionType } from "./types";
+import { useSchedule } from "./useSchedule";
+import "../../styles/student-schedule.css";
 
-interface TimetableScheduleViewProps {
-  onNavigate: (tab: string) => void;
-}
+const sessionTypes = [
+  { id: "chinh-khoa", label: "Chính khóa", icon: "school" },
+  { id: "tutor", label: "Tutor", icon: "support_agent" },
+  { id: "tu-hoc", label: "Tự học", icon: "edit_square" },
+  { id: "thi-thu", label: "Thi thử", icon: "quiz" },
+] as const;
+const filterTabs = [
+  { id: "all", label: "Tất cả", icon: "calendar_today" },
+  ...sessionTypes,
+] as const;
+const viewTabs = [
+  { id: "daily", label: "Theo ngày" },
+  { id: "weekly", label: "Cả tuần" },
+] as const;
+const shortDate = (date: string) =>
+  new Intl.DateTimeFormat(appConfig.locale, {
+    timeZone: appConfig.timeZone,
+    day: "numeric",
+    month: "numeric",
+  }).format(new Date(`${date}T12:00:00Z`));
+const durationLabel = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return hours ? `${hours} giờ${rest ? ` ${rest} phút` : ""}` : `${rest} phút`;
+};
 
-export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
+export function TimetableScheduleView({
   onNavigate,
-}) => {
-  // Determine current day of week (in JS: 0 is Sun, 1 is Mon... in VN: 2 is Mon, 8 is Sun)
-  const todayJs = new Date().getDay();
-  const currentVnDay = todayJs === 0 ? 8 : todayJs + 1;
-
-  const [selectedDay, setSelectedDay] = useState<number>(currentVnDay);
+}: {
+  onNavigate: (path: string) => void;
+}) {
+  const { subjects, lessons, topics } = useCurriculum();
+  const { sessions, setSessions, storageError } = useSchedule();
+  const [now, setNow] = useState(() => new Date());
+  const currentDay = localDayOfWeek(now);
+  const [selectedDay, setSelectedDay] = useState(currentDay);
   const [viewMode, setViewMode] = useState<"daily" | "weekly">("daily");
   const [filterType, setFilterType] = useState<SessionType | "all">("all");
-
-  const [sessions, setSessions] = useState<ScheduleSession[]>(() => {
-    try {
-      const stored = browserStorage.read(storageKeys.studentSchedule);
-      if (stored) return JSON.parse(stored);
-    } catch {
-      // fallback
-    }
-    return initialScheduleSessions;
-  });
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [newSubject, setNewSubject] = useState("Toán học");
-  const [newDay, setNewDay] = useState(selectedDay);
-  const [newStartTime, setNewStartTime] = useState("19:30");
-  const [newEndTime, setNewEndTime] = useState("20:30");
-  const [newSessionType, setNewSessionType] = useState<SessionType>("tutor");
-  const [newLocation, setNewLocation] = useState(
-    "Phòng học trực tuyến Live Tutor",
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<ScheduleSession | null>(null);
+  const [deleted, setDeleted] = useState<ScheduleSession | null>(null);
+  const [notice, setNotice] = useState("");
+  const [errors, setErrors] = useState<
+    ReturnType<typeof validateScheduleDraft>
+  >({});
+  const formRef = useRef<HTMLFormElement>(null);
+  const days = getScheduleWeek(now);
+  const selected = days.find((day) => day.day === selectedDay)!;
+  const upcoming = getNextScheduleSession(sessions, now);
+  const scope = selectScheduleSessions(
+    sessions,
+    viewMode === "daily" ? { day: selectedDay } : {},
   );
-  const [newInstructor, setNewInstructor] = useState("Tutor Đồng Hành");
-  const [newNotes, setNewNotes] = useState("");
+  const shown = selectScheduleSessions(scope, { type: filterType });
+  const summary = summarizeSchedule(shown);
+  const availableLessons = ownedPublishedLessons(lessons, topics);
+  const subjectOptions = Array.from(
+    new Map([
+      ...subjects.map((subject) => [subject.name, subject.icon] as const),
+      ...sessions.map(
+        (session) => [session.subjectName, session.subjectIcon] as const,
+      ),
+    ]).entries(),
+  );
+  const defaultSubject =
+    subjects.find(
+      (subject) => subject.id === studentProfile.enrollments[0]?.subjectId,
+    )?.name ??
+    subjectOptions[0]?.[0] ??
+    "";
+  const createDraft = (day: number): ScheduleDraft => ({
+    title: "",
+    subjectName: defaultSubject,
+    dayOfWeek: day,
+    sessionType: "tu-hoc",
+    startTime: "19:30",
+    endTime: "20:00",
+    instructor: "",
+    location: "",
+    notes: "",
+  });
+  const [draft, setDraft] = useState<ScheduleDraft>(() =>
+    createDraft(selectedDay),
+  );
 
   useEffect(() => {
-    try {
-      browserStorage.write(
-        storageKeys.studentSchedule,
-        JSON.stringify(sessions),
+    const refresh = () => setNow(new Date());
+    const timer = window.setInterval(refresh, 60_000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
+
+  const changeDraft = <K extends keyof ScheduleDraft>(
+    key: K,
+    value: ScheduleDraft[K],
+  ) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setErrors((current) => ({ ...current, [key]: undefined }));
+  };
+  const openAdd = () => {
+    setEditing(null);
+    setDraft(createDraft(selectedDay));
+    setErrors({});
+    setModalOpen(true);
+  };
+  const openEdit = (session: ScheduleSession) => {
+    setEditing(session);
+    setDraft({ ...session });
+    setErrors({});
+    setModalOpen(true);
+  };
+  const saveSession = (event: FormEvent) => {
+    event.preventDefault();
+    const validation = validateScheduleDraft(draft);
+    setErrors(validation);
+    if (Object.keys(validation).length) {
+      requestAnimationFrame(() =>
+        formRef.current
+          ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+          ?.focus(),
       );
-    } catch {
-      // ignore
+      return;
     }
-  }, [sessions]);
-
-  const filteredSessions = sessions.filter((s) => {
-    const matchesDay =
-      viewMode === "weekly" ? true : s.dayOfWeek === selectedDay;
-    const matchesType =
-      filterType === "all" ? true : s.sessionType === filterType;
-    return matchesDay && matchesType;
-  });
-
-  // Sort by start time
-  const sortedSessions = [...filteredSessions].sort((a, b) =>
-    a.startTime.localeCompare(b.startTime),
-  );
-
-  // Next upcoming session
-  const upcomingTutorSessions = sessions.filter(
-    (s) => s.sessionType === "tutor" && s.status !== "completed",
-  );
-  const nextSession =
-    sessions.find(
-      (s) => s.dayOfWeek === selectedDay && s.status === "upcoming",
-    ) ??
-    upcomingTutorSessions[0] ??
-    sessions[0];
-
-  const handleAddSession = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
-
-    const iconMap: Record<string, string> = {
-      "Toán học": "functions",
-      "Tiếng Anh": "translate",
-      "Ngữ văn": "menu_book",
-      "Vật lý": "bolt",
-      "Hóa học": "science",
-      "Sinh học": "biotech",
-      "Tutor Đồng Hành": "support_agent",
-      "Tự học thông minh": "psychology",
+    const entry: ScheduleSession = {
+      ...editing,
+      ...draft,
+      id: editing?.id ?? `session-${crypto.randomUUID()}`,
+      title: draft.title.trim(),
+      subjectName: draft.subjectName.trim(),
+      subjectIcon:
+        subjectOptions.find(([name]) => name === draft.subjectName)?.[1] ??
+        "school",
+      location: draft.location?.trim() ?? "",
+      instructor: draft.instructor?.trim() ?? "",
+      notes: draft.notes?.trim() ?? "",
+      status: editing?.status ?? "upcoming",
     };
-
-    const newSessionItem: ScheduleSession = {
-      id: `session-${Date.now()}`,
-      dayOfWeek: Number(newDay),
-      title: newTitle.trim(),
-      subjectName: newSubject,
-      subjectIcon: iconMap[newSubject] || "school",
-      startTime: newStartTime,
-      endTime: newEndTime,
-      sessionType: newSessionType,
-      location: newLocation.trim() || "Phòng học",
-      instructor: newInstructor.trim() || "Giáo viên / Tutor",
-      notes: newNotes.trim(),
-      status: "upcoming",
+    setSessions((current) =>
+      editing
+        ? current.map((session) =>
+            session.id === editing.id ? entry : session,
+          )
+        : [...current, entry],
+    );
+    setSelectedDay(entry.dayOfWeek);
+    setViewMode("daily");
+    setFilterType("all");
+    setNotice(editing ? "Đã cập nhật lịch học." : "Đã thêm lịch học của em.");
+    setDeleted(null);
+    setModalOpen(false);
+  };
+  const deleteSession = (session: ScheduleSession) => {
+    setSessions((current) =>
+      current.filter((entry) => entry.id !== session.id),
+    );
+    setDeleted(session);
+    setNotice(`Đã xóa “${session.title}”.`);
+  };
+  const undoDelete = () => {
+    if (!deleted) return;
+    setSessions((current) =>
+      current.some((entry) => entry.id === deleted.id)
+        ? current
+        : [...current, deleted],
+    );
+    setDeleted(null);
+    setNotice("Đã khôi phục lịch học.");
+  };
+  const sessionAction = (session: ScheduleSession) => {
+    const lesson = availableLessons.find(
+      (entry) => entry.id === session.lessonId,
+    );
+    if (lesson)
+      return {
+        label: "Mở bài học",
+        path: lessonHref(lesson),
+        icon: "menu_book",
+      };
+    if (session.sessionType === "tu-hoc")
+      return {
+        label: "Mở tự giải",
+        path: routePath("tu-giai"),
+        icon: "edit_square",
+      };
+    if (session.sessionType === "thi-thu")
+      return {
+        label: "Xem bài thi mẫu",
+        path: routePath("tien-bo"),
+        icon: "quiz",
+      };
+    return {
+      label: "Xem môn học",
+      path: routePath("hoc-bai"),
+      icon: "menu_book",
     };
-
-    setSessions((prev) => [...prev, newSessionItem]);
-    setNewTitle("");
-    setNewNotes("");
-    setIsAddModalOpen(false);
   };
 
-  const deleteSession = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  const sessionTypeBadges: Record<
-    SessionType,
-    { label: string; className: string }
-  > = {
-    "chinh-khoa": {
-      label: "Lớp chính khóa",
-      className: "bg-primary/10 text-primary",
-    },
-    tutor: { label: "Buổi Tutor", className: "bg-secondary/20 text-primary" },
-    "tu-hoc": { label: "Tự học", className: "bg-secondary/15 text-primary" },
-    "thi-thu": {
-      label: "Thi thử",
-      className: "bg-surface-container text-on-surface-variant",
-    },
+  const renderSession = (session: ScheduleSession, compact = false) => {
+    const kind = sessionTypes.find((type) => type.id === session.sessionType)!;
+    const action = sessionAction(session);
+    const isNext =
+      upcoming?.session.id === session.id &&
+      upcoming.date === days.find((day) => day.day === session.dayOfWeek)?.date;
+    const custom = session.id.startsWith("session-");
+    return (
+      <article
+        key={session.id}
+        data-session-id={session.id}
+        data-kind={session.sessionType}
+        data-next={isNext}
+        className={`schedule-session ${compact ? "schedule-session--compact" : ""}`}
+        aria-label={session.title}
+      >
+        <div className="schedule-session-time">
+          <time>{session.startTime}</time>
+          <span>{session.endTime}</span>
+          <i aria-hidden="true" />
+        </div>
+        <div className="schedule-session-body">
+          <div className="schedule-session-topline">
+            <span className="schedule-subject">
+              <Icon name={session.subjectIcon} />
+              {session.subjectName}
+            </span>
+            <span className="schedule-kind">
+              <Icon name={kind.icon} />
+              {kind.label}
+            </span>
+            {session.status === "completed" && (
+              <span className="schedule-completed">
+                <Icon name="check" />
+                Đã hoàn thành
+              </span>
+            )}
+            {isNext && (
+              <span className="schedule-next-label">
+                {upcoming.isOngoing ? "Đang diễn ra" : "Tiếp theo"}
+              </span>
+            )}
+          </div>
+          <h3>{session.title}</h3>
+          {(session.instructor || session.location) && (
+            <div className="schedule-session-meta">
+              {session.instructor && (
+                <span>
+                  <Icon name="person" />
+                  {session.instructor}
+                </span>
+              )}
+              {session.location && (
+                <span>
+                  <Icon name="room" />
+                  {session.location}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="schedule-session-bottom">
+            {session.notes && (
+              <details className="schedule-session-notes">
+                <summary>
+                  <Icon name="edit_note" />
+                  Chuẩn bị cho buổi học
+                  <Icon name="expand_more" />
+                </summary>
+                <p>{session.notes}</p>
+              </details>
+            )}
+            <div className="schedule-session-actions">
+              {custom && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Chỉnh sửa lịch: ${session.title}`}
+                    title="Chỉnh sửa lịch"
+                    onClick={() => openEdit(session)}
+                  >
+                    <Icon name="edit" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Xóa lịch: ${session.title}`}
+                    title="Xóa lịch"
+                    onClick={() => deleteSession(session)}
+                  >
+                    <Icon name="delete_outline" />
+                  </Button>
+                </>
+              )}
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigate(action.path)}
+              >
+                {action.label}
+                <Icon name="arrow_forward" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </article>
+    );
   };
 
   return (
-    <div className="learning-os-page">
-      <StudentPageHeader
-        eyebrow="Learning rhythm"
-        icon="calendar_month"
-        title={`Nhịp học tuần này của lớp ${studentProfile.className}`}
-        description="Thời khóa biểu minh họa được lưu trên thiết bị; lịch học thật cần được cập nhật theo trường và giáo viên."
-        meta={
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
-            <Icon name="auto_awesome" />
-            Phiên học gần nhất
-          </span>
-        }
-        actions={
-          <>
-            <div className="ui-segmented" role="group" aria-label="Chế độ xem lịch">
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-pressed={viewMode === "daily"}
-                onClick={() => setViewMode("daily")}
-                className="ui-segment"
-              >
-                Theo ngày
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-pressed={viewMode === "weekly"}
-                onClick={() => setViewMode("weekly")}
-                className="ui-segment"
-              >
-                Cả tuần
-              </Button>
-            </div>
+    <div className="schedule-desk">
+      <header className="schedule-heading">
+        <div>
+          <p className="schedule-eyebrow">
+            <Icon name="calendar_today" />
+            Một tuần theo nhịp của em
+          </p>
+          <h1>Lịch học của mình</h1>
+          <p>Biết lúc nào học, sẵn sàng cho điều tiếp theo.</p>
+        </div>
+        <Button onClick={openAdd}>
+          <Icon name="add" />
+          Thêm lịch
+        </Button>
+      </header>
+
+      <section className="schedule-calendar" aria-label="Chọn ngày học">
+        <div className="schedule-calendar-bar">
+          <div className="schedule-week-caption">
+            <strong>Tuần này</strong>
+            <span>
+              {shortDate(days[0].date)} – {shortDate(days[6].date)}
+            </span>
+          </div>
+          <div className="schedule-calendar-controls">
             <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
-                setNewDay(selectedDay);
-                setIsAddModalOpen(true);
+                setSelectedDay(currentDay);
+                setViewMode("daily");
               }}
             >
-              <Icon name="add" />
-              Thêm lịch
+              <Icon name="calendar_today" />
+              Hôm nay
             </Button>
-          </>
-        }
-      />
-
-      <StudentSignalStrip
-        items={[
-          { icon: "schedule", label: "Phiên hôm nay", value: `${sessions.filter((s) => s.dayOfWeek === currentVnDay).length} phiên` },
-          { icon: "psychology", label: "Buổi Tutor", value: `${sessions.filter((s) => s.sessionType === "tutor").length} phiên` },
-          { icon: "target", label: "Đang xem", value: viewMode === "daily" ? DAYS_OF_WEEK.find((d) => d.day === selectedDay)?.full ?? "Hôm nay" : "Cả tuần" },
-          { icon: "auto_awesome", label: "Next up", value: nextSession ? `${nextSession.startTime} · ${nextSession.subjectName}` : "Chưa có lịch" },
-        ]}
-      />
-
-      {/* Next Upcoming Highlight Banner */}
-      {nextSession && (
-        <section className="signal-card signal-card--accent overflow-hidden">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-0.5 text-xs font-bold text-white shadow-xs">
-                  <Icon name="alarm" className="text-sm" />
-                  {nextSession.sessionType === "tutor"
-                    ? "BUỔI CỐ VẤN TUTOR"
-                    : "BUỔI HỌC SẮP TỚI"}
-                </span>
-                <span className="text-xs font-semibold text-primary">
-                  {
-                    DAYS_OF_WEEK.find((d) => d.day === nextSession.dayOfWeek)
-                      ?.full
-                  }{" "}
-                  · {nextSession.startTime} – {nextSession.endTime}
-                </span>
-              </div>
-              <h2 className="text-xl font-bold text-primary sm:text-2xl">
-                {nextSession.title}
-              </h2>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant">
-                <span className="inline-flex items-center gap-1">
-                  <Icon name="person" className="text-base text-secondary" />
-                  {nextSession.instructor}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Icon name="room" className="text-base text-secondary" />
-                  {nextSession.location}
-                </span>
-                {nextSession.notes && (
-                  <span className="inline-flex items-center gap-1 text-secondary font-medium">
-                    <Icon name="info" className="text-base" />
-                    {nextSession.notes}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
-              {nextSession.sessionType === "tutor" ? (
-                <Button
-                  variant="primary"
-                  onClick={() => onNavigate(courseHref("9", "toan"))}
-                  className="rounded-full font-bold text-xs"
-                >
-                  <Icon name="videocam" className="text-lg" />
-                  Vào phòng học trực tuyến
-                </Button>
-              ) : (
-                <Button
-                  variant="primary"
-                  onClick={() => onNavigate(courseHref("9", "toan"))}
-                  className="rounded-full font-bold text-xs"
-                >
-                  <Icon name="play_lesson" className="text-lg" />
-                  Vào ôn bài học
-                </Button>
-              )}
-            </div>
+            <Tabs
+              tabs={viewTabs}
+              value={viewMode}
+              onChange={setViewMode}
+              label="Chế độ xem lịch"
+              variant="pill"
+            />
           </div>
-        </section>
-      )}
-
-      {/* Day Selector (if in daily mode) */}
-      {viewMode === "daily" && (
-        <div className="grid grid-cols-7 gap-2 overflow-x-auto pb-1">
-          {DAYS_OF_WEEK.map((d) => {
-            const isToday = d.day === currentVnDay;
-            const isSelected = d.day === selectedDay;
-            const daySessionCount = sessions.filter(
-              (s) => s.dayOfWeek === d.day,
+        </div>
+        <div
+          className="schedule-days"
+          role="group"
+          aria-label="Ngày trong tuần"
+        >
+          {days.map((day) => {
+            const count = sessions.filter(
+              (session) => session.dayOfWeek === day.day,
             ).length;
-
             return (
               <Button
-                key={d.day}
-                variant="surface"
-                onClick={() => setSelectedDay(d.day)}
-                className={`group relative flex flex-col items-center rounded-2xl border p-3 text-center transition-all h-auto ${
-                  isSelected
-                    ? "border-primary bg-primary text-white shadow-md ring-2 ring-primary/20"
-                    : "border-outline-variant/70 bg-white hover:border-secondary/50 hover:bg-secondary/5 text-on-surface"
-                }`}
+                key={day.day}
+                variant="ghost"
+                aria-pressed={selectedDay === day.day && viewMode === "daily"}
+                onClick={() => {
+                  setSelectedDay(day.day);
+                  setViewMode("daily");
+                }}
+                className="schedule-day"
+                data-today={day.isToday}
               >
-                {isToday && (
-                  <span
-                    className={`absolute -top-2 rounded-full px-2 py-0.5 text-xs font-extrabold uppercase ${
-                      isSelected
-                        ? "bg-secondary text-white"
-                        : "bg-secondary text-white"
-                    }`}
-                  >
-                    Hôm nay
-                  </span>
-                )}
-                <span className="text-xs font-semibold">
-                  {d.short}
+                <span className="sr-only">
+                  {day.full}, ngày {shortDate(day.date)}.{" "}
                 </span>
-                <span className="mt-1 text-sm sm:text-base font-bold">
-                  {d.label}
-                </span>
-                <span
-                  className={`mt-1.5 rounded-full px-2 py-0.5 text-xs font-bold ${
-                    isSelected
-                      ? "bg-white/20 text-white"
-                      : "bg-surface-container text-on-surface-variant group-hover:bg-secondary/15 group-hover:text-secondary"
-                  }`}
-                >
-                  {daySessionCount} tiết
+                <span className="schedule-day-name">{day.short}</span>
+                <strong>{Number(day.date.slice(-2))}</strong>
+                <span className="schedule-day-count">{count} buổi</span>
+                <span className="schedule-today-marker">
+                  {day.isToday && (
+                    <>
+                      <span className="schedule-today-full">Hôm nay</span>
+                      <span className="schedule-today-short">Nay</span>
+                    </>
+                  )}
                 </span>
               </Button>
             );
           })}
         </div>
-      )}
+      </section>
 
-      {/* Filter Category Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div className="flex flex-wrap items-center gap-1.5">
+      {storageError && <Alert tone="warning">{storageError}</Alert>}
+      {notice && (
+        <div className="schedule-notice" role="status">
+          <Icon name="check_circle" />
+          <span>{notice}</span>
+          {deleted && (
+            <Button variant="ghost" size="sm" onClick={undoDelete}>
+              Hoàn tác
+            </Button>
+          )}
           <Button
-            variant={filterType === "all" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setFilterType("all")}
-            className="rounded-full text-xs"
+            variant="ghost"
+            size="icon"
+            aria-label="Ẩn thông báo"
+            onClick={() => {
+              setNotice("");
+              setDeleted(null);
+            }}
           >
-            Tất cả ({filteredSessions.length})
-          </Button>
-          <Button
-            variant={filterType === "tutor" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setFilterType("tutor")}
-            className="rounded-full text-xs"
-          >
-            <Icon name="support_agent" className="text-sm" />
-            Buổi Tutor
-          </Button>
-          <Button
-            variant={filterType === "chinh-khoa" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setFilterType("chinh-khoa")}
-            className="rounded-full text-xs"
-          >
-            <Icon name="school" className="text-sm" />
-            Chính khóa
-          </Button>
-          <Button
-            variant={filterType === "tu-hoc" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setFilterType("tu-hoc")}
-            className="rounded-full text-xs"
-          >
-            <Icon name="psychology" className="text-sm" />
-            Tự học
-          </Button>
-          <Button
-            variant={filterType === "thi-thu" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setFilterType("thi-thu")}
-            className="rounded-full text-xs"
-          >
-            <Icon name="quiz" className="text-sm" />
-            Thi thử
+            <Icon name="close" />
           </Button>
         </div>
+      )}
 
-        <p className="text-xs text-on-surface-variant">
-          {viewMode === "daily"
-            ? `${DAYS_OF_WEEK.find((d) => d.day === selectedDay)?.full} · ${sortedSessions.length} phiên học`
-            : `Toàn bộ tuần · ${sortedSessions.length} phiên học`}
-        </p>
-      </div>
-
-      {/* Schedule Items Grid / Cards */}
-      {viewMode === "daily" ? (
-        <div className="space-y-3.5">
-          {sortedSessions.map((session) => {
-            const badgeMeta = sessionTypeBadges[session.sessionType];
-            const isTutor = session.sessionType === "tutor";
-
-            return (
-              <div
-                key={session.id}
-                className={`group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-3xl border p-5 transition-all ${
-                  isTutor
-                    ? "border-secondary/40 bg-secondary/5 hover:border-secondary shadow-xs"
-                    : session.status === "completed"
-                      ? "border-outline-variant/50 bg-surface-container-low/60 opacity-80"
-                      : "border-outline-variant/80 bg-white hover:border-primary/40 hover:shadow-xs"
-                }`}
-              >
-                {/* Left: Time & Icon & Details */}
-                <div className="flex items-start gap-4">
-                  {/* Time box */}
-                  <div className="flex flex-col items-center justify-center rounded-2xl bg-white border border-outline-variant/60 px-3.5 py-2.5 text-center shadow-2xs shrink-0 w-20">
-                    <span className="text-sm font-extrabold text-primary">
-                      {session.startTime}
-                    </span>
-                    <span className="text-xs text-outline">
-                      {session.endTime}
-                    </span>
-                  </div>
-
-                  {/* Icon */}
-                  <span
-                    className={`hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
-                      isTutor
-                        ? "bg-secondary text-white shadow-xs"
-                        : "bg-surface-container text-primary"
-                    }`}
-                  >
-                    <Icon name={session.subjectIcon} className="text-2xl" />
-                  </span>
-
-                  {/* Content */}
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-xs uppercase tracking-wider text-secondary">
-                        {session.subjectName}
-                      </span>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${badgeMeta.className}`}
-                      >
-                        {badgeMeta.label}
-                      </span>
-                      {session.status === "completed" && (
-                        <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-                          Đã hoàn thành
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-base font-bold text-primary group-hover:text-secondary transition-colors">
-                      {session.title}
-                    </h3>
-
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant">
-                      <span className="inline-flex items-center gap-1">
-                        <Icon
-                          name="person"
-                          className="text-sm text-secondary"
-                        />
-                        {session.instructor}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Icon
-                          name="meeting_room"
-                          className="text-sm text-outline"
-                        />
-                        {session.location}
-                      </span>
-                    </div>
-
-                    {session.notes && (
-                      <p className="mt-1 text-xs text-on-surface-variant/90 italic bg-white/70 p-1.5 px-2.5 rounded-lg border border-outline-variant/40">
-                        {session.notes}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right: Actions */}
-                <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                  {session.id.startsWith("session-") && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Xóa lịch học"
-                      onClick={(e) => deleteSession(session.id, e)}
-                      className="text-outline hover:text-secondary h-8 w-8"
-                    >
-                      <Icon name="delete_outline" className="text-base" />
-                    </Button>
-                  )}
-
-                  {session.sessionType === "tutor" ? (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => onNavigate(courseHref("9", "toan"))}
-                      className="rounded-full font-bold shadow-xs text-xs"
-                    >
-                      <Icon name="videocam" className="text-sm" />
-                      Vào phòng học
-                    </Button>
-                  ) : session.sessionType === "tu-hoc" ? (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => onNavigate("/tu-giai")}
-                      className="rounded-full text-xs font-semibold"
-                    >
-                      Tự giải ngay
-                      <Icon name="arrow_forward" className="text-xs" />
-                    </Button>
-                  ) : session.sessionType === "thi-thu" ? (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => onNavigate("/thi-thu")}
-                      className="rounded-full text-xs font-semibold"
-                    >
-                      Vào thi thử
-                      <Icon name="arrow_forward" className="text-xs" />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="surface"
-                      size="sm"
-                      onClick={() => onNavigate(courseHref("9", "toan"))}
-                      className="rounded-full border border-outline-variant text-xs font-semibold hover:bg-surface-container-low"
-                    >
-                      Xem bài học
-                    </Button>
-                  )}
-                </div>
+      <div className="schedule-layout" data-view={viewMode}>
+        <section className="schedule-agenda" aria-label="Các buổi học">
+          <div className="schedule-agenda-heading">
+            <div>
+              <h2>
+                {viewMode === "daily"
+                  ? `${selected.full}, ${shortDate(selected.date)}`
+                  : "Một tuần nhìn thật rõ"}
+              </h2>
+              <p>
+                {summary.count} buổi học
+                {summary.count > 0 && (
+                  <> · {durationLabel(summary.minutes)} đã lên lịch</>
+                )}
+              </p>
+            </div>
+            {viewMode === "daily" && selected.isToday && (
+              <Badge tone="success">Hôm nay</Badge>
+            )}
+          </div>
+          <Tabs
+            tabs={filterTabs}
+            value={filterType}
+            onChange={setFilterType}
+            label="Loại buổi học"
+            className="schedule-filters"
+          />
+          {shown.length ? (
+            viewMode === "daily" ? (
+              <div className="schedule-timeline">
+                {shown.map((session) => renderSession(session))}
               </div>
-            );
-          })}
-
-          {sortedSessions.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-outline-variant p-8 text-center bg-white">
-              <Icon name="event_busy" className="text-4xl text-outline mb-2" />
-              <h3 className="text-base font-bold text-primary">
-                Chưa có lịch học cho ngày này
+            ) : (
+              <div className="schedule-week-grid">
+                {days
+                  .filter((day) =>
+                    shown.some((session) => session.dayOfWeek === day.day),
+                  )
+                  .map((day) => {
+                    const daySessions = shown.filter(
+                      (session) => session.dayOfWeek === day.day,
+                    );
+                    return (
+                      <section
+                        className="schedule-week-day"
+                        key={day.day}
+                        aria-label={`Lịch ${day.full}`}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="schedule-week-day-heading"
+                          onClick={() => {
+                            setSelectedDay(day.day);
+                            setViewMode("daily");
+                          }}
+                        >
+                          <span>
+                            <strong>{day.full}</strong>
+                            <small>
+                              {shortDate(day.date)}
+                              {day.isToday ? " · Hôm nay" : ""}
+                            </small>
+                          </span>
+                          <span>
+                            {daySessions.length} buổi
+                            <Icon name="arrow_forward" />
+                          </span>
+                        </Button>
+                        {daySessions.map((session) =>
+                          renderSession(session, true),
+                        )}
+                      </section>
+                    );
+                  })}
+              </div>
+            )
+          ) : (
+            <div className="schedule-empty">
+              <span>
+                <Icon name="calendar_today" />
+              </span>
+              <h3>
+                {filterType !== "all"
+                  ? "Chưa có buổi học thuộc nhóm này"
+                  : "Một khoảng trống cho kế hoạch của em"}
               </h3>
-              <p className="mt-1 text-xs text-on-surface-variant">
-                Bạn có thể thêm lịch học cá nhân hoặc phiên cố vấn cùng Tutor.
+              <p>
+                {filterType !== "all"
+                  ? "Thử xem tất cả buổi học hoặc chọn một ngày khác nhé."
+                  : "Thêm một buổi tự học nhỏ, hoặc dành thời gian để nghỉ ngơi."}
               </p>
               <Button
-                variant="primary"
-                size="sm"
-                onClick={() => {
-                  setNewDay(selectedDay);
-                  setIsAddModalOpen(true);
-                }}
-                className="mt-4 rounded-full text-xs"
+                variant="secondary"
+                onClick={
+                  filterType !== "all" ? () => setFilterType("all") : openAdd
+                }
               >
-                <Icon name="add" className="text-base" />
-                Thêm lịch học
+                {filterType !== "all" ? "Xem tất cả" : "Thêm lịch"}
+                <Icon name={filterType !== "all" ? "arrow_forward" : "add"} />
               </Button>
             </div>
           )}
-        </div>
-      ) : (
-        /* Weekly Full Grid Overview */
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {DAYS_OF_WEEK.map((d) => {
-            const daySessions = sessions
-              .filter((s) => s.dayOfWeek === d.day)
-              .sort((a, b) => a.startTime.localeCompare(b.startTime));
-            const isToday = d.day === currentVnDay;
+          <p className="schedule-data-note">
+            <Icon name="info" />
+            <span>
+              Lịch mẫu lặp lại hằng tuần. Lịch riêng được lưu trên thiết bị này.
+            </span>
+          </p>
+        </section>
 
-            return (
-              <div
-                key={d.day}
-                className={`rounded-3xl border p-4.5 bg-white transition-all ${
-                  isToday
-                    ? "border-secondary/50 ring-2 ring-secondary/20 shadow-xs"
-                    : "border-outline-variant/70"
-                }`}
+        <aside
+          className="schedule-sidebar"
+          aria-label="Chuẩn bị buổi học tiếp theo"
+        >
+          {upcoming ? (
+            <>
+              <section
+                className="schedule-upnext"
+                data-kind={upcoming.session.sessionType}
               >
-                <div className="flex items-center justify-between pb-3 border-b border-outline-variant/50">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold ${
-                        isToday
-                          ? "bg-secondary text-white"
-                          : "bg-surface-container text-primary"
-                      }`}
-                    >
-                      {d.short}
-                    </span>
-                    <h3 className="text-sm font-bold text-primary">{d.full}</h3>
-                  </div>
-                  <span className="text-xs text-outline font-medium">
-                    {daySessions.length} tiết
+                <div className="schedule-upnext-heading">
+                  <span>
+                    <Icon name={upcoming.isOngoing ? "play_arrow" : "alarm"} />
+                    {upcoming.isOngoing
+                      ? "Đang trong giờ học"
+                      : "Buổi học gần nhất"}
                   </span>
+                  <Icon name={upcoming.session.subjectIcon} />
                 </div>
-
-                <div className="mt-3 space-y-2.5">
-                  {daySessions.map((s) => (
-                    <div
-                      key={s.id}
-                      className={`rounded-xl p-2.5 text-xs transition-colors border ${
-                        s.sessionType === "tutor"
-                          ? "bg-secondary/10 border-secondary/30 text-secondary"
-                          : "bg-surface-container-low/60 border-outline-variant/40 text-on-surface"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="truncate pr-1">{s.title}</span>
-                        <span className="shrink-0 text-xs opacity-80">
-                          {s.startTime}
-                        </span>
-                      </div>
-                      <div className="mt-1 flex items-center justify-between text-xs text-on-surface-variant">
-                        <span>{s.instructor}</span>
-                        <span>{s.location}</span>
-                      </div>
-                    </div>
-                  ))}
-                  {daySessions.length === 0 && (
-                    <p className="py-4 text-center text-xs text-outline italic">
-                      Không có lịch học
-                    </p>
+                <p className="schedule-upnext-date">
+                  {upcoming.daysAway === 0
+                    ? "Hôm nay"
+                    : upcoming.daysAway === 1
+                      ? "Ngày mai"
+                      : DAYS_OF_WEEK.find(
+                          (day) => day.day === upcoming.session.dayOfWeek,
+                        )?.full}{" "}
+                  · {shortDate(upcoming.date)}
+                </p>
+                <div className="schedule-upnext-time">
+                  <strong>{upcoming.session.startTime}</strong>
+                  <span>— {upcoming.session.endTime}</span>
+                </div>
+                <span className="schedule-upnext-kind">
+                  {
+                    sessionTypes.find(
+                      (kind) => kind.id === upcoming.session.sessionType,
+                    )?.label
+                  }
+                </span>
+                <h2>{upcoming.session.title}</h2>
+                <div className="schedule-upnext-meta">
+                  {upcoming.session.instructor && (
+                    <span>
+                      <Icon name="person" />
+                      {upcoming.session.instructor}
+                    </span>
+                  )}
+                  {upcoming.session.location && (
+                    <span>
+                      <Icon name="room" />
+                      {upcoming.session.location}
+                    </span>
                   )}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                <Button
+                  className="ui-btn-on-brand"
+                  onClick={() =>
+                    onNavigate(sessionAction(upcoming.session).path)
+                  }
+                >
+                  <Icon name={sessionAction(upcoming.session).icon} />
+                  {sessionAction(upcoming.session).label}
+                  <Icon name="arrow_forward" />
+                </Button>
+              </section>
+              {upcoming.session.notes && (
+                <section className="schedule-preparation">
+                  <span className="schedule-preparation-icon">
+                    <Icon name="edit_note" />
+                  </span>
+                  <div>
+                    <h2>Chuẩn bị một chút</h2>
+                    <p>{upcoming.session.notes}</p>
+                  </div>
+                </section>
+              )}
+            </>
+          ) : (
+            <section className="schedule-upnext schedule-upnext--empty">
+              <Icon name="wb_sunny" />
+              <h2>Lịch phía trước đang trống</h2>
+              <p>Chọn một khoảng thời gian phù hợp để học điều em muốn.</p>
+              <Button className="ui-btn-on-brand" onClick={openAdd}>
+                <Icon name="add" />
+                Thêm lịch
+              </Button>
+            </section>
+          )}
+          <section className="schedule-personal-plan">
+            <Icon name="edit_square" />
+            <h2>Một chút thời gian cho mình</h2>
+            <p>Tự chọn môn, thời gian và điều muốn hiểu rõ hơn.</p>
+            <Button variant="ghost" onClick={openAdd}>
+              Lên lịch tự học
+              <Icon name="arrow_forward" />
+            </Button>
+          </section>
+        </aside>
+      </div>
 
-      {/* Add Custom Schedule Modal */}
       <Modal
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        title="Thêm lịch học / Phiên học mới"
-        description="Thêm buổi học chính khóa, phiên cố vấn Tutor hoặc ca tự học vào thời khóa biểu"
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? "Chỉnh sửa lịch học" : "Thêm lịch học"}
+        description="Chọn một khoảng thời gian vừa sức. Lịch này sẽ lặp lại mỗi tuần."
+        className="schedule-editor-dialog"
       >
-        <form onSubmit={handleAddSession} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Tiêu đề buổi học
-            </label>
+        <form
+          ref={formRef}
+          onSubmit={saveSession}
+          className="schedule-editor"
+          noValidate
+        >
+          <Field label="Tên buổi học" error={errors.title}>
             <Input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="VD: Toán 9: Luyện tập rút gọn căn thức..."
+              autoFocus
+              value={draft.title}
+              maxLength={180}
+              onChange={(event) => changeDraft("title", event.target.value)}
+              placeholder="Em muốn học điều gì?"
               required
-              className="w-full"
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Môn học
-              </label>
+          </Field>
+          <div className="schedule-form-grid">
+            <Field label="Môn học" error={errors.subjectName}>
               <Select
-                value={newSubject}
-                onChange={(e) => setNewSubject(e.target.value)}
+                value={draft.subjectName}
+                onChange={(event) =>
+                  changeDraft("subjectName", event.target.value)
+                }
               >
-                <option value="Toán học">Toán học</option>
-                <option value="Tiếng Anh">Tiếng Anh</option>
-                <option value="Ngữ văn">Ngữ văn</option>
-                <option value="Vật lý">Vật lý</option>
-                <option value="Hóa học">Hóa học</option>
-                <option value="Sinh học">Sinh học</option>
-                <option value="Tutor Đồng Hành">Tutor Đồng Hành</option>
-                <option value="Tự học thông minh">Tự học thông minh</option>
-              </Select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Thứ trong tuần
-              </label>
-              <Select
-                value={newDay}
-                onChange={(e) => setNewDay(Number(e.target.value))}
-              >
-                {DAYS_OF_WEEK.map((d) => (
-                  <option key={d.day} value={d.day}>
-                    {d.full}
+                {subjectOptions.map(([name]) => (
+                  <option key={name} value={name}>
+                    {name}
                   </option>
                 ))}
               </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Loại hình
-              </label>
+            </Field>
+            <Field label="Loại buổi học" error={errors.sessionType}>
               <Select
-                value={newSessionType}
-                onChange={(e) =>
-                  setNewSessionType(e.target.value as SessionType)
+                value={draft.sessionType}
+                onChange={(event) =>
+                  changeDraft("sessionType", event.target.value as SessionType)
                 }
               >
-                <option value="tutor">Buổi Tutor</option>
-                <option value="chinh-khoa">Chính khóa</option>
-                <option value="tu-hoc">Tự học</option>
-                <option value="thi-thu">Thi thử</option>
+                {sessionTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.label}
+                  </option>
+                ))}
               </Select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Giờ bắt đầu
-              </label>
+            </Field>
+          </div>
+          <div className="schedule-form-time">
+            <Field label="Thứ trong tuần" error={errors.dayOfWeek}>
+              <Select
+                value={draft.dayOfWeek}
+                onChange={(event) =>
+                  changeDraft("dayOfWeek", Number(event.target.value))
+                }
+              >
+                {DAYS_OF_WEEK.map((day) => (
+                  <option key={day.day} value={day.day}>
+                    {day.full}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Bắt đầu" error={errors.startTime}>
               <Input
                 type="time"
-                value={newStartTime}
-                onChange={(e) => setNewStartTime(e.target.value)}
+                value={draft.startTime}
+                onChange={(event) =>
+                  changeDraft("startTime", event.target.value)
+                }
                 required
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Giờ kết thúc
-              </label>
+            </Field>
+            <Field label="Kết thúc" error={errors.endTime}>
               <Input
                 type="time"
-                value={newEndTime}
-                onChange={(e) => setNewEndTime(e.target.value)}
+                value={draft.endTime}
+                onChange={(event) => changeDraft("endTime", event.target.value)}
                 required
               />
-            </div>
+            </Field>
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Giáo viên / Tutor
-              </label>
+          <div className="schedule-form-grid">
+            <Field label="Người hướng dẫn" hint="Không bắt buộc">
               <Input
-                type="text"
-                value={newInstructor}
-                onChange={(e) => setNewInstructor(e.target.value)}
-                placeholder="VD: Tutor Mai Anh..."
+                value={draft.instructor ?? ""}
+                maxLength={100}
+                onChange={(event) =>
+                  changeDraft("instructor", event.target.value)
+                }
+                placeholder="Tên giáo viên hoặc tutor"
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Phòng học / Địa điểm
-              </label>
+            </Field>
+            <Field label="Địa điểm" hint="Không bắt buộc">
               <Input
-                type="text"
-                value={newLocation}
-                onChange={(e) => setNewLocation(e.target.value)}
-                placeholder="VD: Phòng 9A2 / Trực tuyến..."
+                value={draft.location ?? ""}
+                maxLength={160}
+                onChange={(event) =>
+                  changeDraft("location", event.target.value)
+                }
+                placeholder="Ở nhà, phòng học…"
               />
-            </div>
+            </Field>
           </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Ghi chú chuẩn bị
-            </label>
-            <Input
-              type="text"
-              value={newNotes}
-              onChange={(e) => setNewNotes(e.target.value)}
-              placeholder="VD: Đọc trước bài 3, chuẩn bị câu hỏi thắc mắc..."
-              className="w-full"
+          <Field
+            label="Ghi chú"
+            hint="Điều cần chuẩn bị hoặc mục tiêu nhỏ cho buổi học."
+          >
+            <Textarea
+              value={draft.notes ?? ""}
+              maxLength={600}
+              onChange={(event) => changeDraft("notes", event.target.value)}
+              rows={3}
+              placeholder="Ví dụ: chuẩn bị vở nháp và câu hỏi muốn giải đáp."
             />
-          </div>
-
-          <div className="mt-6 flex justify-end gap-2 pt-2 border-t border-outline-variant">
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setIsAddModalOpen(false)}
-            >
+          </Field>
+          <div className="schedule-editor-footer">
+            <Button variant="ghost" onClick={() => setModalOpen(false)}>
               Hủy
             </Button>
-            <Button variant="primary" type="submit">
-              <Icon name="calendar_add_on" className="text-base" />
-              Lưu vào thời khóa biểu
+            <Button type="submit">
+              <Icon name="calendar_add_on" />
+              Lưu lịch
             </Button>
           </div>
         </form>
       </Modal>
     </div>
   );
-};
+}

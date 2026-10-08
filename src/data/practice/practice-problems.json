@@ -15,13 +15,7 @@
     "initialInput": "12 = a \\cdot (-2)^2 \\iff 12 = 4a",
     "setup": "Vì điểm $M(-2;12)$ thuộc đồ thị, thay $x=-2$ và $y=12$ vào phương trình $y=ax^2$.",
     "conclusion": "Hệ số $a=3$ thỏa mãn $a\\ne 0$. Vậy hàm số cần tìm là $y=3x^2$.",
-    "graphXs": [
-      -2,
-      -1,
-      0,
-      1,
-      2
-    ],
+    "graphXs": [-2, -1, 0, 1, 2],
     "hints": [
       {
         "id": 1,
@@ -49,6 +43,72 @@
         "answer": "Với hệ số $a>0$, parabol có bề lõm hướng lên trên."
       }
     ],
-    "lessonId": "ham-so-bac-hai"
+    "lessonId": "ham-so-bac-hai",
+    "kind": "parabola-coefficient",
+    "durationMinutes": 15,
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "ham-so"
+  },
+  {
+    "id": "quadratic-factor-01",
+    "kind": "quadratic-factor",
+    "label": "Luyện tập tuyển sinh 10",
+    "title": "Phương trình bậc hai & phân tích nhân tử",
+    "course": "Toán lớp 9 · Tuyển sinh 10",
+    "topic": "Phương trình bậc hai",
+    "difficulty": "Vận dụng",
+    "durationMinutes": 25,
+    "point": {
+      "x": 0,
+      "y": 6
+    },
+    "variable": "x",
+    "quadratic": {
+      "a": 1,
+      "b": -5,
+      "c": 6,
+      "roots": [2, 3]
+    },
+    "statement": "Giải phương trình bậc hai $x^2 - 5x + 6 = 0$ bằng phương pháp tách hạng tử / phân tích đa thức thành nhân tử.",
+    "initialInput": "",
+    "setup": "Xác định hai số có tổng bằng hệ số của $x$ và tích bằng hệ số tự do. Kiểm tra cả tổng và tích trước khi tách hạng tử.",
+    "conclusion": "Ta có $(x-2)(x-3)=0$. Vậy tập nghiệm là $S=\\{2;3\\}$.",
+    "graphXs": [-1, 0, 1, 2, 3, 4, 5, 6],
+    "hints": [
+      {
+        "id": 1,
+        "title": "Xác định tổng và tích",
+        "text": "Em cần hai số $u,v$ sao cho $u+v=-5$ và $uv=6$. Hai số này cùng dấu hay trái dấu?"
+      },
+      {
+        "id": 2,
+        "title": "Kiểm tra bẫy dấu âm",
+        "text": "Tích dương nên hai số cùng dấu; tổng âm nên cả hai đều âm. Liệt kê các cặp ước của $6$, rồi kiểm tra tổng từng cặp."
+      },
+      {
+        "id": 3,
+        "title": "Nhóm hạng tử & kết luận",
+        "text": "Sau khi tách $-5x$ thành $ux+vx$, nhóm hạng tử để đưa về tích bằng $0$. Cho từng nhân tử bằng $0$, rồi ghi cả hai nghiệm: x = … hoặc x = …."
+      }
+    ],
+    "prompts": [
+      {
+        "question": "Tích dương thì hai số có dấu gì?",
+        "answer": "Hai số khác $0$ có tích dương khi chúng cùng dấu. Dùng thêm dấu của tổng để chọn cùng dương hay cùng âm."
+      },
+      {
+        "question": "Tại sao cần kiểm tra cả tổng và tích?",
+        "answer": "Trong $(x+u)(x+v)$, hệ số của $x$ là $u+v$ và hệ số tự do là $uv$. Một cặp số phải thỏa mãn đồng thời cả hai điều kiện."
+      },
+      {
+        "question": "Từ một tích bằng 0, suy ra điều gì?",
+        "answer": "Nếu $AB=0$ thì $A=0$ hoặc $B=0$. Giải từng phương trình rồi kiểm tra từng nghiệm trong phương trình ban đầu."
+      }
+    ],
+    "lessonId": "he-thuc-viete",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "topicId": "phuong-trinh"
   }
 ]

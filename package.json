@@ -11,6 +11,7 @@
     "lint": "tsc --noEmit && node scripts/check-architecture.mjs && npm run check:icons",
     "typecheck": "tsc --noEmit",
     "test": "node scripts/run-tests.mjs",
+    "test:e2e": "playwright test",
     "format": "prettier --write src tests scripts *.ts *.json *.html *.md",
     "format:check": "prettier --check src tests scripts *.ts *.json *.html *.md",
     "tokens:export": "node scripts/export-design-tokens.mjs",
@@ -32,9 +33,11 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "axe-core": "4.14.0",
     "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",

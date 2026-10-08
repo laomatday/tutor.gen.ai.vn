@@ -1,4 +1,6 @@
 const { defineConfig, devices } = require("@playwright/test");
+const port = Number(process.env.PLAYWRIGHT_PORT || 3001);
+const baseURL = `http://127.0.0.1:${port}`;
 module.exports = defineConfig({
   testDir: "./tests/e2e",
   testMatch: "**/*.spec.cjs",
@@ -6,17 +8,20 @@ module.exports = defineConfig({
   expect: { timeout: 12_000 },
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI ? [["list"], ["html",{open:"never"}]] : "list",
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     ...devices["Desktop Chrome"],
-    baseURL: "http://127.0.0.1:3000",
+    baseURL,
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+      : undefined,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "bun run dev -- --host 127.0.0.1",
+    command: `npm run dev -- --host 127.0.0.1 --port ${port}`,
     env: { VITE_CONTENT_SOURCE: "local" },
-    url: "http://127.0.0.1:3000",
+    url: baseURL,
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
   },

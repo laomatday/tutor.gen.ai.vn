@@ -13,6 +13,7 @@ import { routePath } from "../../config/routes";
 import React, { useEffect, useState } from "react";
 import { AdaptiveText } from "../../components/AdaptiveText";
 import { LessonContentRenderer } from "../../components/LessonContentRenderer";
+import { LessonDiscovery } from "./LessonDiscovery";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
   GRADES,
@@ -1059,6 +1060,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               <div ref={readingSurfaceRef} className="p-5 sm:p-7 lg:p-8">
                 {location.stage === "theory" && (
                   <section aria-labelledby="lesson-theory-title">
+                    <div className="lesson-theory-discovery">
+                      <LessonDiscovery lesson={lesson} />
+                    </div>
                     <div className="mb-6 flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
                         <Icon name="menu_book" />

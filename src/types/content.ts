@@ -28,7 +28,7 @@ export interface Subject {
   theme?: Record<string, string>;
 }
 
-export type LessonStage = 'theory' | 'examples' | 'exercises';
+export type LessonStage = "theory" | "examples" | "exercises";
 
 export interface LessonStageInfo {
   id: LessonStage;
@@ -48,59 +48,59 @@ export interface Topic {
   heroImageUrl?: string | null;
 }
 
-export type ContentTextFormat = 'plain' | 'auto' | 'math';
+export type ContentTextFormat = "plain" | "auto" | "math";
 
 export type LessonContentBlock =
   | {
       id: string;
-      type: 'paragraph';
+      type: "paragraph";
       heading?: string;
       text: string;
       format?: ContentTextFormat;
     }
   | {
       id: string;
-      type: 'image';
+      type: "image";
       imageUrl: string;
       alt: string;
       caption?: string;
     }
   | {
       id: string;
-      type: 'math';
+      type: "math";
       formula: string;
       label?: string;
       display?: boolean;
     }
   | {
       id: string;
-      type: 'callout';
-      tone?: 'info' | 'success' | 'warning';
+      type: "callout";
+      tone?: "info" | "success" | "warning";
       title?: string;
       text: string;
       format?: ContentTextFormat;
     }
   | {
       id: string;
-      type: 'vocabulary';
+      type: "vocabulary";
       title?: string;
       items: Array<{ term: string; meaning: string; example?: string }>;
     }
   | {
       id: string;
-      type: 'dialogue';
+      type: "dialogue";
       title?: string;
       lines: Array<{ speaker: string; text: string; translation?: string }>;
     }
   | {
       id: string;
-      type: 'bullets';
+      type: "bullets";
       title?: string;
       items: string[];
     }
   | {
       id: string;
-      type: 'quote';
+      type: "quote";
       text: string;
       attribution?: string;
     };
@@ -132,10 +132,10 @@ export interface Lesson {
   topicId: string;
   title: string;
   summary: string;
-  kind: 'lesson' | 'problem-type';
+  kind: "lesson" | "problem-type";
   durationMinutes: number;
   order: number;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   thumbnailUrl?: string | null;
   heroImageUrl?: string | null;
   contentBlocks?: LessonContentBlock[];
@@ -163,6 +163,12 @@ export interface PracticePrompt {
 
 export interface PracticeProblem {
   id: string;
+  gradeId: string;
+  subjectId: string;
+  topicId?: string;
+  kind?: "parabola-coefficient" | "quadratic-factor";
+  quadratic?: { a: number; b: number; c: number; roots: [number, number] };
+  durationMinutes?: number;
   lessonId?: string;
   label: string;
   title: string;
@@ -190,6 +196,11 @@ export interface PracticePolicy {
   hintPenaltyGp: number;
   minimumRewardGp: number;
   inputLimit: number;
+  eventLimit: number;
+  sketchStrokeLimit: number;
+  sketchPointLimit: number;
+  replaySpeeds: number[];
+  defaultStudioProblemId: string;
 }
 
 export interface RewardItem {
@@ -202,12 +213,12 @@ export interface RewardItem {
   badgeIcon: string;
   description: string;
   image: string;
-  category: 'stationery' | 'tech' | 'limited';
+  category: "stationery" | "tech" | "limited";
   featured?: boolean;
 }
 
 export interface RewardFilter {
-  id: 'all' | 'ready' | 'tech' | 'limited';
+  id: "all" | "ready" | "tech" | "limited";
   label: string;
 }
 
@@ -242,7 +253,7 @@ export interface AssessmentTimelineItem {
   to: number;
   label: string;
   description: string;
-  tone: 'warning' | 'success' | 'primary' | 'neutral';
+  tone: "warning" | "success" | "primary" | "neutral";
 }
 
 export interface AssessmentPlanStep {
@@ -339,7 +350,7 @@ export interface ManagedUser {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'teacher' | 'admin';
+  role: "student" | "teacher" | "admin";
   active: boolean;
   group: string;
 }

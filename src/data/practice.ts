@@ -12,8 +12,8 @@ const problems = practiceData as PracticeProblem[];
 const formulaToolsList = toolsData.formulaTools as FormulaTool[];
 const policy = toolsData.policy as PracticePolicy;
 
-if (process.env.NODE_ENV !== "production" && problems[0]) {
-  const errors = validatePracticeProblemData(problems[0]);
+if (process.env.NODE_ENV !== "production") {
+  const errors = problems.flatMap(validatePracticeProblemData);
   if (errors.length > 0) {
     console.warn("[Content Validation] Practice problem issues:", errors);
   }

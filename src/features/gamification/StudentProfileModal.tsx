@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Modal, Button, Icon, Progress } from "../../components/ui";
 import { studentProfile } from "../learning/data/student";
 import { initialBadges, type StudentBadge } from "./badges";
+import { useCurriculum } from "../../context/CurriculumContext";
 
 interface StudentProfileModalProps {
   open: boolean;
@@ -14,9 +15,17 @@ interface StudentProfileModalProps {
 export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
   open,
   onClose,
-  gpBalance = 120,
-  completedLessonsCount = 2,
+  gpBalance = 0,
+  completedLessonsCount = 0,
 }) => {
+  const { subjects } = useCurriculum();
+  const enrolledCourses = studentProfile.enrollments
+    .map(({ subjectId, gradeId }) => {
+      const subject = subjects.find((item) => item.id === subjectId);
+      return subject ? `${subject.name} ${gradeId}` : null;
+    })
+    .filter(Boolean)
+    .join(" · ");
   const [activeFilter, setActiveFilter] = useState<
     "all" | "unlocked" | "locked"
   >("all");
@@ -37,7 +46,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
   > = {
     bronze: {
       label: "Đồng",
-      className: "text-secondary bg-secondary/15 border-secondary/30",
+      className: "text-brand bg-secondary/15 border-secondary/30",
     },
     silver: {
       label: "Bạc",
@@ -46,8 +55,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
     },
     gold: {
       label: "Vàng",
-      className:
-        "text-secondary-fixed bg-secondary/20 border-secondary/40 font-bold",
+      className: "text-brand bg-secondary/20 border-secondary/40 font-bold",
     },
     diamond: {
       label: "Kim cương",
@@ -65,7 +73,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
           <span>Hồ sơ & Bộ sưu tập Huy hiệu</span>
         </div>
       }
-      description="Xem các mốc thành tích và huy hiệu phần thưởng bạn đã đạt được"
+      description="Tiến độ và điểm thưởng trên thiết bị; bộ huy hiệu bên dưới là dữ liệu minh họa."
       className="max-w-3xl"
     >
       <div className="space-y-6">
@@ -73,7 +81,11 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
         <div className="relative overflow-hidden rounded-3xl border border-secondary/20 bg-linear-to-br from-primary/5 via-secondary/10 to-transparent p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <div className="relative">
-              <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover ring-4 ring-white shadow-md" />
+              <StudentAvatar
+                name={studentProfile.name}
+                src={studentProfile.avatarUrl}
+                className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover ring-4 ring-white shadow-md"
+              />
               <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-white shadow-sm ring-2 ring-white">
                 <Icon name="verified" className="text-lg" />
               </span>
@@ -93,7 +105,9 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
               </div>
 
               <p className="mt-1 text-xs text-on-surface-variant">
-                Môn học chính: Toán 9 · Học kỳ I · Thành viên tích cực
+                {enrolledCourses
+                  ? `Môn đã đăng ký: ${enrolledCourses}`
+                  : "Chưa đăng ký môn học"}
               </p>
 
               {/* Quick Stats */}
@@ -127,35 +141,39 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
             <div>
               <h4 className="text-base font-bold text-primary flex items-center gap-2">
                 <Icon name="workspace_premium" className="text-secondary" />
-                Huy hiệu mốc học tập ({unlockedCount}/{badges.length})
+                Huy hiệu minh họa ({unlockedCount}/{badges.length})
               </h4>
               <p className="text-xs text-on-surface-variant">
-                Chinh phục các mục tiêu để mở khóa huy hiệu và nhận thưởng GP
+                Khám phá các mốc và phần thưởng trong bộ huy hiệu minh họa
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 rounded-xl bg-surface-container-low p-1">
+            <div
+              className="ui-segmented grid-cols-3"
+              role="group"
+              aria-label="Lọc huy hiệu"
+            >
               <Button
-                variant={activeFilter === "all" ? "primary" : "ghost"}
+                variant="ghost"
                 size="sm"
                 onClick={() => setActiveFilter("all")}
-                className="text-xs h-8"
+                aria-pressed={activeFilter === "all"}
               >
                 Tất cả ({badges.length})
               </Button>
               <Button
-                variant={activeFilter === "unlocked" ? "primary" : "ghost"}
+                variant="ghost"
                 size="sm"
                 onClick={() => setActiveFilter("unlocked")}
-                className="text-xs h-8"
+                aria-pressed={activeFilter === "unlocked"}
               >
                 Đã đạt ({unlockedCount})
               </Button>
               <Button
-                variant={activeFilter === "locked" ? "primary" : "ghost"}
+                variant="ghost"
                 size="sm"
                 onClick={() => setActiveFilter("locked")}
-                className="text-xs h-8"
+                aria-pressed={activeFilter === "locked"}
               >
                 Chưa đạt ({badges.length - unlockedCount})
               </Button>
@@ -178,7 +196,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                       ? isSelected
                         ? "border-secondary bg-secondary/10 shadow-md ring-2 ring-secondary/20"
                         : "border-outline-variant/60 bg-white hover:border-secondary/50 hover:shadow-xs"
-                      : "border-dashed border-outline-variant/70 bg-surface-container-low/50 opacity-75 hover:opacity-95"
+                      : "border-dashed border-outline-variant/70 bg-surface-container-low/50"
                   }`}
                 >
                   <div className="flex items-start gap-3.5 w-full">
@@ -238,7 +256,12 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
 
                       {/* Progress bar if locked */}
                       {!badge.unlocked && (
-                        <Progress value={badge.progress} label={`Tiến độ huy hiệu ${badge.title}`} tone="accent" className="mt-1.5 h-1.5 w-full" />
+                        <Progress
+                          value={badge.progress}
+                          label={`Tiến độ huy hiệu ${badge.title}`}
+                          tone="accent"
+                          className="mt-1.5 h-1.5 w-full"
+                        />
                       )}
                     </div>
                   </div>
@@ -281,13 +304,13 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-4 text-xs pt-2 border-t border-secondary/15 text-on-surface-variant">
               <span>
-                Phần thưởng:{" "}
+                Phần thưởng mẫu:{" "}
                 <strong className="text-secondary font-bold">
                   +{selectedBadge.rewardGp} GP
                 </strong>
               </span>
               <span>
-                Trạng thái:{" "}
+                Trạng thái mẫu:{" "}
                 <strong>
                   {selectedBadge.unlocked
                     ? `Hoàn thành ngày ${selectedBadge.unlockedAt}`

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { avatarInitials } from "./avatarInitials";
 
 interface StudentAvatarProps {
   name: string;
@@ -7,11 +8,31 @@ interface StudentAvatarProps {
 }
 
 /** Self-contained avatar with a text fallback (including failed image URLs). */
-export function StudentAvatar({ name, src, className = "" }: StudentAvatarProps) {
+export function StudentAvatar({
+  name,
+  src,
+  className = "",
+}: StudentAvatarProps) {
   const [broken, setBroken] = useState(false);
-  const initials = name.trim().split(/\s+/).slice(-2).map((part) => part[0]).join("").toUpperCase() || "HS";
+  const initials = avatarInitials(name);
   if (!src || broken) {
-    return <span role="img" aria-label={name} className={`student-avatar-fallback ${className}`}>{initials}</span>;
+    return (
+      <span
+        role="img"
+        aria-label={name}
+        className={`student-avatar-fallback ${className}`}
+      >
+        {initials}
+      </span>
+    );
   }
-  return <img src={src} alt={name} onError={() => setBroken(true)} referrerPolicy="no-referrer" className={className} />;
+  return (
+    <img
+      src={src}
+      alt={name}
+      onError={() => setBroken(true)}
+      referrerPolicy="no-referrer"
+      className={className}
+    />
+  );
 }

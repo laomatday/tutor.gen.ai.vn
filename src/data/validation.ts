@@ -1,4 +1,13 @@
-import type { Grade, Subject, Topic, Lesson, LessonStageInfo, RewardItem, PracticeProblem, SampleAssessment } from '../types/content';
+import type {
+  Grade,
+  Subject,
+  Topic,
+  Lesson,
+  LessonStageInfo,
+  RewardItem,
+  PracticeProblem,
+  SampleAssessment,
+} from "../types/content";
 
 export interface ContentValidationError {
   scope: string;
@@ -18,64 +27,113 @@ export function validateCurriculumData(
   lessons: Lesson[],
 ): ContentValidationError[] {
   const errors: ContentValidationError[] = [];
-  const gradeIds = new Set(grades.map(item => item.id));
-  const subjectIds = new Set(subjects.map(item => item.id));
-  const stageIds = new Set(stages.map(item => item.id));
+  const gradeIds = new Set(grades.map((item) => item.id));
+  const subjectIds = new Set(subjects.map((item) => item.id));
+  const stageIds = new Set(stages.map((item) => item.id));
   const topicIds = new Set<string>();
   const lessonIds = new Set<string>();
 
   if (gradeIds.size !== grades.length) {
-    errors.push({ scope: 'grades', message: 'Mã khối lớp (gradeId) bị trùng lặp.' });
+    errors.push({
+      scope: "grades",
+      message: "Mã khối lớp (gradeId) bị trùng lặp.",
+    });
   }
   if (subjectIds.size !== subjects.length) {
-    errors.push({ scope: 'subjects', message: 'Mã môn học (subjectId) bị trùng lặp.' });
+    errors.push({
+      scope: "subjects",
+      message: "Mã môn học (subjectId) bị trùng lặp.",
+    });
   }
   if (stageIds.size !== stages.length) {
-    errors.push({ scope: 'stages', message: 'Mã giai đoạn bài học (stageId) bị trùng lặp.' });
+    errors.push({
+      scope: "stages",
+      message: "Mã giai đoạn bài học (stageId) bị trùng lặp.",
+    });
   }
 
   for (const topic of topics) {
     if (!topic.id || topicIds.has(topic.id)) {
-      errors.push({ scope: 'topics', id: topic.id, message: `Chủ đề có mã '${topic.id}' không hợp lệ hoặc bị trùng.` });
+      errors.push({
+        scope: "topics",
+        id: topic.id,
+        message: `Chủ đề có mã '${topic.id}' không hợp lệ hoặc bị trùng.`,
+      });
     }
     topicIds.add(topic.id);
     if (!gradeIds.has(topic.gradeId)) {
-      errors.push({ scope: 'topics', id: topic.id, message: `Chủ đề '${topic.title}' trỏ đến gradeId '${topic.gradeId}' không tồn tại.` });
+      errors.push({
+        scope: "topics",
+        id: topic.id,
+        message: `Chủ đề '${topic.title}' trỏ đến gradeId '${topic.gradeId}' không tồn tại.`,
+      });
     }
     if (!subjectIds.has(topic.subjectId)) {
-      errors.push({ scope: 'topics', id: topic.id, message: `Chủ đề '${topic.title}' trỏ đến subjectId '${topic.subjectId}' không tồn tại.` });
+      errors.push({
+        scope: "topics",
+        id: topic.id,
+        message: `Chủ đề '${topic.title}' trỏ đến subjectId '${topic.subjectId}' không tồn tại.`,
+      });
     }
     if (!topic.title.trim()) {
-      errors.push({ scope: 'topics', id: topic.id, message: `Chủ đề '${topic.id}' thiếu tiêu đề.` });
+      errors.push({
+        scope: "topics",
+        id: topic.id,
+        message: `Chủ đề '${topic.id}' thiếu tiêu đề.`,
+      });
     }
   }
 
-  const topicMap = new Map(topics.map(topic => [topic.id, topic]));
+  const topicMap = new Map(topics.map((topic) => [topic.id, topic]));
   const ordersByTopic = new Map<string, Set<number>>();
 
   for (const lesson of lessons) {
     if (!lesson.id || lessonIds.has(lesson.id)) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học có mã '${lesson.id}' không hợp lệ hoặc bị trùng.` });
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Bài học có mã '${lesson.id}' không hợp lệ hoặc bị trùng.`,
+      });
     }
     lessonIds.add(lesson.id);
 
     const parentTopic = topicMap.get(lesson.topicId);
     if (!parentTopic) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' tham chiếu topicId '${lesson.topicId}' không tồn tại.` });
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Bài học '${lesson.title}' tham chiếu topicId '${lesson.topicId}' không tồn tại.`,
+      });
     } else {
       if (parentTopic.gradeId !== lesson.gradeId) {
-        errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' có gradeId '${lesson.gradeId}' khác với chủ đề '${parentTopic.gradeId}'.` });
+        errors.push({
+          scope: "lessons",
+          id: lesson.id,
+          message: `Bài học '${lesson.title}' có gradeId '${lesson.gradeId}' khác với chủ đề '${parentTopic.gradeId}'.`,
+        });
       }
       if (parentTopic.subjectId !== lesson.subjectId) {
-        errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' có subjectId '${lesson.subjectId}' khác với chủ đề '${parentTopic.subjectId}'.` });
+        errors.push({
+          scope: "lessons",
+          id: lesson.id,
+          message: `Bài học '${lesson.title}' có subjectId '${lesson.subjectId}' khác với chủ đề '${parentTopic.subjectId}'.`,
+        });
       }
     }
 
     if (!gradeIds.has(lesson.gradeId)) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' trỏ đến gradeId '${lesson.gradeId}' không hợp lệ.` });
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Bài học '${lesson.title}' trỏ đến gradeId '${lesson.gradeId}' không hợp lệ.`,
+      });
     }
     if (!subjectIds.has(lesson.subjectId)) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' trỏ đến subjectId '${lesson.subjectId}' không hợp lệ.` });
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Bài học '${lesson.title}' trỏ đến subjectId '${lesson.subjectId}' không hợp lệ.`,
+      });
     }
 
     if (!ordersByTopic.has(lesson.topicId)) {
@@ -83,36 +141,74 @@ export function validateCurriculumData(
     }
     const topicOrders = ordersByTopic.get(lesson.topicId)!;
     if (topicOrders.has(lesson.order)) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Thứ tự bài học (order: ${lesson.order}) bị trùng lặp trong chủ đề '${lesson.topicId}'.` });
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Thứ tự bài học (order: ${lesson.order}) bị trùng lặp trong chủ đề '${lesson.topicId}'.`,
+      });
     }
     topicOrders.add(lesson.order);
 
-    if (lesson.thumbnailUrl !== undefined && lesson.thumbnailUrl !== null && !lesson.thumbnailUrl.trim()) {
-      errors.push({ scope: 'lessons', id: lesson.id, message: `Bài học '${lesson.title}' có thumbnailUrl rỗng.` });
+    if (
+      lesson.thumbnailUrl !== undefined &&
+      lesson.thumbnailUrl !== null &&
+      !lesson.thumbnailUrl.trim()
+    ) {
+      errors.push({
+        scope: "lessons",
+        id: lesson.id,
+        message: `Bài học '${lesson.title}' có thumbnailUrl rỗng.`,
+      });
     }
 
     const blockIds = new Set<string>();
     for (const block of lesson.contentBlocks ?? []) {
       if (!block.id || blockIds.has(block.id)) {
-        errors.push({ scope: 'content-blocks', id: lesson.id, message: `Content block '${block.id}' trong bài '${lesson.id}' bị trùng hoặc thiếu id.` });
+        errors.push({
+          scope: "content-blocks",
+          id: lesson.id,
+          message: `Content block '${block.id}' trong bài '${lesson.id}' bị trùng hoặc thiếu id.`,
+        });
       }
       blockIds.add(block.id);
-      if (block.type === 'image' && (!block.imageUrl.trim() || !block.alt.trim())) {
-        errors.push({ scope: 'content-blocks', id: lesson.id, message: `Image block trong bài '${lesson.id}' phải có imageUrl và alt.` });
+      if (
+        block.type === "image" &&
+        (!block.imageUrl.trim() || !block.alt.trim())
+      ) {
+        errors.push({
+          scope: "content-blocks",
+          id: lesson.id,
+          message: `Image block trong bài '${lesson.id}' phải có imageUrl và alt.`,
+        });
       }
     }
 
     const exerciseIds = new Set<string>();
     for (const exercise of lesson.exercises) {
       if (!exercise.id || exerciseIds.has(exercise.id)) {
-        errors.push({ scope: 'exercises', id: lesson.id, message: `Bài tập '${exercise.id}' trong bài '${lesson.id}' bị trùng mã.` });
+        errors.push({
+          scope: "exercises",
+          id: lesson.id,
+          message: `Bài tập '${exercise.id}' trong bài '${lesson.id}' bị trùng mã.`,
+        });
       }
       exerciseIds.add(exercise.id);
       if (exercise.options.length < 2) {
-        errors.push({ scope: 'exercises', id: lesson.id, message: `Bài tập '${exercise.id}' có ít hơn 2 phương án.` });
+        errors.push({
+          scope: "exercises",
+          id: lesson.id,
+          message: `Bài tập '${exercise.id}' có ít hơn 2 phương án.`,
+        });
       }
-      if (exercise.correctIndex < 0 || exercise.correctIndex >= exercise.options.length) {
-        errors.push({ scope: 'exercises', id: lesson.id, message: `Đáp án đúng (${exercise.correctIndex}) ngoài khoảng phương án của '${exercise.id}'.` });
+      if (
+        exercise.correctIndex < 0 ||
+        exercise.correctIndex >= exercise.options.length
+      ) {
+        errors.push({
+          scope: "exercises",
+          id: lesson.id,
+          message: `Đáp án đúng (${exercise.correctIndex}) ngoài khoảng phương án của '${exercise.id}'.`,
+        });
       }
     }
   }
@@ -120,42 +216,144 @@ export function validateCurriculumData(
   return errors;
 }
 
-export function validateRewardsData(items: RewardItem[]): ContentValidationError[] {
+export function validateRewardsData(
+  items: RewardItem[],
+): ContentValidationError[] {
   const errors: ContentValidationError[] = [];
   const ids = new Set<string>();
   for (const item of items) {
     if (!item.id || ids.has(item.id)) {
-      errors.push({ scope: 'rewards', id: item.id, message: `Phần thưởng '${item.id}' không hợp lệ hoặc bị trùng.` });
+      errors.push({
+        scope: "rewards",
+        id: item.id,
+        message: `Phần thưởng '${item.id}' không hợp lệ hoặc bị trùng.`,
+      });
     }
     ids.add(item.id);
     if (!Number.isInteger(item.cost) || item.cost <= 0) {
-      errors.push({ scope: 'rewards', id: item.id, message: `Giá đổi của '${item.id}' phải là số nguyên dương.` });
+      errors.push({
+        scope: "rewards",
+        id: item.id,
+        message: `Giá đổi của '${item.id}' phải là số nguyên dương.`,
+      });
     }
     if (!Number.isInteger(item.stock) || item.stock < 0) {
-      errors.push({ scope: 'rewards', id: item.id, message: `Số lượng tồn kho của '${item.id}' phải không âm.` });
+      errors.push({
+        scope: "rewards",
+        id: item.id,
+        message: `Số lượng tồn kho của '${item.id}' phải không âm.`,
+      });
     }
   }
   return errors;
 }
 
-export function validatePracticeProblemData(problem: PracticeProblem): ContentValidationError[] {
+export function validatePracticeProblemData(
+  problem: PracticeProblem,
+): ContentValidationError[] {
   const errors: ContentValidationError[] = [];
   if (!problem.id || !problem.title.trim()) {
-    errors.push({ scope: 'practice', id: problem.id, message: 'Bài toán mẫu thiếu id hoặc tiêu đề.' });
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Bài toán mẫu thiếu id hoặc tiêu đề.",
+    });
+  }
+  if (
+    typeof problem.gradeId !== "string" ||
+    !problem.gradeId.trim() ||
+    typeof problem.subjectId !== "string" ||
+    !problem.subjectId.trim()
+  ) {
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Bài tập cần thông tin lớp và môn học để xác định quyền học.",
+    });
+  }
+  if (
+    problem.topicId !== undefined &&
+    (typeof problem.topicId !== "string" || !problem.topicId.trim())
+  ) {
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Mã chủ đề của bài tập không hợp lệ.",
+    });
   }
   if (!Array.isArray(problem.hints) || !problem.hints.length) {
-    errors.push({ scope: 'practice', id: problem.id, message: 'Bài toán mẫu cần ít nhất 1 gợi ý.' });
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Bài toán mẫu cần ít nhất 1 gợi ý.",
+    });
+  }
+  if (problem.kind === "quadratic-factor") {
+    const q = problem.quadratic;
+    if (
+      !q ||
+      ![q.a, q.b, q.c].every(Number.isFinite) ||
+      q.a === 0 ||
+      !Array.isArray(q.roots) ||
+      q.roots.length !== 2 ||
+      !q.roots.every(Number.isFinite)
+    ) {
+      errors.push({
+        scope: "practice",
+        id: problem.id,
+        message: "Phương trình bậc hai cần hệ số và hai nghiệm hợp lệ.",
+      });
+    } else {
+      const close = (a: number, b: number) =>
+        Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+      if (
+        !close(q.roots[0] + q.roots[1], -q.b / q.a) ||
+        !close(q.roots[0] * q.roots[1], q.c / q.a)
+      ) {
+        errors.push({
+          scope: "practice",
+          id: problem.id,
+          message: "Nghiệm không khớp tổng và tích của phương trình.",
+        });
+      }
+    }
+  } else if (problem.kind && problem.kind !== "parabola-coefficient") {
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Dạng bài chưa được hỗ trợ.",
+    });
+  }
+  if (
+    problem.durationMinutes !== undefined &&
+    (!Number.isFinite(problem.durationMinutes) || problem.durationMinutes <= 0)
+  ) {
+    errors.push({
+      scope: "practice",
+      id: problem.id,
+      message: "Thời lượng bài tập phải lớn hơn 0.",
+    });
   }
   return errors;
 }
 
-export function validateAssessmentData(assessment: SampleAssessment): ContentValidationError[] {
+export function validateAssessmentData(
+  assessment: SampleAssessment,
+): ContentValidationError[] {
   const errors: ContentValidationError[] = [];
   if (!assessment.id || !assessment.title.trim()) {
-    errors.push({ scope: 'assessment', id: assessment.id, message: 'Đề đánh giá mẫu thiếu id hoặc tiêu đề.' });
+    errors.push({
+      scope: "assessment",
+      id: assessment.id,
+      message: "Đề đánh giá mẫu thiếu id hoặc tiêu đề.",
+    });
   }
   if (!assessment.skills.length) {
-    errors.push({ scope: 'assessment', id: assessment.id, message: 'Đề đánh giá mẫu cần có danh sách kỹ năng.' });
+    errors.push({
+      scope: "assessment",
+      id: assessment.id,
+      message: "Đề đánh giá mẫu cần có danh sách kỹ năng.",
+    });
   }
   return errors;
 }

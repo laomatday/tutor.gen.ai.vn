@@ -1,0 +1,28 @@
+[
+  {
+    "lessonId": "can-bac-hai",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "exerciseId": "can-bac-hai-1",
+    "expectedPrompt": "Biểu thức $\\sqrt{x-2}$ xác định khi nào?",
+    "kind": "square-root-domain",
+    "offset": 2,
+    "min": -2,
+    "max": 6,
+    "initial": 0,
+    "title": "Một hình vuông đang chờ xuất hiện",
+    "instruction": "Thay đổi x và quan sát phần dưới dấu căn. Khi nào em có thể dựng một hình vuông có diện tích đó?"
+  },
+  {
+    "lessonId": "ham-so-bac-hai",
+    "gradeId": "9",
+    "subjectId": "toan",
+    "exerciseId": "ham-so-1",
+    "expectedPrompt": "Hàm số $y=-3x^2$ có đồ thị như thế nào?",
+    "kind": "parabola",
+    "coefficients": [-3, -2, -1, 1, 2, 3],
+    "initial": 1,
+    "title": "Một hệ số, hai hướng mở",
+    "instruction": "Đổi hệ số a và quan sát đồ thị. Thử cả một giá trị âm và một giá trị dương trước khi chọn đáp án."
+  }
+]

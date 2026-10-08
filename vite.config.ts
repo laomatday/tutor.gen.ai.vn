@@ -29,7 +29,7 @@ export default defineConfig(() => {
         manifest: {
           id: "/",
           name: `${appConfig.brand.name} — Không gian học tập`,
-          short_name: "genAi Tutor",
+          short_name: appConfig.brand.name,
           description: appConfig.brand.description,
           theme_color: "#243c8f",
           background_color: "#f7fafc",
@@ -59,8 +59,7 @@ export default defineConfig(() => {
         },
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
-          runtimeCaching: [
-          ],
+          runtimeCaching: [],
         },
         devOptions: {
           enabled: true,

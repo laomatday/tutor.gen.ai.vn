@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Icon, Modal, Input, Select, Progress } from "../../components/ui";
+import {
+  Button,
+  Icon,
+  Modal,
+  Input,
+  Select,
+  Progress,
+} from "../../components/ui";
 import {
   defaultDailyGoals,
   defaultWeeklyGoals,
@@ -130,20 +137,24 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Daily vs Weekly switcher */}
-          <div className="inline-flex rounded-full border border-outline-variant/80 bg-surface-container-low p-1 text-xs">
+          <div
+            className="ui-segmented grid-cols-2"
+            role="group"
+            aria-label="Khoảng thời gian mục tiêu"
+          >
             <Button
-              variant={activeTimeframe === "daily" ? "primary" : "ghost"}
+              variant="ghost"
               size="sm"
               onClick={() => setActiveTimeframe("daily")}
-              className="rounded-full text-xs h-8"
+              aria-pressed={activeTimeframe === "daily"}
             >
               Mục tiêu hôm nay
             </Button>
             <Button
-              variant={activeTimeframe === "weekly" ? "primary" : "ghost"}
+              variant="ghost"
               size="sm"
               onClick={() => setActiveTimeframe("weekly")}
-              className="rounded-full text-xs h-8"
+              aria-pressed={activeTimeframe === "weekly"}
             >
               Mục tiêu tuần
             </Button>
@@ -195,7 +206,12 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
           </span>
         </div>
 
-        <Progress value={percentage} label={`Tiến độ mục tiêu ${activeTimeframe}`} tone="accent" className="h-2.5 bg-white" />
+        <Progress
+          value={percentage}
+          label={`Tiến độ mục tiêu ${activeTimeframe}`}
+          tone="accent"
+          className="h-2.5 bg-white"
+        />
       </div>
 
       {/* Goals List */}

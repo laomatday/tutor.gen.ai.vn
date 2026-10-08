@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Icon, Modal } from "../ui";
 import { usePWAInstall } from "../../lib/usePWAInstall";
+import { appConfig } from "../../config/app";
 
 interface PWAInstallButtonProps {
   variant?: "primary" | "secondary" | "surface" | "ghost";
@@ -31,7 +32,7 @@ export function PWAInstallButton({
         size={size}
         onClick={install}
         className={className}
-        aria-label="Cài đặt ứng dụng genAi Tutor"
+        aria-label={`Cài đặt ứng dụng ${appConfig.brand.name}`}
         title="Cài đặt ứng dụng về máy"
       >
         <Icon name="download" />
@@ -59,7 +60,7 @@ export function PWAInstallButton({
         <Modal
           open={showIOSGuide}
           onClose={() => setShowIOSGuide(false)}
-          title="Cài đặt genAi Tutor trên iPhone / iPad"
+          title={`Cài đặt ${appConfig.brand.name} trên iPhone / iPad`}
           description="Trải nghiệm ứng dụng mượt mà và toàn màn hình không qua App Store"
           footer={
             <Button

@@ -77,21 +77,35 @@ const AdminView = lazy(() =>
 export default function App() {
   const location = useAppLocation();
   const { role, section, label } = readRoute(location.pathname);
-  const { subjects, lessons, topics, completedLessonIds, contentLoading, contentError } = useCurriculum();
+  const {
+    subjects,
+    lessons,
+    topics,
+    completedLessonIds,
+    contentLoading,
+    contentError,
+  } = useCurriculum();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const selectedSubject = new URLSearchParams(location.search).get("subject");
-  const activeEnrollment = studentProfile.enrollments.find(
-    (course) => course.subjectId === selectedSubject,
-  ) ?? primaryEnrollment;
-  const progress = getCourseProgress(lessons, topics, completedLessonIds, activeEnrollment);
+  const activeEnrollment =
+    studentProfile.enrollments.find(
+      (course) => course.subjectId === selectedSubject,
+    ) ?? primaryEnrollment;
+  const progress = getCourseProgress(
+    lessons,
+    topics,
+    completedLessonIds,
+    activeEnrollment,
+  );
   const notice = useNotice();
   const wallet = useRewardWallet(notice.show);
   const isStudent = role === "Học sinh";
-  const [desktopSidebarVisible, setDesktopSidebarVisible] = useLocalStorage<boolean>(
-    storageKeys.studentSidebarVisibleV2,
-    true,
-    (value): value is boolean => typeof value === "boolean",
-  );
+  const [desktopSidebarVisible, setDesktopSidebarVisible] =
+    useLocalStorage<boolean>(
+      storageKeys.studentSidebarVisibleV2,
+      false,
+      (value): value is boolean => typeof value === "boolean",
+    );
   const menu = useMobileNavigation(!isStudent || desktopSidebarVisible);
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
@@ -99,7 +113,7 @@ export default function App() {
   const studentSidebarVisible = isStudent && desktopSidebarVisible;
 
   const toggleStudentSidebar = () => {
-    if (window.matchMedia("(min-width: 1024px)").matches) {
+    if (menu.isDesktop) {
       setDesktopSidebarVisible((visible) => !visible);
       menu.setOpen(false);
     } else {
@@ -116,9 +130,9 @@ export default function App() {
   }, [location.pathname, location.search]);
 
   const navigate = (path: string) => {
+    menu.setOpen(false);
     if (navigateTo(path)) {
       notice.clear();
-      menu.setOpen(false);
     }
   };
 
@@ -134,13 +148,11 @@ export default function App() {
         Đi đến nội dung
       </a>
 
-      {menu.open && (
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 z-40 bg-inverse-surface/40 lg:hidden"
-          onClick={() => menu.setOpen(false)}
-        />
-      )}
+      <div
+        aria-hidden="true"
+        className={`app-navigation-backdrop lg:hidden ${menu.open ? "is-open" : ""}`}
+        onClick={() => menu.setOpen(false)}
+      />
 
       <AppSidebar
         role={role}
@@ -150,10 +162,8 @@ export default function App() {
         closeRef={menu.closeButton}
         onClose={() => menu.setOpen(false)}
         onNavigate={navigate}
-        onOpenProfile={() => setIsProfileOpen(true)}
         nextLessonPath={nextLessonPath}
-        progress={progress.percent}
-        balance={wallet.balance}
+        isDesktop={menu.isDesktop}
         pinned={desktopSidebarVisible}
         onToggleSidebar={toggleStudentSidebar}
       />
@@ -168,7 +178,10 @@ export default function App() {
       >
         <AppHeader
           role={role}
-          menuOpen={isStudent ? (window.matchMedia("(min-width: 1024px)").matches ? desktopSidebarVisible : menu.open) : menu.open}
+          section={section}
+          label={label}
+          search={location.search}
+          menuOpen={menu.open}
           menuRef={menu.trigger}
           onMenu={toggleStudentSidebar}
           onNavigate={navigate}
@@ -189,10 +202,20 @@ export default function App() {
           tabIndex={-1}
           className={isStudent ? "app-main app-main--student" : "app-main"}
         >
-          <PageBreadcrumbs role={role} section={section} label={label} search={location.search} subjects={subjects} onNavigate={navigate} />
+          {!isStudent && (
+            <PageBreadcrumbs
+              role={role}
+              section={section}
+              label={label}
+              search={location.search}
+              subjects={subjects}
+              onNavigate={navigate}
+            />
+          )}
           {contentError && !contentLoading && isStudent && (
             <Alert tone="warning" className="mb-4">
-              Chưa kết nối được học liệu trực tuyến. Nội dung đang hiển thị là dữ liệu minh họa; tiến độ được lưu trên trình duyệt này.
+              Chưa kết nối được học liệu trực tuyến. Nội dung đang hiển thị là
+              dữ liệu minh họa; tiến độ được lưu trên trình duyệt này.
             </Alert>
           )}
           {wallet.error && (
@@ -212,63 +235,68 @@ export default function App() {
                 </div>
               }
             >
-              {role === "Học sinh" && (contentLoading ? (
-                <div role="status" aria-label="Đang tải học liệu" className="learning-load-skeleton">
-                  <div className="learning-load-skeleton__title" />
-                  <div className="learning-load-skeleton__card" />
-                  <div className="learning-load-skeleton__card" />
-                </div>
-              ) : (
-                <>
-                  {section === "hom-nay" && (
-                    <TodayView
-                      onNavigate={navigateStudent}
-                      onOpenBadges={() => setIsProfileOpen(true)}
-                      gpBalance={wallet.balance}
-                      dailyGp={wallet.dailyGp}
-                      onEarnGp={wallet.earn}
-                    />
-                  )}
+              {role === "Học sinh" &&
+                (contentLoading ? (
+                  <div
+                    role="status"
+                    aria-label="Đang tải học liệu"
+                    className="learning-load-skeleton"
+                  >
+                    <div className="learning-load-skeleton__title" />
+                    <div className="learning-load-skeleton__card" />
+                    <div className="learning-load-skeleton__card" />
+                  </div>
+                ) : (
+                  <>
+                    {section === "hom-nay" && (
+                      <TodayView
+                        onNavigate={navigateStudent}
+                        onOpenBadges={() => setIsProfileOpen(true)}
+                        gpBalance={wallet.balance}
+                        dailyGp={wallet.dailyGp}
+                        onEarnGp={wallet.earn}
+                      />
+                    )}
 
-                  {section === "hoc-bai" && (
-                    <KnowledgeMapView
-                      onNavigate={navigateStudent}
-                      onEarnGp={wallet.earn}
-                    />
-                  )}
+                    {section === "hoc-bai" && (
+                      <KnowledgeMapView
+                        onNavigate={navigateStudent}
+                        onEarnGp={wallet.earn}
+                      />
+                    )}
 
-                  {section === "tu-giai" && (
-                    <SelfSolveView
-                      onEarnGp={wallet.earn}
-                      onNavigate={navigateStudent}
-                    />
-                  )}
+                    {section === "tu-giai" && (
+                      <SelfSolveView
+                        onEarnGp={wallet.earn}
+                        onNavigate={navigateStudent}
+                      />
+                    )}
 
-                  {section === "replay" && (
-                    <ThinkingReplayView onNavigate={navigateStudent} />
-                  )}
+                    {section === "replay" && (
+                      <ThinkingReplayView onNavigate={navigateStudent} />
+                    )}
 
-                  {section === "thoi-khoa-bieu" && (
-                    <TimetableScheduleView onNavigate={navigateStudent} />
-                  )}
+                    {section === "thoi-khoa-bieu" && (
+                      <TimetableScheduleView onNavigate={navigateStudent} />
+                    )}
 
-                  {(section === "thi-thu" || section === "tien-bo") && (
-                    <ExamIntelligenceView
-                      onNavigate={navigateStudent}
-                      onOpenBadges={() => setIsProfileOpen(true)}
-                    />
-                  )}
+                    {(section === "thi-thu" || section === "tien-bo") && (
+                      <ExamIntelligenceView
+                        onNavigate={navigateStudent}
+                        onOpenBadges={() => setIsProfileOpen(true)}
+                      />
+                    )}
 
-                  {section === "doi-qua" && (
-                    <RewardsStoreView
-                      gpBalance={wallet.balance}
-                      dailyGp={wallet.dailyGp}
-                      onNavigate={navigateStudent}
-                      onSpendGp={wallet.spend}
-                    />
-                  )}
-                </>
-              ))}
+                    {section === "doi-qua" && (
+                      <RewardsStoreView
+                        gpBalance={wallet.balance}
+                        dailyGp={wallet.dailyGp}
+                        onNavigate={navigateStudent}
+                        onSpendGp={wallet.spend}
+                      />
+                    )}
+                  </>
+                ))}
 
               {role === "Giáo viên" && (
                 <TeacherView

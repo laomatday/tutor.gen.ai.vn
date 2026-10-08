@@ -12,8 +12,8 @@
   "rewards": {
     "dailyLimit": 120,
     "lessonCompletionGp": 20,
-    "initialBalance": 860,
-    "initialDailyEarned": 95
+    "initialBalance": 0,
+    "initialDailyEarned": 0
   },
   "feedback": {
     "noticeDurationMs": 3500

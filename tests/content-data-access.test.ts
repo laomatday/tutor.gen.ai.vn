@@ -81,7 +81,14 @@ test("Data Access Layer retrieves JSON-backed academic content properly", () => 
 
 test("Data Access Layer retrieves practice, rewards and assessment data", () => {
   const practiceProblems = getPracticeProblems();
-  assert.equal(practiceProblems.length, 1);
+  assert.ok(
+    practiceProblems.some((item) => item.id === "parabola-coefficient-03"),
+  );
+  assert.ok(practiceProblems.some((item) => item.id === "quadratic-factor-01"));
+  assert.equal(
+    new Set(practiceProblems.map((item) => item.id)).size,
+    practiceProblems.length,
+  );
   const problem = getPracticeProblem("parabola-coefficient-03");
   assert.equal(problem.id, "parabola-coefficient-03");
   assert.equal(problem.variable, "a");
