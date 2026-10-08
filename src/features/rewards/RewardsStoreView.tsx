@@ -56,7 +56,7 @@ function RewardWallet({
         eyebrow="Góc đổi quà · Focus Rewards"
         icon="workspace_premium"
         title="Phần thưởng"
-        description="Nỗ lực học tập phải được nhìn thấy. GP là tín hiệu ghi nhận hành vi học tốt: hoàn thành bài học, tự giải và tự sửa lỗi."
+        description="Điểm GP ghi nhận nỗ lực tự học của em: hoàn thành bài học, tự giải bài và tự sửa sai."
         meta={
           <span className="inline-flex items-center gap-2 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
             <Icon name="auto_awesome" />

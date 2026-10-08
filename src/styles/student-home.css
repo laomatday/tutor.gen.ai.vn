@@ -612,6 +612,71 @@
     margin-top: 2px;
   }
 
+  /* 3 thẻ hàng đầu: Lối học chủ động · Chặng tiếp theo · Nhịp học tuần này */
+  .home-hero-trio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    align-items: stretch;
+    width: 100%;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 1100px) {
+    .home-hero-trio {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+  }
+  .home-trio-card {
+    border-radius: 20px;
+    padding: 22px;
+    color: var(--home-ink);
+    background: var(--home-surface);
+    border: 1px solid var(--color-line-subtle);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    transition: all 0.2s ease;
+  }
+  .home-trio-head {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-line-subtle);
+  }
+  .home-trio-head h2 {
+    font-size: clamp(17px, 1.4vw, 20px);
+    font-weight: 700;
+    color: var(--home-ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .home-trio-action-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+  .home-trio-card.home-rhythm-card {
+    padding: 22px;
+  }
+  .home-trio-card.home-rhythm-card .home-panel-title {
+    margin-bottom: 8px;
+  }
+  .home-trio-card.home-rhythm-card .home-rhythm-lead {
+    margin: 4px 0 16px;
+  }
+  .home-trio-card.home-rhythm-card .home-week {
+    margin-bottom: 16px;
+  }
+  .home-trio-card.home-milestones-card {
+    gap: 16px;
+  }
+
   /* Redesigned 3 learning actions deck & Unified Hero Hub */
   .home-hero-hub,
   .home-actions-deck {
@@ -1329,10 +1394,25 @@
     font-size: 12px;
     color: var(--color-brand);
   }
+  .home-courses {
+    width: 100%;
+    margin-top: 12px;
+  }
   .home-course-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
+    width: 100%;
+  }
+  @media (max-width: 1024px) {
+    .home-course-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .home-course-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .home-course-card.ui-card {
     border-radius: 18px;

@@ -219,44 +219,40 @@ export function TodayView({
         )}
       </header>
 
-      <div className="home-dashboard-grid">
-        <div className="home-main-column">
-          {/* Trung tâm học tập: Lối học chủ động + Chặng tiếp theo của bạn */}
-          <section
-            className="home-mission home-hero-hub"
-            aria-label="Chọn cách học hôm nay"
-          >
-            <div className="home-hero-head">
-              <div className="home-hero-headline">
-                <span className="home-mission-tag">
-                  <Icon name="auto_awesome" />
-                  Góc học tập chủ động
-                </span>
-                <h2>Hôm nay bạn muốn học thế nào?</h2>
-              </div>
-              <Tabs
-                tabs={learningMoods}
-                value={mood}
-                onChange={setMood}
-                label="Bạn muốn học thế nào?"
-                variant="pill"
-                className="home-mood-tabs"
-              />
-            </div>
+      {/* 3 Thẻ: Lối học chủ động · Chặng tiếp theo · Nhịp học tuần này */}
+      <div className="home-hero-trio">
+        {/* Thẻ 1: Lối học chủ động */}
+        <section
+          className="home-mission home-trio-card home-mood-card"
+          aria-label="Chọn cách học hôm nay"
+        >
+          <div className="home-trio-head">
+            <span className="home-mission-tag">
+              <Icon name="auto_awesome" />
+              Góc học tập chủ động
+            </span>
+            <h2>Hôm nay bạn muốn học thế nào?</h2>
+            <Tabs
+              tabs={learningMoods}
+              value={mood}
+              onChange={setMood}
+              label="Bạn muốn học thế nào?"
+              variant="pill"
+              className="home-mood-tabs"
+            />
+          </div>
 
-            <div className="home-hero-content-grid">
-              {/* Cột 1: Thao tác theo lối học được chọn */}
-              <div
-                role="tabpanel"
-                aria-label={
-                  mood === "learn"
-                    ? "Học mới"
-                    : mood === "practice"
-                      ? "Luyện một bài"
-                      : "Xem lại"
-                }
-                className="home-hero-action-panel"
-              >
+          <div
+            role="tabpanel"
+            aria-label={
+              mood === "learn"
+                ? "Học mới"
+                : mood === "practice"
+                  ? "Luyện một bài"
+                  : "Xem lại"
+            }
+            className="home-trio-action-panel"
+          >
                 {mood === "learn" && (
                   <div className="home-action-focused" data-mood="learn">
                     <div className="home-action-badge" data-tone="sky">
@@ -469,13 +465,14 @@ export function TodayView({
                     </div>
                   </div>
                 )}
-              </div>
+          </div>
+        </section>
 
-              {/* Cột 2: "Chặng tiếp theo của bạn" - Tối ưu hóa không gian hiển thị lộ trình */}
-              <section
-                className="home-milestones home-embedded-milestones"
-                aria-labelledby="home-progress-title"
-              >
+        {/* Thẻ 2: Chặng tiếp theo của bạn */}
+        <section
+          className="home-milestones home-trio-card home-milestones-card"
+          aria-labelledby="home-progress-title"
+        >
                 <div className="home-progress-intro">
                   <span className="home-panel-icon">
                     <Icon name="route" />
@@ -535,202 +532,174 @@ export function TodayView({
                 <p className="home-history-caption">
                   Từ những lần tự giải bạn đã lưu. Mỗi lần thử đều có ý nghĩa.
                 </p>
-              </section>
-            </div>
-          </section>
+        </section>
 
-          {/* Khám phá các môn học - Bố cục tối ưu, trực quan */}
-          <section
-            className="home-courses"
-            aria-labelledby="home-courses-title"
-          >
-            <div className="home-section-heading">
-              <div>
-                <h2 id="home-courses-title">Bạn muốn khám phá môn nào?</h2>
-                <p>Khóa học theo tiến độ của bạn, từng chặng nhỏ vững vàng.</p>
-              </div>
-              <Button
-                variant="ghost"
-                onClick={() => onNavigate(routePath("hoc-bai"))}
-              >
-                Xem tất cả môn
-                <Icon name="arrow_forward" />
-              </Button>
-            </div>
-            <div className="home-course-grid">
-              {courses.map(({ enrollment, subject, progress }, index) => (
-                <Card
-                  className="home-course-card"
-                  key={`${enrollment.gradeId}-${enrollment.subjectId}`}
-                  data-tone={index % 2 ? "teal" : "sky"}
-                >
-                  <div className="home-course-heading">
-                    <span className="home-course-icon">
-                      <Icon name={subject!.icon} />
-                    </span>
-                    <div>
-                      <p>Lớp {enrollment.gradeId}</p>
-                      <h3>{subject!.name}</h3>
-                    </div>
-                    <Badge tone={index % 2 ? "success" : "primary"}>
-                      {progress.completed}/{progress.total} bài
-                    </Badge>
-                  </div>
-                  <Progress
-                    value={progress.completed}
-                    max={progress.total}
-                    label={`Tiến độ môn ${subject!.name}`}
-                    tone={index % 2 ? "accent" : "primary"}
-                  />
-                  <div className="home-course-next">
-                    <span>
-                      {progress.nextLesson
-                        ? "Chặng tiếp theo"
-                        : "Đã hoàn thành các bài hiện có"}
-                    </span>
-                    <strong>
-                      {progress.nextLesson?.title ??
-                        "Ôn lại những điều bạn đã học"}
-                    </strong>
-                    <small>
-                      {progress.nextLesson
-                        ? `${progress.nextLesson.durationMinutes} phút · ${progress.nextLesson.exercises.length} câu tự kiểm tra`
-                        : `${progress.total} bài sẵn sàng để ôn tập`}
-                    </small>
-                  </div>
-                  <div className="home-course-actions">
-                    <Button
-                      onClick={() =>
-                        onNavigate(
-                          progress.nextLesson
-                            ? lessonHref(progress.nextLesson)
-                            : courseHref(
-                                enrollment.gradeId,
-                                enrollment.subjectId,
-                              ),
-                        )
-                      }
-                    >
-                      {progress.nextLesson
-                        ? `Học tiếp ${subject!.name}`
-                        : `Ôn lại ${subject!.name}`}
-                      <Icon name="arrow_forward" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() =>
-                        onNavigate(
-                          courseHref(enrollment.gradeId, enrollment.subjectId),
-                        )
-                      }
-                    >
-                      Lộ trình
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-            {!courses.length && (
-              <Card className="home-empty-courses">
-                <Icon name="school" />
-                <h3>Các môn học đang được chuẩn bị</h3>
-                <p>Quay lại bản đồ để xem những học liệu đã mở cho bạn.</p>
-                <Button onClick={() => onNavigate(routePath("hoc-bai"))}>
-                  Mở lộ trình học
-                </Button>
-              </Card>
+        {/* Thẻ 3: Nhịp học tuần này */}
+        <Card
+          className="home-rhythm home-trio-card home-rhythm-card"
+          aria-label="Nhịp học tuần này"
+        >
+          <div className="home-panel-title">
+            <span className="home-panel-icon">
+              <Icon name="calendar_today" />
+            </span>
+            <h2>Nhịp học tuần này</h2>
+          </div>
+          <p className="home-rhythm-lead">
+            {journey.activeDays ? (
+              <>
+                Bạn đã dành <strong>{journey.activeDays} ngày</strong> để thử
+                sức.
+              </>
+            ) : (
+              <>
+                Tuần này, bắt đầu bằng <strong>một lần thử</strong> nhé.
+              </>
             )}
-          </section>
-        </div>
-
-        {/* Cột bên: Nhịp học tuần & Điểm tích lũy */}
-        <aside className="home-side-column" aria-label="Thống kê và tiến độ">
-          <Card className="home-rhythm">
-            <div className="home-panel-title">
-              <span className="home-panel-icon">
-                <Icon name="calendar_today" />
-              </span>
-              <h2>Nhịp học tuần này</h2>
-            </div>
-            <p className="home-rhythm-lead">
-              {journey.activeDays ? (
-                <>
-                  Bạn đã dành <strong>{journey.activeDays} ngày</strong> để thử
-                  sức.
-                </>
-              ) : (
-                <>
-                  Tuần này, bắt đầu bằng <strong>một lần thử</strong> nhé.
-                </>
-              )}
+          </p>
+          <ol className="home-week">
+            {journey.weekDays.map((day) => (
+              <li
+                key={day.key}
+                className={day.isToday ? "is-today" : ""}
+                data-active={day.active}
+                aria-label={`${day.label}${day.isToday ? ", hôm nay" : ""}: ${day.attempts} lượt kiểm tra`}
+              >
+                <span>{day.label}</span>
+                <span className="home-day-stamp">
+                  {day.active ? (
+                    <Icon name="check" />
+                  ) : day.isToday ? (
+                    <Icon name="add" />
+                  ) : (
+                    <span className="home-day-dot" />
+                  )}
+                </span>
+                {day.isToday && <small>nay</small>}
+              </li>
+            ))}
+          </ol>
+          <div className="home-week-note">
+            <Icon name={journey.todayAttempts ? "verified" : "wb_sunny"} />
+            <p>
+              {journey.todayAttempts
+                ? `${journey.todayAttempts} lượt tự kiểm tra hôm nay. Một lần thử cũng là một bước tiến.`
+                : "Mỗi ngày có lượt tự kiểm tra sẽ được đánh dấu ở đây. Cứ theo nhịp của bạn."}
             </p>
-            <ol className="home-week">
-              {journey.weekDays.map((day) => (
-                <li
-                  key={day.key}
-                  className={day.isToday ? "is-today" : ""}
-                  data-active={day.active}
-                  aria-label={`${day.label}${day.isToday ? ", hôm nay" : ""}: ${day.attempts} lượt kiểm tra`}
-                >
-                  <span>{day.label}</span>
-                  <span className="home-day-stamp">
-                    {day.active ? (
-                      <Icon name="check" />
-                    ) : day.isToday ? (
-                      <Icon name="add" />
-                    ) : (
-                      <span className="home-day-dot" />
-                    )}
-                  </span>
-                  {day.isToday && <small>nay</small>}
-                </li>
-              ))}
-            </ol>
-            <div className="home-week-note">
-              <Icon name={journey.todayAttempts ? "verified" : "wb_sunny"} />
-              <p>
-                {journey.todayAttempts
-                  ? `${journey.todayAttempts} lượt tự kiểm tra hôm nay. Một lần thử cũng là một bước tiến.`
-                  : "Mỗi ngày có lượt tự kiểm tra sẽ được đánh dấu ở đây. Cứ theo nhịp của bạn."}
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              className="home-calendar-link"
-              onClick={() => onNavigate(routePath("thoi-khoa-bieu"))}
+          </div>
+          <Button
+            variant="ghost"
+            className="home-calendar-link"
+            onClick={() => onNavigate(routePath("thoi-khoa-bieu"))}
+          >
+            Sắp xếp thời gian học
+            <Icon name="arrow_forward" />
+          </Button>
+        </Card>
+      </div>
+
+      {/* Khám phá các môn học - Fullwidth chia thành 3 cột như trên */}
+      <section
+        className="home-courses w-full"
+        aria-labelledby="home-courses-title"
+      >
+        <div className="home-section-heading">
+          <div>
+            <h2 id="home-courses-title">Bạn muốn khám phá môn nào?</h2>
+            <p>Khóa học theo tiến độ của bạn, từng chặng nhỏ vững vàng.</p>
+          </div>
+          <Button
+            variant="ghost"
+            onClick={() => onNavigate(routePath("hoc-bai"))}
+          >
+            Xem tất cả môn
+            <Icon name="arrow_forward" />
+          </Button>
+        </div>
+        <div className="home-course-grid">
+          {courses.map(({ enrollment, subject, progress }, index) => (
+            <Card
+              className="home-course-card"
+              key={`${enrollment.gradeId}-${enrollment.subjectId}`}
+              data-tone={index % 2 ? "teal" : "sky"}
             >
-              Sắp xếp thời gian học
-              <Icon name="arrow_forward" />
+              <div className="home-course-heading">
+                <span className="home-course-icon">
+                  <Icon name={subject!.icon} />
+                </span>
+                <div>
+                  <p>Lớp {enrollment.gradeId}</p>
+                  <h3>{subject!.name}</h3>
+                </div>
+                <Badge tone={index % 2 ? "success" : "primary"}>
+                  {progress.completed}/{progress.total} bài
+                </Badge>
+              </div>
+              <Progress
+                value={progress.completed}
+                max={progress.total}
+                label={`Tiến độ môn ${subject!.name}`}
+                tone={index % 2 ? "accent" : "primary"}
+              />
+              <div className="home-course-next">
+                <span>
+                  {progress.nextLesson
+                    ? "Chặng tiếp theo"
+                    : "Đã hoàn thành các bài hiện có"}
+                </span>
+                <strong>
+                  {progress.nextLesson?.title ??
+                    "Ôn lại những điều bạn đã học"}
+                </strong>
+                <small>
+                  {progress.nextLesson
+                    ? `${progress.nextLesson.durationMinutes} phút · ${progress.nextLesson.exercises.length} câu tự kiểm tra`
+                    : `${progress.total} bài sẵn sàng để ôn tập`}
+                </small>
+              </div>
+              <div className="home-course-actions">
+                <Button
+                  onClick={() =>
+                    onNavigate(
+                      progress.nextLesson
+                        ? lessonHref(progress.nextLesson)
+                        : courseHref(
+                            enrollment.gradeId,
+                            enrollment.subjectId,
+                          ),
+                    )
+                  }
+                >
+                  {progress.nextLesson
+                    ? `Học tiếp ${subject!.name}`
+                    : `Ôn lại ${subject!.name}`}
+                  <Icon name="arrow_forward" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    onNavigate(
+                      courseHref(enrollment.gradeId, enrollment.subjectId),
+                    )
+                  }
+                >
+                  Lộ trình
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+        {!courses.length && (
+          <Card className="home-empty-courses">
+            <Icon name="school" />
+            <h3>Các môn học đang được chuẩn bị</h3>
+            <p>Quay lại bản đồ để xem những học liệu đã mở cho bạn.</p>
+            <Button onClick={() => onNavigate(routePath("hoc-bai"))}>
+              Mở lộ trình học
             </Button>
           </Card>
-
-          <Card className="home-reward-summary-card">
-            <div className="home-reward-summary-header">
-              <span className="home-reward-icon">
-                <Icon name="workspace_premium" />
-              </span>
-              <div>
-                <h3>Điểm tích lũy GP</h3>
-                <p>Hoàn thành bài tập & tự giải để nhận thêm GP</p>
-              </div>
-            </div>
-            <div className="home-reward-score">
-              <strong>{gpBalance}</strong>
-              <span>GP khả dụng</span>
-            </div>
-            {onOpenBadges && (
-              <Button
-                variant="surface"
-                className="home-reward-open-btn"
-                onClick={onOpenBadges}
-              >
-                <span>Xem huy hiệu & Phần thưởng</span>
-                <Icon name="chevron_right" />
-              </Button>
-            )}
-          </Card>
-        </aside>
-      </div>
+        )}
+      </section>
     </div>
   );
 }
