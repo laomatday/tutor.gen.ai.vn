@@ -282,3 +282,33 @@ Student header lấy cảm hứng từ Gemini:
 - không đưa quá nhiều dashboard metric lên header.
 
 Không thay đổi page-level AI Pulse V3, DB-first curriculum, Teacher/Admin shell hoặc mobile bottom nav khi chỉnh app shell.
+
+
+## Student shell: rail + Gemini command bar
+
+Student shell dùng mô hình hai lớp lấy cảm hứng từ ChatGPT/Gemini nhưng giữ nhận diện genAi:
+
+- **Desktop rail**: 60px, luôn hiện, chứa logo + 4 core surfaces + profile.
+- **Logo là menu trigger**: click logo mở/đóng panel 288px.
+- **Panel**: Bắt đầu phiên học mới, Giữ sidebar mở, Đã ghim, Gần đây, Không gian học tập, Công cụ & tiến độ, mastery/profile.
+- **Pin sidebar**: lưu bằng `storageKeys.studentSidebarPinned`; khi pinned, navigation/reload không đóng panel.
+- **Recent routes**: lưu bằng `storageKeys.studentRecentRoutes`, tối đa 6 route.
+- **Mobile**: không có rail/pin; dùng drawer + bottom nav.
+
+### Theme contract
+
+Light theme là mặc định và **header/sidebar phải sáng**:
+- rail/panel: light gray / white;
+- Gemini header: translucent white;
+- ink text và border theo genAi tokens.
+
+Dark graphite chỉ được đặt trong selector `.dark ...`; không hard-code dark shell ở state mặc định.
+
+### Width contract
+
+Student desktop không dùng container 86rem cũ:
+- `.app-main--student` là fluid;
+- `.learning-os-page` tối đa 112rem;
+- padding ngang dùng `clamp()`.
+
+Ở viewport 1920px với rail collapsed, learning surface mục tiêu khoảng 1.75–1.8k px; mở sidebar thì header/content phải dịch cùng 288px panel, không overlap.
