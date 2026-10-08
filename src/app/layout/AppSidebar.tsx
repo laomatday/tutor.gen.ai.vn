@@ -13,6 +13,8 @@ import {
 } from "../../config/routes";
 import { studentProfile } from "../../features/curriculum";
 
+const routeHomeForMentor = () => roleHome["Học sinh"];
+
 interface Props {
   role: UserRole;
   section: string;
@@ -66,8 +68,11 @@ export function AppSidebar({
               alt=""
               className="h-10 w-10 shrink-0 object-contain"
             />
-            <span className="student-rail-label font-bold text-brand">
-              gen<span className="text-accent">Ai</span> Tutor
+            <span className="student-rail-label">
+              <strong className="text-base font-extrabold tracking-tight text-brand">
+                AI <span className="text-accent">Pulse</span>
+              </strong>
+              <small className="text-xs text-ink-500">Học thông minh hơn</small>
             </span>
           </Button>
           <Button
@@ -148,6 +153,24 @@ export function AppSidebar({
         </nav>
 
         <div className="mt-auto space-y-2 p-2">
+          <div className="student-ai-companion">
+            <span className="student-ai-companion__orb" aria-hidden="true">
+              <Icon name="smart_toy" />
+            </span>
+            <span className="student-rail-label">
+              <strong>AI luôn đồng hành cùng bạn</strong>
+              <small>Đặt câu hỏi, nhận gợi ý Socratic đúng lúc.</small>
+              <Button
+                size="sm"
+                className="mt-3 w-full justify-between"
+                onClick={() => onNavigate(routeHomeForMentor())}
+              >
+                Chat với AI
+                <Icon name="arrow_forward" />
+              </Button>
+            </span>
+          </div>
+
           <div className="student-mastery-summary">
             <div
               className="student-progress-orb"
@@ -160,9 +183,10 @@ export function AppSidebar({
             </div>
             <span className="student-rail-label">
               <strong>Mastery {progress}%</strong>
-              <small>Tiến độ toàn hành trình</small>
+              <small>{balance} GP · {studentProfile.levelLabel}</small>
             </span>
           </div>
+
           <Button
             variant="surface"
             onClick={onOpenProfile}
@@ -177,14 +201,18 @@ export function AppSidebar({
             />
             <span className="student-rail-label min-w-0">
               <strong className="truncate">{studentProfile.name}</strong>
-              <small>{balance} GP · {studentProfile.levelLabel}</small>
+              <small>Lớp {studentProfile.className} · Hồ sơ nhận thức</small>
             </span>
           </Button>
+
           <PWAInstallButton
             variant="surface"
             size="sm"
             className="student-rail-label w-full justify-center"
           />
+          <span className="student-rail-label block px-2 pb-1 pt-2 text-[11px] text-ink-400">
+            AI Pulse v3.0 · Học sâu hơn. Đi xa hơn.
+          </span>
         </div>
       </aside>
     );
