@@ -25,18 +25,18 @@ Tài liệu liên quan: `docs/ui-components.md` (API component, tương tác bà
 | Route | Nhãn | Nhóm | Việc của màn hình |
 | --- | --- | --- | --- |
 | `/` | Hôm nay | Chính | Nhiệm vụ tiếp theo, tiến độ khóa học, lịch hôm nay |
-| `/hoc-bai` | Lộ trình | Chính | Chủ đề → bài học; mở bài |
+| `/hoc-bai` | Môn học | Chính | Chủ đề → bài học; mở bài |
 | `/tu-giai` | Luyện tập | Chính | Làm bài, kiểm tra từng bước, mở gợi ý theo bậc |
 | `/replay` | Xem lại | Chính | Xem lại bài đã nộp và lỗi sai của chính bài đó |
 | `/thoi-khoa-bieu` | Lịch học | Phụ | Lịch chính khóa và buổi kèm |
 | `/tien-bo` | Tiến bộ | Phụ | Kết quả và lịch sử làm bài. Gộp hai mục cũ "Thống kê" và "Bài tập & Đề thi"; `/thi-thu` chuyển hướng về đây |
 | `/doi-qua` | Phần thưởng | Phụ | Điểm GP và đổi quà |
 
-Mỗi đích xuất hiện tối đa một lần trong mỗi vùng điều hướng. Một đích có một tên duy nhất ở mọi nơi: nav, nút, tiêu đề trang, breadcrumb. Chỉ thêm mục vào nhóm Chính khi nó phục vụ trực tiếp chu trình Hôm nay → Lộ trình hoặc Luyện tập → Xem lại.
+Mỗi đích xuất hiện tối đa một lần trong mỗi vùng điều hướng. Một đích có một tên duy nhất ở mọi nơi: nav, nút, tiêu đề trang, breadcrumb. Chỉ thêm mục vào nhóm Chính khi nó phục vụ trực tiếp chu trình Hôm nay → Môn học hoặc Luyện tập → Xem lại.
 
 ## 4. Shell
 
-**Desktop (từ 1024px).** Một sidebar 240px có nhãn, có thể thu gọn còn 72px (icon kèm nhãn ngắn, lưu lựa chọn của người dùng). Không có panel thứ hai, không có mục "Đã ghim" hay "Gần đây". Header cao 56px gồm: tiêu đề trang ở bên trái, ô tìm kiếm ở giữa, hồ sơ ở bên phải. Ô tìm kiếm chỉ hiển thị khi nó lọc được bài học thật. Header không chứa streak, chỉ số hay lối tắt điều hướng. Nút thông báo chỉ xuất hiện khi đã có nguồn thông báo thật.
+**Desktop (từ 1024px).** Sidebar nền trắng rộng 288px với logo genAi Tutor, phụ đề “Học tập cùng genAi”, CTA “Tiếp tục học” màu navy và mục điều hướng có nhãn; có thể thu gọn thành rail 72px bằng nút riêng trong sidebar (lưu lựa chọn người dùng). Mục đang chọn có nền navy và chữ trắng. Không có panel thứ hai, “Đã ghim” hoặc “Gần đây”. Header nền sáng cao 72px với breadcrumb “Không gian học tập › Tên trang” ở bên trái, tìm kiếm bài học thật ở giữa, hồ sơ ở bên phải. Không có streak, chỉ số giả, shortcut trùng sidebar hay thông báo khi chưa có nguồn dữ liệu.
 
 **Mobile (dưới 1024px).** Bottom nav gồm 4 mục Chính, mỗi nhãn nằm trên một dòng. Drawer chứa nhóm Phụ và hồ sơ. Nội dung trang chừa khoảng an toàn cho bottom nav.
 
@@ -84,7 +84,7 @@ Nội dung tải từ DB theo quy tắc sau:
 2. Mượn pattern từ sản phẩm khác: PR phải nêu rõ việc người dùng mà pattern đó giải quyết trong Tutor. Ví dụ, sidebar lịch sử hội thoại chỉ hợp lý khi sản phẩm có hội thoại.
 3. PR có thay đổi giao diện: đính kèm ảnh trước và sau ở 390×844 và 1440×900. E2E của hai luồng chính phải pass:
    - Hôm nay → Luyện tập → Nộp bài → Xem lại.
-   - Lộ trình → Bài học → Hoàn thành.
+   - Môn học → Bài học → Hoàn thành.
 
 ## 9. Định nghĩa hoàn thành cho thay đổi giao diện
 

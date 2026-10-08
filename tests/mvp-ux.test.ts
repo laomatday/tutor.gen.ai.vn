@@ -24,7 +24,7 @@ test("completion progress is shared across the student journey", () => {
 
 test("navigation uses Vietnamese IA and preserves the legacy exam link", () => {
   assert.deepEqual(studentRoutes.map((r) => r.label), [
-    "Hôm nay", "Lộ trình", "Luyện tập", "Xem lại", "Tiến bộ", "Lịch học", "Phần thưởng",
+    "Hôm nay", "Môn học", "Luyện tập", "Xem lại", "Tiến bộ", "Lịch học", "Phần thưởng",
   ]);
   assert.equal(readRoute("/thi-thu").section, "tien-bo");
   assert.equal(readRoute("/replay").section, "replay");

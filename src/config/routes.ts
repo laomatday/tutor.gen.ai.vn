@@ -3,8 +3,8 @@ export type UserRole = (typeof roles)[number];
 export type WorkspaceRole = Exclude<UserRole, "Học sinh">;
 
 export const studentRoutes = [
-  { id: "hom-nay", path: "/", label: "Hôm nay", icon: "home", group: "Core", description: "Việc học tiếp theo" },
-  { id: "hoc-bai", path: "/hoc-bai", label: "Lộ trình", icon: "account_tree", group: "Core", description: "Môn học và bài học" },
+  { id: "hom-nay", path: "/", label: "Hôm nay", icon: "wb_sunny", group: "Core", description: "Việc học tiếp theo" },
+  { id: "hoc-bai", path: "/hoc-bai", label: "Môn học", icon: "menu_book", group: "Core", description: "Lớp · Môn · Chủ đề" },
   { id: "tu-giai", path: "/tu-giai", label: "Luyện tập", icon: "edit_square", group: "Core", description: "Tự giải và nhận phản hồi" },
   { id: "replay", path: "/replay", label: "Xem lại", icon: "history", group: "Core", description: "Lịch sử các bước giải" },
   { id: "tien-bo", path: "/tien-bo", label: "Tiến bộ", icon: "bar_chart", group: "Other", description: "Bài đã học và đánh giá" },

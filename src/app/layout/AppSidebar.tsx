@@ -28,7 +28,7 @@ interface Props {
 export function AppSidebar({
   role, section, open, sidebarRef, closeRef, onClose,
   onNavigate, onOpenProfile, nextLessonPath, progress, balance,
-  pinned = true,
+  pinned = true, onToggleSidebar,
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
@@ -41,45 +41,102 @@ export function AppSidebar({
         className={`app-sidebar app-sidebar--student ${open ? "is-open" : ""} ${pinned ? "is-pinned" : ""}`}
       >
         <div className="student-sidebar-panel__header">
-          <Button variant="ghost" className="student-sidebar-brand" onClick={() => onNavigate(roleHome[role])} aria-label="genAi Tutor — Hôm nay">
-            <BrandLogo compact />
+          <Button
+            variant="ghost"
+            className="student-sidebar-brand"
+            onClick={() => onNavigate(roleHome[role])}
+            aria-label="genAi Tutor — Về Hôm nay"
+            title="genAi Tutor"
+          >
+            <img
+              src={appConfig.brand.logoUrl}
+              alt=""
+              width={42}
+              height={42}
+              className="student-sidebar-brand__logo"
+            />
+            <span className="student-sidebar-brand__copy">
+              <span className="student-sidebar-brand__name">
+                gen<span>Ai</span> <small>TUTOR</small>
+              </span>
+              <span className="student-sidebar-brand__tagline">Học tập cùng genAi</span>
+            </span>
           </Button>
-          <Button ref={closeRef} variant="ghost" size="icon" aria-label="Đóng menu" onClick={onClose} className="student-sidebar-close lg:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleSidebar}
+            aria-label={pinned ? "Thu gọn menu" : "Mở rộng menu"}
+            aria-expanded={pinned}
+            aria-controls="main-navigation"
+            className="student-sidebar-toggle hidden lg:inline-flex"
+            title={pinned ? "Thu gọn menu" : "Mở rộng menu"}
+          >
+            <Icon name={pinned ? "chevron_left" : "menu"} />
+          </Button>
+          <Button
+            ref={closeRef}
+            variant="ghost"
+            size="icon"
+            aria-label="Đóng menu"
+            onClick={onClose}
+            className="student-sidebar-close lg:hidden"
+          >
             <Icon name="close" />
           </Button>
         </div>
 
         <div className="student-sidebar-scroll">
-          <div className="student-sidebar-section__label">TIẾP TỤC</div>
-          <Button onClick={() => onNavigate(nextLessonPath)} className="student-sidebar-next" title="Tiếp tục học" aria-label="Tiếp tục học bài tiếp theo">
-            <span className="student-sidebar-next__symbol"><Icon name="play_arrow" /></span>
-            <span className="min-w-0 flex-1 text-left">
-              <strong>Tiếp tục học</strong>
-              <small>Mở bài học tiếp theo</small>
-            </span>
-            <Icon name="arrow_forward" />
+          <Button
+            onClick={() => onNavigate(nextLessonPath)}
+            className="student-sidebar-next"
+            title="Tiếp tục học"
+            aria-label="Tiếp tục học bài tiếp theo"
+          >
+            <Icon name="play_arrow" className="student-sidebar-next__play" />
+            <span className="student-sidebar-next__label">Tiếp tục học</span>
+            <Icon name="arrow_forward" className="student-sidebar-next__arrow" />
           </Button>
 
           <nav className="student-sidebar-navigation" aria-label="Các trang học tập">
             <p className="student-sidebar-section__label" id="student-nav-core">HỌC TẬP</p>
             <div role="group" aria-labelledby="student-nav-core">
               {core.map((item) => (
-                <Button key={item.id} variant="ghost" onClick={() => onNavigate(item.path)}
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  onClick={() => onNavigate(item.path)}
                   aria-current={section === item.id ? "page" : undefined}
-                  className="student-sidebar-row" title={item.label} aria-label={item.label}>
+                  className="student-sidebar-row"
+                  title={item.label}
+                  aria-label={item.label}
+                >
                   <Icon name={item.icon} className="student-sidebar-row__icon" />
-                  <span>{item.label}</span>
+                  <span className="student-sidebar-row__text">
+                    <strong>{item.label}</strong>
+                    {item.id === "hoc-bai" && (
+                      <small>Lớp · Môn · Chủ đề</small>
+                    )}
+                  </span>
                 </Button>
               ))}
             </div>
             <p className="student-sidebar-section__label" id="student-nav-other">CÁ NHÂN</p>
             <div role="group" aria-labelledby="student-nav-other">
               {other.map((item) => (
-                <Button key={item.id} variant="ghost" onClick={() => onNavigate(item.path)}
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  onClick={() => onNavigate(item.path)}
                   aria-current={section === item.id ? "page" : undefined}
-                  className="student-sidebar-row">
+                  className="student-sidebar-row"
+                  title={item.label}
+                  aria-label={item.label}
+                >
                   <Icon name={item.icon} className="student-sidebar-row__icon" />
-                  <span>{item.label}</span>
+                  <span className="student-sidebar-row__text">
+                    <strong>{item.label}</strong>
+                  </span>
                 </Button>
               ))}
             </div>
@@ -97,8 +154,11 @@ export function AppSidebar({
           </div>
           <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile">
             <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-10 w-10 shrink-0 rounded-full" />
-            <span className="min-w-0 flex-1 text-left"><strong>{studentProfile.name}</strong><small>Lớp {studentProfile.className}</small></span>
-            <Icon name="chevron_right" />
+            <span className="student-sidebar-profile__copy">
+              <strong>{studentProfile.name}</strong>
+              <small>Lớp {studentProfile.className}</small>
+            </span>
+            <Icon name="chevron_right" className="student-sidebar-profile__arrow" />
           </Button>
           <PWAInstallButton variant="ghost" size="sm" className="student-sidebar-install w-full justify-center" />
         </div>
