@@ -51,7 +51,7 @@
   }
 
   .app-main--student {
-    @apply pb-28 lg:pb-8;
+    @apply pb-28 md:pb-8;
     /* The shell owns the page gutter; student views use the available width. */
     max-width: none;
     margin-inline: 0;
@@ -457,6 +457,21 @@
     background: var(--color-chip);
   }
 
+  .student-course-context {
+    min-height: 44px;
+    margin-bottom: 20px;
+    padding-inline: 2px;
+    flex-wrap: wrap;
+  }
+  .student-course-context .student-header-context__current {
+    max-width: 100%;
+  }
+  @media (min-width: 1920px) {
+    .app-main--student {
+      padding-inline: 32px;
+    }
+  }
+  
   /* Teacher and admin workspaces keep their page-level breadcrumb trail. */
   .app-breadcrumbs {
     margin-bottom: 1rem;
@@ -543,6 +558,7 @@
     }
   }
 
+  /* Teacher and admin retain their 1024px desktop workspace. */
   @media (min-width: 1024px) {
     .app-sidebar:not(.app-sidebar--student) {
       transform: translateX(0);
@@ -553,61 +569,66 @@
     .app-frame:not(.app-frame--student) .app-header {
       left: var(--sidebar-w);
     }
+  }
 
+  /* Tablet and laptop: 72px rail with an on-demand overlaid menu. */
+  @media (min-width: 768px) {
     .app-sidebar--student {
       width: var(--student-sidebar-collapsed);
       transform: translateX(0);
-      transition: width var(--sidebar-duration) var(--sidebar-easing);
+      transition:
+        width var(--sidebar-duration) var(--sidebar-easing),
+        box-shadow var(--sidebar-duration) var(--sidebar-easing);
       box-shadow: none;
       border-radius: 0;
     }
-
-    .app-sidebar--student.is-pinned {
+    .app-sidebar--student.is-open {
       width: var(--student-sidebar-expanded);
+      box-shadow: var(--shadow-card-hover);
+      border-radius: 0 20px 20px 0;
     }
-
     .app-frame--student {
       padding-left: var(--student-sidebar-collapsed);
       transition: padding-left var(--sidebar-duration) var(--sidebar-easing);
     }
-
     .app-frame--student .app-header {
       left: var(--student-sidebar-collapsed);
       transition: left var(--sidebar-duration) var(--sidebar-easing);
     }
-
-    .app-frame--student-sidebar-open {
-      padding-left: var(--student-sidebar-expanded);
-    }
-
-    .app-frame--student-sidebar-open .app-header {
-      left: var(--student-sidebar-expanded);
-    }
-
     .app-main--student {
       padding-top: calc(var(--student-header-height) + 1.25rem);
     }
-
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-section__label,
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-next__label,
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-next__arrow,
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-row__text,
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-brand__copy {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-section__label,
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-next__label,
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-next__arrow,
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-row__text,
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-brand__copy {
       opacity: 0;
       pointer-events: none;
     }
-
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-brand__copy {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-install {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-install {
       display: none;
     }
   }
 
-  @media (max-width: 1023px) {
+  /* Large screens alone may pin a full-width sidebar and move the workspace. */
+  @media (min-width: 1440px) {
+    .app-sidebar--student.is-pinned {
+      width: var(--student-sidebar-expanded);
+    }
+    .app-frame--student-sidebar-open {
+      padding-left: var(--student-sidebar-expanded);
+    }
+    .app-frame--student-sidebar-open .app-header {
+      left: var(--student-sidebar-expanded);
+    }
+    .app-navigation-backdrop--student {
+      display: none;
+    }
+  }
+
+  /* Phones use one bottom navigation, with secondary pages in the drawer. */
+  @media (max-width: 767px) {
     .app-main--student {
       padding-top: calc(var(--student-header-height) + 1.25rem);
     }
@@ -616,6 +637,7 @@
       display: none;
     }
   }
+
 
   .dark .app-sidebar--student,
   .dark .student-sidebar-panel__footer {
@@ -721,24 +743,24 @@
   .app-search-form .ui-btn {
     flex-shrink: 0;
   }
-  @media (min-width: 1024px) {
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-brand {
+  @media (min-width: 768px) {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-brand {
       flex: 0 0 44px;
     }
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-next {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-next {
       border: 0;
       border-radius: 10px;
       background: transparent;
       color: var(--color-brand);
       box-shadow: none;
     }
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-next:hover {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-next:hover {
       background: var(--color-chip);
     }
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-row {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-row {
       border-radius: 10px;
     }
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-panel__footer {
+    .app-sidebar--student:not(.is-open):not(.is-pinned) .student-sidebar-panel__footer {
       display: none;
     }
   }

@@ -6,7 +6,6 @@ import {
   roles,
   roleHome,
   routePath,
-  studentRoutes,
   type UserRole,
 } from "../../config/routes";
 import { appConfig } from "../../config/app";
@@ -25,7 +24,7 @@ interface PageContextProps {
   onNavigate: (path: string) => void;
 }
 
-function StudentPageContext({
+export function StudentPageContext({
   section,
   label,
   search,
@@ -69,20 +68,12 @@ function StudentPageContext({
           item.gradeId === selected.gradeId,
       )
     : undefined;
-  const route = studentRoutes.find((item) => item.id === section);
-
-  if (!selected)
-    return (
-      <div className="student-header-context student-header-context--section">
-        <Icon name={route?.icon ?? "menu_book"} />
-        <span>{label}</span>
-      </div>
-    );
+  if (!selected || lesson) return null;
 
   const backPath = lesson ? selected.href : routePath("hoc-bai");
   const backLabel = lesson ? selected.label : "Môn học";
   return (
-    <nav className="student-header-context" aria-label="Điều hướng môn học">
+    <nav className="student-header-context student-course-context" aria-label="Điều hướng môn học">
       <a
         href={backPath}
         className="student-header-context__back"
@@ -138,9 +129,6 @@ interface Props extends PageContextProps {
 
 export function AppHeader({
   role,
-  section,
-  label,
-  search: locationSearch,
   menuOpen,
   menuRef,
   onMenu,
@@ -192,16 +180,10 @@ export function AppHeader({
             aria-label={menuOpen ? "Đóng menu học tập" : "Mở menu học tập"}
             aria-expanded={menuOpen}
             aria-controls="main-navigation"
-            className="app-header__menu app-header__logo lg:hidden"
+            className="app-header__menu app-header__logo md:hidden"
           >
             <img src={appConfig.brand.logoUrl} alt="" width={28} height={28} />
           </Button>
-          <StudentPageContext
-            section={section}
-            label={label}
-            search={locationSearch}
-            onNavigate={onNavigate}
-          />
         </div>
         <div className="app-header__end">
           <Button

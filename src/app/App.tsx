@@ -15,7 +15,7 @@ import {
 import { StudentProfileModal } from "../features/gamification/StudentProfileModal";
 import type { TeacherSection } from "../features/teacher/TeacherView";
 import type { AdminSection } from "../features/admin/AdminView";
-import { AppHeader } from "./layout/AppHeader";
+import { AppHeader, StudentPageContext } from "./layout/AppHeader";
 import { PageBreadcrumbs } from "./layout/PageBreadcrumbs";
 import { AppSidebar } from "./layout/AppSidebar";
 import { useMobileNavigation } from "./layout/useMobileNavigation";
@@ -106,14 +106,14 @@ export default function App() {
       false,
       (value): value is boolean => typeof value === "boolean",
     );
-  const menu = useMobileNavigation(!isStudent || desktopSidebarVisible);
+  const menu = useMobileNavigation(!isStudent || desktopSidebarVisible, isStudent);
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
-  const studentSidebarVisible = isStudent && desktopSidebarVisible;
+  const studentSidebarVisible = isStudent && menu.isWideDesktop && desktopSidebarVisible;
 
   const toggleStudentSidebar = () => {
-    if (menu.isDesktop) {
+    if (menu.isWideDesktop) {
       setDesktopSidebarVisible((visible) => !visible);
       menu.setOpen(false);
     } else {
@@ -150,7 +150,7 @@ export default function App() {
 
       <div
         aria-hidden="true"
-        className={`app-navigation-backdrop lg:hidden ${menu.open ? "is-open" : ""}`}
+        className={`app-navigation-backdrop ${isStudent ? "app-navigation-backdrop--student" : "lg:hidden"} ${menu.open ? "is-open" : ""}`}
         onClick={() => menu.setOpen(false)}
       />
 
@@ -163,8 +163,8 @@ export default function App() {
         onClose={() => menu.setOpen(false)}
         onNavigate={navigate}
         nextLessonPath={nextLessonPath}
-        isDesktop={menu.isDesktop}
-        pinned={desktopSidebarVisible}
+        isDesktop={menu.isWideDesktop}
+        pinned={studentSidebarVisible}
         onToggleSidebar={toggleStudentSidebar}
       />
 
@@ -202,6 +202,14 @@ export default function App() {
           tabIndex={-1}
           className={isStudent ? "app-main app-main--student" : "app-main"}
         >
+          {isStudent && section === "hoc-bai" && (
+            <StudentPageContext
+              section={section}
+              label={label}
+              search={location.search}
+              onNavigate={navigate}
+            />
+          )}
           {!isStudent && (
             <PageBreadcrumbs
               role={role}
