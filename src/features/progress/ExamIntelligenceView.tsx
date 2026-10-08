@@ -1,5 +1,6 @@
 import { RichMathText } from "../../components/MathLatex";
 import { Alert, Badge, Button, Card, Icon } from "../../components/ui";
+import { StudentPageHeader, StudentSignalStrip } from "../../components/student/StudentExperience";
 import { assessmentSummary, sampleAssessment } from "./data";
 import {
   CurriculumAction,
@@ -159,42 +160,47 @@ export function ExamIntelligenceView({
     section?.focus({ preventScroll: true });
   };
   return (
-    <div className="space-y-6 pb-8">
-      <header className="flex flex-col justify-between gap-5 xl:flex-row xl:items-start">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
+    <div className="learning-os-page">
+      <StudentPageHeader
+        eyebrow="Learning radar"
+        icon="insights"
+        title="Biết chính xác điểm nào đang kéo kết quả xuống."
+        description={`${sampleAssessment.title} · Radar gom điểm số, lỗi sai và skill gap thành một tín hiệu hành động thay vì một báo cáo dài.`}
+        meta={
+          <>
             <Badge tone="primary">{sampleAssessment.course}</Badge>
-            <Badge>Bài thi mẫu #{sampleAssessment.id}</Badge>
-          </div>
-          <h1 className="mt-4 text-2xl font-bold tracking-tight text-primary sm:text-3xl">
-            Phân tích kết quả học tập
-          </h1>
-          <p className="mt-3 text-sm text-on-surface-variant">
-            {sampleAssessment.title} · Nhận diện lỗi và lên kế hoạch ôn tập.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {onOpenBadges && (
-            <Button
-              variant="secondary"
-              onClick={onOpenBadges}
-              className="font-semibold text-secondary"
-            >
-              <Icon name="military_tech" />
-              Huy hiệu mốc
+            <Badge>Bài thi #{sampleAssessment.id}</Badge>
+          </>
+        }
+        actions={
+          <>
+            {onOpenBadges && (
+              <Button variant="secondary" onClick={onOpenBadges}>
+                <Icon name="workspace_premium" />
+                Mastery profile
+              </Button>
+            )}
+            <Button variant="secondary" onClick={() => window.print()}>
+              <Icon name="print" />
+              Lưu báo cáo
             </Button>
-          )}
-          <Button variant="secondary" onClick={() => window.print()}>
-            <Icon name="print" />
-            In / Lưu PDF
-          </Button>
-          <Button onClick={showPlan}>
-            <Icon name="arrow_downward" />
-            Lộ trình {summary.planDays} ngày
-          </Button>
-        </div>
-      </header>
-      <Alert tone="info">
+            <Button onClick={showPlan}>
+              <Icon name="arrow_downward" />
+              Intervention plan
+            </Button>
+          </>
+        }
+      />
+
+      <StudentSignalStrip
+        items={[
+          { icon: "target", label: "Điểm hiện tại", value: `${sampleAssessment.score}/${sampleAssessment.maximumScore}` },
+          { icon: "trending_up", label: "Có thể phục hồi", value: `+${summary.recoverablePoints} điểm` },
+          { icon: "psychology", label: "Skill gap", value: `${summary.developingSkills.length} chủ đề` },
+          { icon: "calendar_month", label: "Kế hoạch", value: `${summary.planDays} ngày` },
+        ]}
+      />
+      <Alert tone="info" className="rounded-2xl">
         Báo cáo minh họa từ dữ liệu bài thi mẫu. Các chỉ số bên dưới chưa được
         tính từ hoạt động học thực tế của bạn.
       </Alert>
