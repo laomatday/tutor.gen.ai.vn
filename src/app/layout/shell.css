@@ -378,28 +378,37 @@
 
   .app-header__end { justify-content: flex-end; }
   .app-header__menu { width: 44px; height: 44px; flex-shrink: 0; border-radius: 11px; }
-  .app-header__breadcrumb {
+  .app-header__context {
+    color: var(--color-brand);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Page-level breadcrumbs (never part of the fixed header). */
+  .app-breadcrumbs {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    color: var(--color-ink-600);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .app-breadcrumbs__list {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-width: 0;
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 1.35;
-    color: #596577;
-    white-space: nowrap;
+    gap: 9px;
+    min-height: 28px;
+    width: max-content;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
-
-  .app-header__breadcrumb-parent { flex-shrink: 0; }
-  .app-header__breadcrumb-chevron { font-size: 17px; flex-shrink: 0; color: var(--color-ink-600); }
-  .app-header__breadcrumb strong {
-    color: var(--color-brand);
-    font-weight: 700;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
+  .app-breadcrumbs__item { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+  .app-breadcrumbs__divider { width: 15px; height: 15px; color: var(--color-ink-500); }
+  .app-breadcrumbs__link { color: var(--color-ink-600); text-decoration: none; }
+  .app-breadcrumbs__link:hover { color: var(--color-brand); text-decoration: underline; }
+  .app-breadcrumbs__current { color: var(--color-brand); font-weight: 700; }
   .app-header__search {
     position: relative;
     display: none;
@@ -483,9 +492,7 @@
   @media (max-width: 639px) {
     .app-header--student { padding-inline: 12px; }
     .app-header__start, .app-header__end { gap: 3px; }
-    .app-header__breadcrumb { gap: 0; }
-    .app-header__breadcrumb-parent, .app-header__breadcrumb-chevron { display: none; }
-    .app-header__breadcrumb strong { font-size: 14px; }
+    .app-header__context { font-size: 13px; }
   }
 
   @media (min-width: 1024px) {

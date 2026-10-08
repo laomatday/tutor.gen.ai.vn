@@ -64,8 +64,10 @@ test.describe("360px minimum mobile width", () => {
 test("Reference shell: desktop sidebar, breadcrumb, and collapsed rail", async ({page}) => {
   await page.setViewportSize({width:1440,height:900});
   await page.goto("/");
-  await expect(page.getByRole("navigation", {name:"Đường dẫn"})).toContainText("Không gian học tập");
-  await expect(page.getByRole("navigation", {name:"Đường dẫn"})).toContainText("Hôm nay");
+  const crumbs = page.locator("#main-content").getByRole("navigation", {name:"Đường dẫn"});
+  await expect(crumbs).toContainText("Không gian học tập");
+  await expect(crumbs).toContainText("Hôm nay");
+  await expect(page.locator(".app-header").getByRole("navigation", {name:"Đường dẫn"})).toHaveCount(0);
   const sidebar = page.locator("#main-navigation");
   const nav = sidebar.getByRole("navigation", {name:"Các trang học tập"});
   await expect(nav.getByRole("button", {name:"Hôm nay"})).toHaveAttribute("aria-current","page");
