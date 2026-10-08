@@ -1,0 +1,135 @@
+/* Tutor pilot shares genAi tokens and controls but has an isolated layout. */
+.pilot-page { min-width: 0; }
+.pilot-header {
+  min-height: 76px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-ink-200);
+}
+.pilot-main {
+  max-width: 1320px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 24px 16px calc(40px + env(safe-area-inset-bottom));
+}
+.pilot-auth { max-width: 520px; margin: 5vh auto; }
+.pilot-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: clamp(20px, 3vw, 34px);
+  border-radius: 24px;
+  background: var(--color-white);
+  border: 1px solid var(--color-ink-200);
+}
+.pilot-metrics {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 14px 0;
+}
+.pilot-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--color-ink-50);
+}
+.pilot-metrics strong { font-size: clamp(1.2rem,2.5vw,1.8rem); color: var(--color-brand); }
+.pilot-metrics span { font-size: 12px; line-height: 1.5; color: var(--color-ink-600); }
+.pilot-study-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  align-items: start;
+  gap: 20px;
+}
+.pilot-study-layout > * { min-width: 0; }
+.pilot-tabs { width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+.pilot-tabs > .ui-segment { flex: 1 0 auto; min-height: 48px; }
+.pilot-radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-ink-200);
+  border-radius: 12px;
+  cursor: pointer;
+  background: var(--color-white);
+}
+.pilot-radio-row:has(input:checked) {
+  border-color: var(--color-brand);
+  background: var(--color-brand-50);
+}
+.pilot-radio-row > input { margin-top: 4px; flex-shrink: 0; }
+.pilot-lesson-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 12px;
+  color: var(--color-ink-700);
+}
+.pilot-lesson-row:hover, .pilot-lesson-row[aria-current] {
+  background: var(--color-brand-50);
+  color: var(--color-brand);
+}
+.pilot-lesson-row .ui-icon { flex: 0 0 auto; }
+.pilot-lesson-row span { min-width: 0; overflow-wrap: anywhere; }
+.pilot-event {
+  border-left: 3px solid var(--color-brand-300);
+  padding: 10px 14px;
+  background: var(--color-ink-50);
+  border-radius: 0 12px 12px 0;
+}
+.pilot-event time { display: block; margin-top: 4px; }
+.pilot-event pre { overflow-wrap: anywhere; white-space: pre-wrap; }
+.pilot-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr));
+  gap: 14px;
+}
+.pilot-learner-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-ink-200);
+}
+.pilot-learner-row:last-child { border-bottom: none; }
+.pilot-learner-row > div { min-width: 0; }
+.pilot-tool-tabs { flex-wrap: wrap; gap: 6px; }
+.pilot-page :is(button,a,input,textarea,select,summary):focus-visible {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 2px;
+}
+.pilot-page .studio-graph, .pilot-page .studio-sketch { max-width: 100%; }
+@media (min-width: 980px) {
+  .pilot-study-layout { grid-template-columns: minmax(0,1fr) minmax(290px,330px); }
+  .pilot-main { padding: 34px 24px 50px; }
+}
+@media (max-width: 479px) {
+  .pilot-header { min-height: 64px; }
+  .pilot-main { padding: 16px 12px 32px; }
+  .pilot-metrics { grid-template-columns: 1fr 1fr; }
+  .pilot-metrics > div:last-child { grid-column: 1 / -1; }
+  .pilot-learner-row { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pilot-page * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
