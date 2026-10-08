@@ -29,9 +29,9 @@ const TodayView = lazy(() =>
     default: module.TodayView,
   })),
 );
-const TheoryLessonsView = lazy(() =>
-  import("../features/learning/TheoryLessonsView").then((module) => ({
-    default: module.TheoryLessonsView,
+const KnowledgeMapView = lazy(() =>
+  import("../features/learning/KnowledgeMapView").then((module) => ({
+    default: module.KnowledgeMapView,
   })),
 );
 const TimetableScheduleView = lazy(() =>
@@ -47,6 +47,11 @@ const SelfSolveView = lazy(() =>
 const ExamIntelligenceView = lazy(() =>
   import("../features/progress/ExamIntelligenceView").then((module) => ({
     default: module.ExamIntelligenceView,
+  })),
+);
+const ThinkingReplayView = lazy(() =>
+  import("../features/progress/ThinkingReplayView").then((module) => ({
+    default: module.ThinkingReplayView,
   })),
 );
 const RewardsStoreView = lazy(() =>
@@ -77,21 +82,26 @@ export default function App() {
   const notice = useNotice();
   const wallet = useRewardWallet(notice.show);
   const menu = useMobileNavigation();
+  const isStudent = role === "Học sinh";
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
+
   useEffect(() => {
     document.title = `${label} | ${appConfig.brand.name}`;
   }, [label]);
+
   useEffect(() => {
     menu.setOpen(false);
   }, [location.pathname, location.search]);
+
   const navigate = (path: string) => {
     if (navigateTo(path)) {
       notice.clear();
       menu.setOpen(false);
     }
   };
+
   const navigateStudent = (tab: string) =>
     navigate(tab.startsWith("/") ? tab : routePath(tab as NavTab));
 
@@ -103,6 +113,7 @@ export default function App() {
       >
         Đi đến nội dung
       </a>
+
       {menu.open && (
         <div
           aria-hidden="true"
@@ -110,6 +121,7 @@ export default function App() {
           onClick={() => menu.setOpen(false)}
         />
       )}
+
       <AppSidebar
         role={role}
         section={section}
@@ -123,7 +135,11 @@ export default function App() {
         progress={progress.percent}
         balance={wallet.balance}
       />
-      <div ref={menu.content} className="app-frame">
+
+      <div
+        ref={menu.content}
+        className={isStudent ? "app-frame app-frame--student" : "app-frame"}
+      >
         <AppHeader
           role={role}
           label={label}
@@ -133,6 +149,7 @@ export default function App() {
           onNavigate={navigate}
           onOpenProfile={() => setIsProfileOpen(true)}
         />
+
         <div role="status" aria-live="polite" aria-atomic="true">
           {notice.notice && (
             <div className="app-toast flex items-start gap-2">
@@ -141,12 +158,18 @@ export default function App() {
             </div>
           )}
         </div>
-        <main id="main-content" tabIndex={-1} className="app-main">
+
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className={isStudent ? "app-main app-main--student" : "app-main"}
+        >
           {wallet.error && (
             <Alert tone="warning" className="mb-4">
               {wallet.error}
             </Alert>
           )}
+
           <ScreenErrorBoundary key={role} resetKey={section}>
             <Suspense
               fallback={
@@ -169,24 +192,36 @@ export default function App() {
                       onEarnGp={wallet.earn}
                     />
                   )}
+
                   {section === "hoc-bai" && (
-                    <TheoryLessonsView
+                    <KnowledgeMapView
                       onNavigate={navigateStudent}
                       onEarnGp={wallet.earn}
                     />
                   )}
+
+                  {section === "tu-giai" && (
+                    <SelfSolveView
+                      onEarnGp={wallet.earn}
+                      onNavigate={navigateStudent}
+                    />
+                  )}
+
+                  {section === "replay" && (
+                    <ThinkingReplayView onNavigate={navigateStudent} />
+                  )}
+
                   {section === "thoi-khoa-bieu" && (
                     <TimetableScheduleView onNavigate={navigateStudent} />
                   )}
-                  {section === "tu-giai" && (
-                    <SelfSolveView onEarnGp={wallet.earn} />
-                  )}
+
                   {(section === "thi-thu" || section === "tien-bo") && (
                     <ExamIntelligenceView
                       onNavigate={navigateStudent}
                       onOpenBadges={() => setIsProfileOpen(true)}
                     />
                   )}
+
                   {section === "doi-qua" && (
                     <RewardsStoreView
                       gpBalance={wallet.balance}
@@ -197,6 +232,7 @@ export default function App() {
                   )}
                 </>
               )}
+
               {role === "Giáo viên" && (
                 <TeacherView
                   section={section as TeacherSection}
@@ -206,6 +242,7 @@ export default function App() {
                   onNotice={notice.show}
                 />
               )}
+
               {role === "Quản trị" && (
                 <AdminView
                   section={section as AdminSection}
@@ -219,6 +256,7 @@ export default function App() {
           </ScreenErrorBoundary>
         </main>
       </div>
+
       <StudentProfileModal
         open={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}

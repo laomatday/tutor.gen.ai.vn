@@ -1,0 +1,92 @@
+@reference "../index.css";
+
+@layer components {
+  .learning-os-page { @apply mx-auto w-full max-w-[86rem] space-y-6 pb-12; }
+  .mission-hero {
+    @apply relative isolate overflow-hidden rounded-[2rem] border border-brand/15 bg-brand px-6 py-7 text-white shadow-card sm:px-8 sm:py-9 lg:px-10;
+    min-height: 30rem;
+    background-image:
+      radial-gradient(circle at 78% 28%, color-mix(in oklab, var(--color-accent) 45%, transparent), transparent 24%),
+      radial-gradient(circle at 92% 72%, color-mix(in oklab, var(--color-sky) 35%, transparent), transparent 26%),
+      linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-strong) 68%, var(--color-ink-900) 100%);
+  }
+  .mission-hero::after {
+    content: "";
+    @apply pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-white/10;
+    box-shadow: 0 0 0 2.5rem rgb(255 255 255 / 0.025), 0 0 0 5rem rgb(255 255 255 / 0.018);
+  }
+  .mission-layout { @apply grid min-h-[25rem] items-center gap-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(19rem,.75fr)]; }
+  .mission-kicker { @apply inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-accent-pale backdrop-blur; }
+  .mission-title { @apply mt-5 max-w-3xl text-4xl font-extrabold leading-[1.06] tracking-[-0.045em] text-white sm:text-5xl lg:text-[3.5rem]; text-wrap: balance; }
+  .mission-copy { @apply mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base; }
+  .mission-actions { @apply mt-7 flex flex-wrap items-center gap-3; }
+  .mission-primary-action { @apply inline-flex min-h-14 items-center gap-2 rounded-full bg-white px-6 text-base font-bold text-brand shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0; }
+  .mission-secondary-action { @apply inline-flex min-h-12 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/10; }
+  .mission-orbit { @apply relative mx-auto flex aspect-square w-full max-w-[20rem] items-center justify-center; }
+  .mission-orbit::before, .mission-orbit::after { content: ""; @apply absolute rounded-full border border-white/15; }
+  .mission-orbit::before { inset: 5%; }
+  .mission-orbit::after { inset: 22%; }
+  .mission-orbit-core { @apply relative z-10 flex h-36 w-36 flex-col items-center justify-center rounded-full bg-white text-center text-brand shadow-2xl; }
+  .mission-orbit-node { @apply absolute z-20 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-xl text-white shadow-lg backdrop-blur; }
+  .mission-orbit-node--a { left: 4%; top: 38%; }
+  .mission-orbit-node--b { right: 8%; top: 14%; }
+  .mission-orbit-node--c { bottom: 6%; right: 24%; }
+  .signal-card { @apply rounded-3xl border border-ink-200/80 bg-white p-5 shadow-card sm:p-6 dark:border-ink-800 dark:bg-night-raised; }
+  .signal-card--accent { @apply border-accent/20 bg-accent/5; }
+  .signal-label { @apply flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-accent-strong; }
+  .knowledge-preview {
+    @apply relative min-h-72 overflow-hidden rounded-3xl border border-ink-200/80 bg-white p-5 shadow-card sm:p-6;
+    background-image:
+      radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--color-ice) 80%, transparent), transparent 26%),
+      radial-gradient(circle at 80% 70%, color-mix(in oklab, var(--color-accent) 12%, transparent), transparent 30%);
+  }
+  .knowledge-preview-node { @apply absolute z-10 flex items-center gap-2 rounded-full border border-ink-200 bg-white px-3 py-2 text-xs font-bold text-brand shadow-card; }
+  .knowledge-preview-node[data-active="true"] { @apply border-accent bg-accent text-white; }
+  .knowledge-preview-line { stroke: color-mix(in oklab, var(--color-brand) 28%, transparent); stroke-width: 1.5; stroke-dasharray: 5 6; }
+  .knowledge-canvas {
+    @apply relative min-h-[38rem] overflow-hidden rounded-[2rem] border border-ink-200/80 bg-white shadow-card;
+    background:
+      radial-gradient(circle at center, color-mix(in oklab, var(--color-ice) 72%, transparent), transparent 30%),
+      linear-gradient(var(--color-ink-100) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-ink-100) 1px, transparent 1px);
+    background-size: auto, 32px 32px, 32px 32px;
+  }
+  .knowledge-canvas::after { content: ""; @apply pointer-events-none absolute inset-0; background: radial-gradient(circle at center, transparent 30%, rgb(255 255 255 / 0.88) 92%); }
+  .knowledge-edge { stroke: color-mix(in oklab, var(--color-brand) 34%, transparent); stroke-width: 1.5; stroke-dasharray: 7 8; }
+  .knowledge-node {
+    @apply absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-3xl border bg-white p-4 text-left shadow-card transition-all hover:-translate-y-[54%] hover:shadow-card-hover;
+    width: min(14rem, 40vw);
+  }
+  .knowledge-node[data-state="mastered"] { @apply border-brand bg-brand text-white; }
+  .knowledge-node[data-state="current"] { @apply border-accent bg-white ring-4 ring-accent/10; }
+  .knowledge-node[data-state="gap"] { @apply border-warning-300 bg-warning-50; }
+  .knowledge-node__meter { @apply mt-3 h-1.5 overflow-hidden rounded-full bg-ink-100; }
+  .knowledge-node__fill { @apply h-full rounded-full bg-accent; }
+  .knowledge-path { @apply relative space-y-3; }
+  .knowledge-path::before { content: ""; @apply absolute bottom-8 left-6 top-8 w-px bg-ink-200; }
+  .knowledge-path-node { @apply relative z-10 flex w-full items-center gap-4 rounded-3xl border border-ink-200 bg-white p-4 text-left shadow-card; }
+  .knowledge-path-node[data-state="mastered"] { @apply border-brand bg-brand text-white; }
+  .knowledge-path-node[data-state="current"] { @apply border-accent ring-4 ring-accent/10; }
+  .knowledge-path-node[data-state="gap"] { @apply border-warning-300 bg-warning-50; }
+  .knowledge-path-index { @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-surface-page text-xs font-extrabold text-brand; }
+  .knowledge-path-node[data-state="mastered"] .knowledge-path-index { @apply bg-white/15 text-white; }
+  .studio-shell { @apply grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]; }
+  .studio-canvas { @apply overflow-hidden rounded-[2rem] border border-ink-200/80 bg-white shadow-card; }
+  .studio-canvas__top { @apply flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 bg-surface-page px-5 py-4 sm:px-6; }
+  .studio-problem { @apply border-b border-ink-100 px-5 py-6 sm:px-7 sm:py-8; }
+  .studio-workspace { @apply space-y-5 px-5 py-6 sm:px-7 sm:py-7; }
+  .studio-input { @apply min-h-40 rounded-2xl border-2 border-dashed border-ink-200 bg-surface-page p-1 transition-colors focus-within:border-accent; }
+  .ai-pulse { @apply overflow-hidden rounded-[2rem] border border-brand/15 bg-brand text-white shadow-card xl:sticky; top: calc(var(--header-h) + 1.5rem); }
+  .ai-pulse__head { @apply border-b border-white/10 px-5 py-4; }
+  .ai-pulse__body { @apply space-y-4 p-5; }
+  .ai-pulse__message { @apply rounded-2xl bg-white/10 p-4 text-sm leading-6 text-white/85; }
+  .trace-item { @apply relative grid grid-cols-[3rem_1fr] gap-3 pb-5; }
+  .trace-item:not(:last-child)::after { content: ""; @apply absolute bottom-0 left-[1.45rem] top-8 w-px bg-ink-200; }
+  .trace-time { @apply text-xs font-bold tabular-nums text-ink-500; }
+  .trace-dot { @apply absolute left-[1.1rem] top-0.5 h-3 w-3 rounded-full border-2 border-white bg-accent shadow; }
+  .replay-hero { @apply grid gap-5 rounded-[2rem] border border-ink-200/80 bg-white p-6 shadow-card lg:grid-cols-[minmax(0,1fr)_20rem] lg:p-8; }
+  .dna-bar { @apply h-2 overflow-hidden rounded-full bg-ink-100; }
+  .dna-bar > span { @apply block h-full rounded-full bg-gradient-to-r from-brand to-accent; }
+  @variant max-lg { .mission-hero { min-height: auto; } .mission-layout { min-height: auto; } }
+  @variant max-sm { .mission-title { @apply text-4xl; } }
+}

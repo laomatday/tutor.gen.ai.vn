@@ -1,39 +1,148 @@
 @reference "../../index.css";
 @reference "../../styles/tutor-compat.css";
+
 @layer components {
   .app-sidebar {
     @apply fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col border-r border-ink-200 bg-white transition-transform;
     width: var(--sidebar-w);
   }
-  .app-sidebar.is-open {
-    translate: 0;
-  }
+  .app-sidebar.is-open { translate: 0; }
+
   .app-header {
     @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-ink-200 bg-white/95 px-4 backdrop-blur-md sm:px-6;
     height: var(--header-h);
   }
+
   .app-main {
     @apply min-h-screen w-full px-4 pb-8 sm:px-6;
     max-width: var(--container-content);
     margin-inline: auto;
     padding-top: calc(var(--header-h) + 1rem);
   }
-  .app-frame {
-    min-width: 0;
-  }
+
+  .app-frame { min-width: 0; }
+
   .app-toast {
     @apply fixed inset-x-4 z-60 rounded-2xl bg-ink-800 px-4 py-3 text-sm text-ink-100 shadow-lg sm:left-auto sm:max-w-md;
     top: calc(var(--header-h) + 1rem);
   }
+
+  .app-sidebar--student {
+    @apply border-r border-ink-200/80 bg-white;
+  }
+
+  .student-rail-brand {
+    @apply flex items-center justify-between gap-2 p-3;
+  }
+
+  .student-brand-button {
+    @apply flex min-h-12 items-center gap-3 rounded-2xl px-2 text-left;
+  }
+
+  .student-rail-mission { @apply px-3 pb-3; }
+
+  .student-mission-launch {
+    @apply w-full justify-center gap-2 rounded-2xl bg-brand px-3 text-white shadow-sm hover:bg-brand-strong;
+  }
+
+  .student-rail-nav { @apply space-y-1 px-2; }
+
+  .student-rail-nav--secondary { @apply min-h-0 overflow-y-auto; }
+
+  .student-rail-divider {
+    @apply mx-3 my-2 border-t border-ink-100;
+  }
+
+  .student-rail-item {
+    @apply flex min-h-12 w-full items-center gap-3 rounded-2xl px-3 text-left text-ink-500 transition-colors hover:bg-surface-page hover:text-brand;
+  }
+
+  .student-rail-item[aria-current="page"] {
+    @apply bg-brand text-white shadow-sm;
+  }
+
+  .student-rail-label {
+    @apply min-w-0 flex-1;
+  }
+
+  .student-rail-label strong {
+    @apply block text-sm font-semibold;
+  }
+
+  .student-rail-label small {
+    @apply mt-0.5 block text-xs font-normal text-ink-500;
+  }
+
+  .student-rail-item[aria-current="page"] .student-rail-label small {
+    @apply text-white/70;
+  }
+
+  .student-progress-orb {
+    @apply mx-auto flex h-11 w-11 items-center justify-center rounded-full p-1 text-xs font-bold text-brand;
+  }
+
+  .student-progress-orb > span {
+    @apply flex h-full w-full items-center justify-center rounded-full bg-white;
+  }
+
+  .student-profile-orb {
+    @apply flex w-full items-center gap-3 rounded-2xl p-1.5 text-left hover:bg-surface-page;
+  }
+
+  .app-header--student {
+    @apply border-b border-ink-100/80 bg-white/85;
+  }
+
   @variant lg {
-    .app-sidebar {
-      translate: 0;
+    .app-sidebar { translate: 0; }
+
+    .app-frame { padding-left: var(--sidebar-w); }
+
+    .app-header { left: var(--sidebar-w); }
+
+    .app-sidebar--student {
+      width: 5rem;
     }
-    .app-frame {
-      padding-left: var(--sidebar-w);
+
+    .app-sidebar--student .student-rail-label {
+      @apply hidden;
     }
-    .app-header {
-      left: var(--sidebar-w);
+
+    .app-sidebar--student .student-rail-brand {
+      @apply justify-center px-2;
+    }
+
+    .app-sidebar--student .student-brand-button {
+      @apply justify-center px-0;
+    }
+
+    .app-sidebar--student .student-rail-mission {
+      @apply px-2;
+    }
+
+    .app-sidebar--student .student-mission-launch {
+      @apply h-12 w-full rounded-2xl px-0;
+    }
+
+    .app-sidebar--student .student-rail-item {
+      @apply justify-center px-0;
+    }
+
+    .app-sidebar--student .student-profile-orb {
+      @apply justify-center px-0;
+    }
+
+    .app-frame--student {
+      padding-left: 5rem;
+    }
+
+    .app-frame--student .app-header {
+      left: 5rem;
+    }
+
+    .app-main--student {
+      max-width: 92rem;
+      padding-top: calc(var(--header-h) + 1.5rem);
     }
   }
 }
