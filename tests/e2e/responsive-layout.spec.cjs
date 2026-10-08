@@ -81,6 +81,23 @@ test("Knowledge Universe mobile map fills the screen and remains dismissible", a
   await expect(page.locator("#main-content h1")).toHaveCount(1);
 });
 
+test("Knowledge Universe: topic selection opens a dismissible bottom sheet on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/hoc-bai");
+  await page.getByRole("tab", { name: "Bản đồ", exact: true }).click();
+  await page.getByRole("button", { name: "Toàn màn hình" }).click();
+  await page.locator(".knowledge-map .knowledge-topic-node").first().click();
+  const sheet = page.getByRole("dialog", { name: "Thông tin chủ đề" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet).toBeFocused();
+  await expect(sheet.locator(".knowledge-lesson-list")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
+  await expect(page.locator(".knowledge-map")).toHaveAttribute("data-map-expanded", "true");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".knowledge-map")).toHaveAttribute("data-map-expanded", "false");
+});
+
 test("Focus Studio phone: write first, open tool dock, then reach step hints", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tu-giai?problem=quadratic-factor-01");
