@@ -7,6 +7,8 @@ import {
   selectDiscovery,
   type DiscoveryModel,
 } from "./lessonDiscovery";
+import { EnglishDialogueMicroLab } from "../microLabs/EnglishDialogueMicroLab";
+import { selectDialogueLab } from "../microLabs/domain";
 import "../../styles/student-exploration.css";
 
 export interface LessonDiscoveryProps {
@@ -20,6 +22,16 @@ export function LessonDiscovery({
   compact = false,
   onContinue,
 }: LessonDiscoveryProps) {
+  const dialogue = selectDialogueLab(lesson);
+  if (dialogue)
+    return (
+      <EnglishDialogueMicroLab
+        key={dialogue.id}
+        lab={dialogue}
+        compact={compact}
+        onContinue={onContinue}
+      />
+    );
   const discovery = selectDiscovery(lesson);
   if (!discovery) return null;
   return (
