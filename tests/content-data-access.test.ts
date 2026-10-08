@@ -48,7 +48,7 @@ test("Data Access Layer retrieves JSON-backed academic content properly", () => 
   assert.equal(radTopic?.title, "Căn thức");
 
   const allLessons = getLessons();
-  assert.equal(allLessons.length, 9);
+  assert.equal(allLessons.length, 10);
 
   const squareRootLesson = getLessonById("can-bac-hai");
   assert.ok(squareRootLesson);
@@ -58,6 +58,25 @@ test("Data Access Layer retrieves JSON-backed academic content properly", () => 
 
   const courseLessons = getLessonsByCourse("9", "toan");
   assert.equal(courseLessons.length, 7);
+
+  const english = subjects.find((s) => s.id === "tieng-anh");
+  assert.ok(english);
+  assert.equal(english?.capabilities?.math, false);
+  assert.ok(english?.cardImageUrl);
+
+  const englishLessons = getLessonsByCourse("9", "tieng-anh");
+  assert.equal(englishLessons.length, 2);
+  assert.ok(englishLessons.every((lesson) => lesson.thumbnailUrl));
+  assert.ok(
+    englishLessons.some((lesson) =>
+      lesson.contentBlocks?.some((block) => block.type === "dialogue"),
+    ),
+  );
+  assert.ok(
+    englishLessons.some((lesson) =>
+      lesson.contentBlocks?.some((block) => block.type === "image"),
+    ),
+  );
 });
 
 test("Data Access Layer retrieves practice, rewards and assessment data", () => {
