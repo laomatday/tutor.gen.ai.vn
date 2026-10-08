@@ -1,8 +1,10 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
+  useState,
   type ReactNode,
   type Dispatch,
   type SetStateAction,
@@ -11,16 +13,20 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import {
   INITIAL_LESSONS,
   INITIAL_TOPICS,
+  SUBJECTS,
   canStudy,
-  isLessons,
-  isTopics,
   type Lesson,
   type Topic,
+  type Subject,
 } from "../data/curriculum";
+import { loadPublishedCurriculum } from "../data/contentRepository";
 import { storageKeys } from "../config/storage";
 import { initialCompletedLessonIds } from "../features/learning/data/student";
 
+export type CurriculumContentSource = "database" | "fallback";
+
 interface CurriculumState {
+  subjects: Subject[];
   topics: Topic[];
   setTopics: Dispatch<SetStateAction<Topic[]>>;
   lessons: Lesson[];
@@ -28,35 +34,71 @@ interface CurriculumState {
   completedLessonIds: string[];
   setCompletedLessonIds: Dispatch<SetStateAction<string[]>>;
   completeLesson: (lessonId: string) => boolean;
+  contentSource: CurriculumContentSource;
+  contentLoading: boolean;
+  contentError: string | null;
+  refreshContent: () => Promise<void>;
   storageError: string | null;
 }
+
 const CurriculumContext = createContext<CurriculumState | null>(null);
+
 const isCompletedIds = (value: unknown): value is string[] =>
   Array.isArray(value) &&
   value.every((id) => typeof id === "string") &&
   new Set(value).size === value.length;
 
 export function CurriculumProvider({ children }: { children: ReactNode }) {
-  const [topics, setTopics, topicError] = useLocalStorage(
-    storageKeys.curriculumTopics,
-    INITIAL_TOPICS,
-    isTopics,
+  const [subjects, setSubjects] = useState<Subject[]>(() =>
+    SUBJECTS.map((subject) => ({ ...subject })),
   );
-  const [lessons, setLessons, lessonError] = useLocalStorage(
-    storageKeys.curriculumLessons,
-    INITIAL_LESSONS,
-    isLessons,
+  const [topics, setTopics] = useState<Topic[]>(() =>
+    structuredClone(INITIAL_TOPICS),
   );
+  const [lessons, setLessons] = useState<Lesson[]>(() =>
+    structuredClone(INITIAL_LESSONS),
+  );
+  const [contentSource, setContentSource] =
+    useState<CurriculumContentSource>("fallback");
+  const [contentLoading, setContentLoading] = useState(true);
+  const [contentError, setContentError] = useState<string | null>(null);
+
   const [completedLessonIds, setCompletedLessonIds, completionError] =
     useLocalStorage(
       storageKeys.completedLessons,
       initialCompletedLessonIds,
       isCompletedIds,
     );
+
   const completedRef = useRef(completedLessonIds);
   useEffect(() => {
     completedRef.current = completedLessonIds;
   }, [completedLessonIds]);
+
+  const refreshContent = useCallback(async () => {
+    setContentLoading(true);
+    try {
+      const snapshot = await loadPublishedCurriculum();
+      setSubjects(snapshot.subjects);
+      setTopics(snapshot.topics);
+      setLessons(snapshot.lessons);
+      setContentSource("database");
+      setContentError(null);
+    } catch (error) {
+      setContentSource("fallback");
+      setContentError(
+        error instanceof Error
+          ? error.message
+          : "Không tải được nội dung từ database. Đang dùng dữ liệu dự phòng.",
+      );
+    } finally {
+      setContentLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshContent();
+  }, [refreshContent]);
 
   const completeLesson = (lessonId: string) => {
     const lesson = lessons.find((item) => item.id === lessonId);
@@ -76,6 +118,7 @@ export function CurriculumProvider({ children }: { children: ReactNode }) {
   return (
     <CurriculumContext.Provider
       value={{
+        subjects,
         topics,
         setTopics,
         lessons,
@@ -83,7 +126,11 @@ export function CurriculumProvider({ children }: { children: ReactNode }) {
         completedLessonIds,
         setCompletedLessonIds,
         completeLesson,
-        storageError: topicError || lessonError || completionError,
+        contentSource,
+        contentLoading,
+        contentError,
+        refreshContent,
+        storageError: completionError,
       }}
     >
       {children}
