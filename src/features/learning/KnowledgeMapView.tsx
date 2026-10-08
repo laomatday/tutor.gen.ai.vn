@@ -78,7 +78,7 @@ function KnowledgeMapOverview({ onNavigate }: { onNavigate: (path: string) => vo
   const next = focusedLessons.find((lesson) => !completedLessonIds.includes(lesson.id)) ?? focusedLessons[0];
   const positions = currentTopics.map((topic, index) => {
     const angle = (index / Math.max(1, currentTopics.length)) * Math.PI * 2 - Math.PI / 2;
-    return { topic, x: 50 + 36 * Math.cos(angle), y: 50 + 36 * Math.sin(angle) };
+    return { topic, x: 50 + 33 * Math.cos(angle), y: 50 + 28 * Math.sin(angle) };
   });
   return (
     <div className="learning-os-page ai-v3-page advanced-workspace">
