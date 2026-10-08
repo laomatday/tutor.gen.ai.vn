@@ -255,3 +255,30 @@ Replay is a cognition timeline, not a result report:
 - Dense information is grouped into narrative panels rather than dashboard grids.
 - Illustration is self-hosted where possible; current journey hero is `/learning-media/learning-horizon.svg`.
 - Do not add a new color family outside the genAi token system.
+
+
+## ChatGPT-style sidebar + Gemini header
+
+Student desktop shell dùng mô hình **rail + panel**:
+
+- Rail cố định **60px** luôn hiển thị.
+- Click logo trên rail để mở/đóng panel **288px**.
+- Khi panel mở, header + main content dịch từ 60px → **348px**; panel không được đè nội dung.
+- Control **Giữ sidebar mở** là pin state:
+  - pinned: giữ panel qua navigation và reload;
+  - unpinned: panel vẫn mở tạm, nhưng tự thu sau navigation.
+- Pin state lưu ở `storageKeys.studentSidebarPinned`.
+- Quick icons trên rail điều hướng trực tiếp 4 core surfaces.
+- Mobile không hiển thị rail; sidebar trở thành drawer ~320px với backdrop và focus-trap hiện có.
+
+Student header lấy cảm hứng từ Gemini:
+
+- chiều cao **60px**;
+- graphite/frosted surface;
+- context pill `AI Pulse + current page` ở trái;
+- compact utility cluster;
+- command search ở giữa, giữ `Cmd/Ctrl+K`;
+- streak / Replay / notification / profile gom về bên phải;
+- không đưa quá nhiều dashboard metric lên header.
+
+Không thay đổi page-level AI Pulse V3, DB-first curriculum, Teacher/Admin shell hoặc mobile bottom nav khi chỉnh app shell.
