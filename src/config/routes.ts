@@ -3,14 +3,14 @@ export type UserRole = (typeof roles)[number];
 export type WorkspaceRole = Exclude<UserRole, "Học sinh">;
 
 export const studentRoutes = [
-  { id: "hom-nay", path: "/", label: "Mission", icon: "target", group: "Core", description: "Nhiệm vụ hôm nay" },
-  { id: "hoc-bai", path: "/hoc-bai", label: "Map", icon: "route", group: "Core", description: "Bản đồ kiến thức" },
-  { id: "tu-giai", path: "/tu-giai", label: "Studio", icon: "edit_square", group: "Core", description: "Không gian tự giải" },
-  { id: "replay", path: "/replay", label: "Replay", icon: "replay", group: "Core", description: "Xem lại cách mình nghĩ" },
-  { id: "thi-thu", path: "/thi-thu", label: "Đánh giá", icon: "quiz", group: "Khác", description: "Thi thử & chẩn đoán" },
+  { id: "hom-nay", path: "/", label: "Trang chủ", icon: "home", group: "Core", description: "AI Pulse & nhiệm vụ hôm nay" },
+  { id: "hoc-bai", path: "/hoc-bai", label: "Knowledge Map", icon: "hub", group: "Core", description: "Vũ trụ tri thức" },
+  { id: "tu-giai", path: "/tu-giai", label: "Focus Studio", icon: "edit_square", group: "Core", description: "Giải bài cùng AI" },
+  { id: "replay", path: "/replay", label: "Thinking Replay", icon: "history", group: "Core", description: "Xem lại tư duy" },
+  { id: "thi-thu", path: "/thi-thu", label: "Bài tập & Đề thi", icon: "assignment", group: "Khác", description: "Đánh giá & luyện thi" },
   { id: "thoi-khoa-bieu", path: "/thoi-khoa-bieu", label: "Lịch học", icon: "calendar_month", group: "Khác", description: "Lịch & buổi Tutor" },
-  { id: "tien-bo", path: "/tien-bo", label: "Radar", icon: "trending_up", group: "Khác", description: "Tín hiệu tiến bộ" },
-  { id: "doi-qua", path: "/doi-qua", label: "Thành tựu", icon: "redeem", group: "Khác", description: "GP & phần thưởng" },
+  { id: "tien-bo", path: "/tien-bo", label: "Thống kê", icon: "bar_chart", group: "Khác", description: "Năng lực & tiến bộ" },
+  { id: "doi-qua", path: "/doi-qua", label: "Thành tựu", icon: "workspace_premium", group: "Khác", description: "Mastery & phần thưởng" },
 ] as const;
 export type NavTab = (typeof studentRoutes)[number]["id"];
 

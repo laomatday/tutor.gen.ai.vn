@@ -1,8 +1,8 @@
-import type { RefObject } from "react";
-import { Button, Icon } from "../../components/ui";
+import { useEffect, useRef, type RefObject } from "react";
+import { Button, Icon, Input } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
-import { roles, roleHome, type UserRole } from "../../config/routes";
+import { roles, roleHome, routePath, type UserRole } from "../../config/routes";
 import { studentProfile } from "../../features/learning/data/student";
 
 interface Props {
@@ -24,7 +24,22 @@ export function AppHeader({
   onNavigate,
   onOpenProfile,
 }: Props) {
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (role !== "Học sinh") return;
+    const handler = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [role]);
+
   if (role === "Học sinh") {
+    const firstName = studentProfile.name.split(" ").at(-1);
     return (
       <header className="app-header app-header--student">
         <div className="flex min-w-0 items-center gap-2">
@@ -40,36 +55,91 @@ export function AppHeader({
           >
             <Icon name="menu" />
           </Button>
-          <div className="hidden items-center gap-2 lg:flex">
-            <span className="h-2 w-2 rounded-full bg-accent" />
-            <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent-strong">
-              AI Learning OS
-            </span>
-          </div>
-          <div className="min-w-0 lg:ml-5">
-            <p className="truncate text-sm font-bold text-brand">{label}</p>
-            <p className="hidden text-xs text-ink-500 sm:block">
-              Quan sát · thích nghi · dẫn đường
+
+          <form
+            className="student-command-search"
+            role="search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              onNavigate(routePath("hoc-bai"));
+            }}
+          >
+            <Icon name="search" className="student-command-search__icon" />
+            <Input
+              ref={searchRef}
+              type="search"
+              aria-label="Tìm bài học, chủ đề hoặc câu hỏi"
+              placeholder="Tìm bài học, chủ đề, hay nhập một câu hỏi..."
+              className="student-command-search__input"
+            />
+            <kbd className="student-command-search__kbd">⌘ K</kbd>
+          </form>
+
+          <div className="hidden min-w-0 xl:block">
+            <p className="truncate text-xs font-bold uppercase tracking-[0.12em] text-accent-strong">
+              AI Pulse V3
             </p>
+            <p className="truncate text-xs text-ink-500">{label}</p>
           </div>
         </div>
+
         <div className="flex items-center gap-2">
-          <span className="hidden items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-2 text-xs font-semibold text-accent-strong md:inline-flex">
-            <Icon name="auto_awesome" />
-            AI Pulse đang theo dõi
-          </span>
+          <div className="student-header-chip hidden lg:flex">
+            <Icon name="local_fire_department" className="text-warning-500" />
+            <span>
+              <strong>14 Ngày</strong>
+              <small>Chuỗi học tập</small>
+            </span>
+          </div>
+          <div className="student-header-chip hidden xl:flex">
+            <Icon name="graphic_eq" className="text-accent-strong" />
+            <span>
+              <strong>Deep Focus</strong>
+              <small>Nhịp học hiện tại</small>
+            </span>
+          </div>
+          <Button
+            variant="surface"
+            className="student-header-chip hidden md:flex"
+            onClick={() => onNavigate(routePath("replay"))}
+          >
+            <Icon name="history" className="text-brand" />
+            <span>
+              <strong>Replay Mode</strong>
+              <small>Xem lại tư duy</small>
+            </span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Thông báo"
+            className="relative hidden sm:inline-flex"
+          >
+            <Icon name="notifications" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white" />
+          </Button>
+
           <Button
             variant="surface"
             onClick={onOpenProfile}
             aria-label="Mở hồ sơ học tập"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-ink-200 bg-white p-1 shadow-sm"
+            className="student-profile-button"
           >
             <img
               alt={studentProfile.name}
-              className="h-8 w-8 rounded-full object-cover"
+              className="h-9 w-9 rounded-full object-cover"
               src={studentProfile.avatarUrl}
               referrerPolicy="no-referrer"
             />
+            <span className="hidden min-w-0 text-left md:block">
+              <strong className="block truncate text-xs text-brand">
+                {studentProfile.name}
+              </strong>
+              <small className="block truncate text-[12px] text-ink-500">
+                Tuyển sinh 10 · {studentProfile.levelLabel.replace("Lv.", "Lv.")}
+              </small>
+            </span>
           </Button>
         </div>
       </header>
