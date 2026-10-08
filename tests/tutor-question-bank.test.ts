@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import data from "../src/data/draft/math9-question-bank.json";
 
 test("Math 9 draft bank has 100 distinct questions with reviewed metadata not falsely published",()=>{
@@ -46,4 +47,16 @@ test("Math 9 draft bank has 100 distinct questions with reviewed metadata not fa
     }
   }
   assert.deepEqual([...bySkill.values()].sort((a,b)=>a-b),[20,20,20,20,20]);
+});
+
+test("Math 9 generator is executable and reproduces the committed draft bank", () => {
+  // Import into a subprocess so test discovery never executes the generator's CLI write path.
+  const result = spawnSync(
+    process.execPath,
+    ["--input-type=module", "-e",
+      'import { buildBank } from "./scripts/generate-tutor-math9-bank.mjs"; process.stdout.write(JSON.stringify(buildBank()));'],
+    { encoding: "utf8", maxBuffer: 5 * 1024 * 1024 },
+  );
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), data);
 });
