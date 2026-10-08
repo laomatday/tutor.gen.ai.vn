@@ -376,7 +376,7 @@
   .ai-v3-replay-track__fill { @apply absolute inset-y-0 left-0 w-[72%] rounded-full bg-brand; }
   .ai-v3-replay-track i { @apply absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand shadow; }
   .ai-v3-replay-track i[data-state="danger"] { @apply bg-danger-500; }
-  .ai-v3-replay-track i[data-state="ai"] { @apply bg-violet-500; }
+  .ai-v3-replay-track i[data-state="ai"] { @apply bg-brand-500; }
   .ai-v3-replay-track i[data-state="success"] { @apply bg-success-500; }
   .ai-v3-replay-labels { @apply mt-3 grid grid-cols-6 gap-1 text-center; }
   .ai-v3-replay-labels b,.ai-v3-replay-labels small { @apply block; }
@@ -391,11 +391,11 @@
   .ai-v3-thought-event__rail i { @apply z-10 h-3.5 w-3.5 rounded-full bg-brand ring-4 ring-brand-50; }
   .ai-v3-thought-event__rail time { @apply mt-2 font-mono text-[10px] text-ink-400; }
   .ai-v3-thought-event[data-state="danger"] .ai-v3-thought-event__rail i { @apply bg-danger-500 ring-danger-50; }
-  .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__rail i { @apply bg-violet-500 ring-violet-50; }
+  .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__rail i { @apply bg-brand-500 ring-brand-50; }
   .ai-v3-thought-event[data-state="success"] .ai-v3-thought-event__rail i { @apply bg-success-500 ring-success-50; }
   .ai-v3-thought-event__card { @apply mb-3 rounded-2xl bg-surface-page p-4; }
   .ai-v3-thought-event[data-state="danger"] .ai-v3-thought-event__card { @apply bg-danger-50; }
-  .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__card { @apply bg-violet-50; }
+  .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__card { @apply bg-brand-50; }
   .ai-v3-thought-event[data-state="success"] .ai-v3-thought-event__card { @apply bg-success-50; }
   .ai-v3-thought-event__card strong { @apply flex items-center gap-2 text-sm text-brand; }
   .ai-v3-thought-event__card > p { @apply mt-2 text-sm leading-6 text-ink-600; }
