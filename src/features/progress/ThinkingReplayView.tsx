@@ -139,20 +139,23 @@ export function ThinkingReplayView({ onNavigate }: ThinkingReplayViewProps) {
           </div>
           <div className="replay-speed" role="group" aria-label="Tốc độ phát">
             {speeds.map((value) => (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 key={value}
                 aria-pressed={speed === value}
                 onClick={() => setSpeed(value)}
               >
                 {value}x
-              </button>
+              </Button>
             ))}
           </div>
         </div>
         <div className="replay-track">
           <div className="replay-track__fill" style={{ width: `${progress}%` }} />
           {events.map((event, index) => (
-            <button
+            <Button
+              variant="surface"
               key={event.time}
               className="replay-marker"
               data-state={event.state}
@@ -163,7 +166,7 @@ export function ThinkingReplayView({ onNavigate }: ThinkingReplayViewProps) {
               <i />
               <time>{event.time}</time>
               <span>{event.short}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </section>
