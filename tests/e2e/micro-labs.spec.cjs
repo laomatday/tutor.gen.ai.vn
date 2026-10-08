@@ -1,6 +1,19 @@
 const { test, expect } = require("@playwright/test");
 const path = require("node:path");
 
+async function assertAccessible(page) {
+  await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
+  const problems = await page.evaluate(async () => {
+    const result = await window.axe.run(document, {
+      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+    });
+    return result.violations
+      .filter((violation) => ["critical", "serious"].includes(violation.impact))
+      .map((violation) => ({ id: violation.id, count: violation.nodes.length }));
+  });
+  expect(problems).toEqual([]);
+}
+
 test("Focus Studio: first checked attempt unlocks a separate quadratic inquiry, without scores", async ({
   page,
 }) => {
@@ -42,8 +55,19 @@ test("Focus Studio: first checked attempt unlocks a separate quadratic inquiry, 
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBeLessThanOrEqual(1);
+  await assertAccessible(page);
   await page.screenshot({
     path: path.join("test-results", "visual", "math-micro-lab-390.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 360, height: 800 });
+  expect(await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  )).toBeLessThanOrEqual(1);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(lab).toBeVisible();
+  await page.screenshot({
+    path: path.join("test-results", "visual", "math-micro-lab-1440.png"),
     fullPage: true,
   });
 });
@@ -87,8 +111,19 @@ test("English micro-lab: published school-club dialogue gives feedback over two 
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBeLessThanOrEqual(1);
+  await assertAccessible(page);
   await page.screenshot({
     path: path.join("test-results", "visual", "english-dialogue-390.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 360, height: 800 });
+  expect(await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  )).toBeLessThanOrEqual(1);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(lab).toBeVisible();
+  await page.screenshot({
+    path: path.join("test-results", "visual", "english-dialogue-1440.png"),
     fullPage: true,
   });
 });
