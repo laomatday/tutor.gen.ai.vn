@@ -113,6 +113,7 @@ jobs:
             const page=await context.newPage();
             const res=await page.goto('http://127.0.0.1:4173/hoc-bai',{waitUntil:'networkidle',timeout:45000});
             await page.locator('h1').first().waitFor({state:'visible'});
+            await page.getByText(/Knowledge Universe · Live DB/i).waitFor({state:'visible',timeout:10000});
             const text=await page.locator('body').innerText();
             const imgs=await page.locator('section[aria-label="Môn học đã đăng ký"] img').count();
             if(res?.status()!==200) failures.push('map: not 200');
