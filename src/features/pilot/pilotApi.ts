@@ -203,7 +203,7 @@ export async function pilotDelete(path: string, token: string): Promise<void> {
   await extractResponse<void>(response);
 }
 
-export function pilotRpc<T>(name: "tutor_submit_lesson_quiz", token: string, body: unknown) {
+export function pilotRpc<T>(name: "tutor_submit_lesson_quiz" | "tutor_assign_lesson" | "tutor_my_assignments" | "tutor_admin_pilot_overview", token: string, body: unknown) {
   return pilotWrite<T>("rpc/" + name, token, body);
 }
 
