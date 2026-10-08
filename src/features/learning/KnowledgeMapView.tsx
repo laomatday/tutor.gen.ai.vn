@@ -1,6 +1,5 @@
 import { Button, Icon, Progress } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
-import { navigateTo } from "../../app/navigation";
 import {
   courseHref,
   ownedPublishedLessons,
@@ -88,8 +87,7 @@ export function KnowledgeMapView({
     nodes[0];
 
   const openTopic = (topicId: string) => {
-    const path = courseHref(enrollment.gradeId, enrollment.subjectId, topicId);
-    if (navigateTo(path)) onNavigate(path);
+    onNavigate(courseHref(enrollment.gradeId, enrollment.subjectId, topicId));
   };
 
   return (
