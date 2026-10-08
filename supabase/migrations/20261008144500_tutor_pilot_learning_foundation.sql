@@ -12,7 +12,7 @@ create table public.tutor_profiles (
   active boolean not null default true,
   created_at timestamptz not null default now(),
   constraint tutor_profiles_student_grade_check
-    check (role <> 'student' or grade_id in ('6','7','8','9','10','11','12'))
+    check (role <> 'student' or (grade_id is not null and grade_id in ('6','7','8','9','10','11','12')))
 );
 
 create table public.tutor_teacher_links (
@@ -216,10 +216,11 @@ create policy tutor_skill_evidence_read_scoped on public.tutor_skill_evidence
     learner_id = (select auth.uid()) or
     learner_id in (select learner_id from public.tutor_teacher_links where teacher_id = (select auth.uid()))
   );
+-- Teacher only for the direct table read: avoid recursive assignment/target RLS.
+-- Learner assignment retrieval will use a later scoped read endpoint.
 create policy tutor_teacher_assignments_read_scoped on public.tutor_teacher_assignments
   for select to authenticated using (
-    teacher_id = (select auth.uid()) or
-    id in (select assignment_id from public.tutor_assignment_targets where learner_id = (select auth.uid()))
+    teacher_id = (select auth.uid())
   );
 create policy tutor_teacher_assignments_insert_staff on public.tutor_teacher_assignments
   for insert to authenticated with check (
@@ -328,6 +329,8 @@ begin
     on conflict do nothing;
     get diagnostics v_inserted = row_count;
     if v_inserted > 0 then
+      -- Serialize GP awards for the same learner to enforce the daily cap.
+      perform pg_advisory_xact_lock(hashtextextended(v_learner::text, 0));
       insert into public.tutor_skill_evidence (learner_id, skill_id, lesson_id)
       select v_learner, m.skill_id, p_lesson_id
       from public.tutor_lesson_skills m
