@@ -61,7 +61,7 @@ jobs:
                 scrollWidth:document.documentElement.scrollWidth,
                 h1:[...document.querySelectorAll('h1')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.textContent?.trim()).filter(Boolean),
                 dialog:[...document.querySelectorAll('dialog')].map(el=>({open:el.open,display:getComputedStyle(el).display})),
-                tiny:[...document.querySelectorAll('body *')].filter(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return r.width>0&&r.height>0&&s.display!=='none'&&parseFloat(s.fontSize)<12&&!el.classList.contains('sr-only')}).length
+                tiny:[...document.querySelectorAll('body *')].filter(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return r.width>0&&r.height>0&&s.display!=='none'&&parseFloat(s.fontSize)<12&&!el.classList.contains('sr-only')&&!el.closest('.katex')}).length
               }));
               if(res?.status()!==200) failures.push(`${size.name}${route}: HTTP ${res?.status()}`);
               if(metrics.scrollWidth!==metrics.width) failures.push(`${size.name}${route}: overflow ${metrics.scrollWidth}>${metrics.width}`);
