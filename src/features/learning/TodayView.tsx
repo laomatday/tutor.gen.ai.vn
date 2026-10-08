@@ -322,7 +322,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
         </div>
         <div className="adaptive-queue-grid">
           {queue.map((item) => (
-            <button key={item.index} className="adaptive-task" onClick={() => onNavigate(item.path)}>
+            <Button key={item.index} variant="surface" className="adaptive-task" onClick={() => onNavigate(item.path)}>
               <span className="adaptive-task__index">{item.index}</span>
               <span className="min-w-0 flex-1 text-left">
                 <strong>{item.title}</strong>
@@ -330,16 +330,16 @@ export const TodayView: React.FC<TodayViewProps> = ({
                 <em data-tone={item.tone}>{item.tag}</em>
               </span>
               <span className="adaptive-task__play"><Icon name="play_arrow" /></span>
-            </button>
+            </Button>
           ))}
-          <button className="adaptive-task adaptive-task--surprise" onClick={() => onNavigate(studioPath)}>
+          <Button variant="surface" className="adaptive-task adaptive-task--surprise" onClick={() => onNavigate(studioPath)}>
             <span className="adaptive-task__index"><Icon name="casino" /></span>
             <span className="min-w-0 flex-1 text-left">
               <strong>Bài tập bất ngờ</strong>
               <small>Thử thách bản thân</small>
             </span>
             <Icon name="arrow_forward" />
-          </button>
+          </Button>
         </div>
       </section>
 
