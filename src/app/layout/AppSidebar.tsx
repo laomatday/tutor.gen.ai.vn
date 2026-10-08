@@ -172,6 +172,7 @@ export function AppSidebar({
                 variant="ghost"
                 size="sm"
                 aria-pressed={pinned}
+                aria-label={pinned ? "Bỏ ghim sidebar" : "Giữ sidebar mở"}
                 onClick={onTogglePinned}
                 className="student-sidebar-pin-toggle"
               >
