@@ -88,7 +88,7 @@ export default function App() {
   const isStudent = role === "Học sinh";
   const [studentSidebarExpanded, setStudentSidebarExpanded] = useLocalStorage<boolean>(
     storageKeys.studentSidebarExpanded,
-    false,
+    true,
     (value): value is boolean => typeof value === "boolean",
   );
   const nextLessonPath = progress.nextLesson
