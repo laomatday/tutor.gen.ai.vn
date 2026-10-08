@@ -210,7 +210,7 @@ export function AppSidebar({
             size="sm"
             className="student-rail-label w-full justify-center"
           />
-          <span className="student-rail-label block px-2 pb-1 pt-2 text-[11px] text-ink-400">
+          <span className="student-rail-label block px-2 pb-1 pt-2 text-xs text-ink-400">
             AI Pulse v3.0 · Học sâu hơn. Đi xa hơn.
           </span>
         </div>
