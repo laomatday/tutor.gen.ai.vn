@@ -9,6 +9,7 @@ import {
   courseHref,
   lessonHref,
   primaryEnrollment,
+  studentProfile,
   getCourseProgress,
 } from "../features/curriculum";
 import { StudentProfileModal } from "../features/gamification/StudentProfileModal";
@@ -77,7 +78,11 @@ export default function App() {
   const { role, section, label } = readRoute(location.pathname);
   const { lessons, topics, completedLessonIds, contentLoading, contentError } = useCurriculum();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const progress = getCourseProgress(lessons, topics, completedLessonIds);
+  const selectedSubject = new URLSearchParams(location.search).get("subject");
+  const activeEnrollment = studentProfile.enrollments.find(
+    (course) => course.subjectId === selectedSubject,
+  ) ?? primaryEnrollment;
+  const progress = getCourseProgress(lessons, topics, completedLessonIds, activeEnrollment);
   const notice = useNotice();
   const wallet = useRewardWallet(notice.show);
   const isStudent = role === "Học sinh";

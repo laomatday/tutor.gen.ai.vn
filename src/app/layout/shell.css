@@ -142,21 +142,44 @@
     .app-frame:not(.app-frame--student) .app-header { left: var(--sidebar-w); }
 
     .app-sidebar--student {
-      width: 16.5rem;
-      transform: translateX(-100%);
+      width: 4.5rem;
+      transform: translateX(0);
       transition: transform 180ms ease;
       box-shadow: none;
     }
-    .app-sidebar--student.is-pinned { transform: translateX(0); }
-    .app-frame--student { padding-left: 0; transition: padding-left 180ms ease; }
-    .app-frame--student .app-header { left: 0; transition: left 180ms ease; }
-    .app-frame--student-sidebar-open { padding-left: 16.5rem; }
-    .app-frame--student-sidebar-open .app-header { left: 16.5rem; }
+    .app-sidebar--student.is-pinned { width: 15rem; }
+    .app-frame--student { padding-left: 4.5rem; transition: padding-left 180ms ease; }
+    .app-frame--student .app-header { left: 4.5rem; transition: left 180ms ease; }
+    .app-frame--student-sidebar-open { padding-left: 15rem; }
+    .app-frame--student-sidebar-open .app-header { left: 15rem; }
+
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-brand > span > span,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-section__label,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-next .min-w-0,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-next > .ui-icon,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-row > span,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-progress,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-profile > span:not(.student-avatar-fallback),
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-profile > .ui-icon,
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-install { display: none; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-panel__header { padding: 1rem .75rem; justify-content: center; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-brand { padding: 0; min-width: 44px; justify-content: center; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-scroll { padding-inline: .5rem; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-next { padding: 0; justify-content: center; min-height: 48px; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-row { padding: 0; justify-content: center; min-height: 48px; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-navigation > div { margin-bottom: .75rem; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-panel__footer { padding: .5rem; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-profile { justify-content: center; padding: .25rem; }
+    .app-sidebar--student { transition: width 180ms ease; }
     .app-main--student {
       max-width: none; width: 100%; margin-inline: 0;
       padding-top: 5.5rem;
       padding-inline: clamp(1rem, 2vw, 2.25rem);
     }
+  }
+  @media (max-width: 1023px) {
+    .student-sidebar-navigation [aria-labelledby="student-nav-core"],
+    .student-sidebar-navigation #student-nav-core { display: none; }
   }
   @media (min-width: 640px) and (max-width: 1023px) {
     .app-header__search { width: min(40vw, 27rem); }

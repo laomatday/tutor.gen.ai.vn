@@ -41,7 +41,7 @@ export function AppSidebar({
         className={`app-sidebar app-sidebar--student ${open ? "is-open" : ""} ${pinned ? "is-pinned" : ""}`}
       >
         <div className="student-sidebar-panel__header">
-          <Button variant="ghost" className="student-sidebar-brand" onClick={() => onNavigate(roleHome[role])} aria-label="genAi Tutor — Trang chủ">
+          <Button variant="ghost" className="student-sidebar-brand" onClick={() => onNavigate(roleHome[role])} aria-label="genAi Tutor — Hôm nay">
             <BrandLogo compact />
           </Button>
           <Button ref={closeRef} variant="ghost" size="icon" aria-label="Đóng menu" onClick={onClose} className="student-sidebar-close lg:hidden">
@@ -51,7 +51,7 @@ export function AppSidebar({
 
         <div className="student-sidebar-scroll">
           <div className="student-sidebar-section__label">TIẾP TỤC</div>
-          <Button onClick={() => onNavigate(nextLessonPath)} className="student-sidebar-next">
+          <Button onClick={() => onNavigate(nextLessonPath)} className="student-sidebar-next" title="Tiếp tục học" aria-label="Tiếp tục học bài tiếp theo">
             <span className="student-sidebar-next__symbol"><Icon name="play_arrow" /></span>
             <span className="min-w-0 flex-1 text-left">
               <strong>Tiếp tục học</strong>
@@ -66,7 +66,7 @@ export function AppSidebar({
               {core.map((item) => (
                 <Button key={item.id} variant="ghost" onClick={() => onNavigate(item.path)}
                   aria-current={section === item.id ? "page" : undefined}
-                  className="student-sidebar-row">
+                  className="student-sidebar-row" title={item.label} aria-label={item.label}>
                   <Icon name={item.icon} className="student-sidebar-row__icon" />
                   <span>{item.label}</span>
                 </Button>

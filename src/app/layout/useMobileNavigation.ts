@@ -11,7 +11,7 @@ export function useMobileNavigation(desktopSidebarVisible = true) {
     const update = () => {
       // The layout's CSS owns its breakpoint; JS reads the resulting visibility.
       const desktop = window.matchMedia("(min-width: 1024px)").matches;
-      if (sidebar.current) sidebar.current.inert = desktop ? !desktopSidebarVisible : !open;
+      if (sidebar.current) sidebar.current.inert = !desktop && !open;
       if (content.current) content.current.inert = !desktop && open;
       document.body.style.overflow = !desktop && open ? "hidden" : "";
       return desktop;
