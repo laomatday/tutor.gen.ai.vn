@@ -2536,8 +2536,29 @@
     }
 
     .home-exploration .home-mood-card {
-      padding: 19px 16px;
+      padding: 16px;
       border-radius: 20px;
+    }
+
+    .home-exploration.home-hub {
+      gap: 12px;
+    }
+
+    .home-exploration .home-greeting h1 {
+      font-size: 28px;
+      line-height: 1.18;
+    }
+
+    .home-exploration .home-mood-card .home-action-focused {
+      gap: 8px;
+    }
+
+    .home-exploration .home-mood-card .home-action-body {
+      gap: 5px;
+    }
+
+    .home-exploration .home-mood-card .home-action-steps {
+      margin-top: 8px;
     }
 
     .home-exploration .home-mood-card .home-trio-head {
