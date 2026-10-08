@@ -91,6 +91,12 @@ export default function App() {
     false,
     (value): value is boolean => typeof value === "boolean",
   );
+  const [studentRecentRoutes, setStudentRecentRoutes] = useLocalStorage<string[]>(
+    storageKeys.studentRecentRoutes,
+    ["/replay", "/tu-giai", "/hoc-bai"],
+    (value): value is string[] =>
+      Array.isArray(value) && value.every((item) => typeof item === "string"),
+  );
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
@@ -134,6 +140,12 @@ export default function App() {
   const navigate = (path: string) => {
     if (navigateTo(path)) {
       notice.clear();
+      if (isStudent) {
+        const basePath = path.split("?")[0] || "/";
+        setStudentRecentRoutes((current) =>
+          [basePath, ...current.filter((item) => item !== basePath)].slice(0, 6),
+        );
+      }
       menu.setOpen(false);
     }
   };
@@ -173,6 +185,7 @@ export default function App() {
         pinned={studentSidebarPinned}
         onToggleSidebar={toggleStudentSidebar}
         onTogglePinned={toggleStudentSidebarPinned}
+        recentPaths={studentRecentRoutes}
       />
 
       <div
@@ -186,7 +199,7 @@ export default function App() {
         <AppHeader
           role={role}
           label={label}
-          menuOpen={menu.open}
+          menuOpen={isStudent ? studentSidebarVisible : menu.open}
           menuRef={menu.trigger}
           onMenu={toggleStudentSidebar}
           onNavigate={navigate}
