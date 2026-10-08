@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Alert, Icon } from "../components/ui";
 import { OfflineIndicator } from "../components/pwa/OfflineIndicator";
+import { StudentBottomNav } from "../components/student/StudentBottomNav";
 import { appConfig } from "../config/app";
 import { routePath, workspacePath, type NavTab } from "../config/routes";
 import { useCurriculum } from "../context/CurriculumContext";
@@ -269,6 +270,10 @@ export default function App() {
           </ScreenErrorBoundary>
         </main>
       </div>
+
+      {isStudent && (
+        <StudentBottomNav section={section} onNavigate={navigate} />
+      )}
 
       <StudentProfileModal
         open={isProfileOpen}
