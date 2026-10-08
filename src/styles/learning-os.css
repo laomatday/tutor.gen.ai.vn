@@ -296,7 +296,7 @@
   .ai-v3-map-node strong { @apply mt-2 max-w-32 text-xs text-brand; }
   .ai-v3-map-node small { @apply mt-0.5 text-[12px] text-ink-400; }
   .ai-v3-map-you { @apply absolute left-[56%] top-[53%] z-20 flex h-16 w-16 flex-col items-center justify-center rounded-full border-4 border-white bg-ink-900 text-center text-white shadow-xl; }
-  .ai-v3-map-you span { @apply text-xs font-extrabold; } .ai-v3-map-you small { @apply text-[10px] opacity-70; }
+  .ai-v3-map-you span { @apply text-xs font-extrabold; } .ai-v3-map-you small { @apply text-[12px] opacity-70; }
   .ai-v3-map-footer { @apply flex flex-wrap items-center gap-4 border-t border-ink-100 px-5 py-3 text-[12px] text-ink-500; }
   .ai-v3-map-footer span { @apply inline-flex items-center gap-2; }
   .ai-v3-map-footer i { @apply h-0.5 w-8; }
@@ -317,9 +317,9 @@
   .ai-v3-support-tile { @apply rounded-xl bg-surface-page p-2 text-center; }
   .ai-v3-support-tile > svg,.ai-v3-support-tile > span:first-child { @apply mx-auto text-accent-strong; }
   .ai-v3-support-tile b { @apply mt-1 block text-[12px] text-brand; }
-  .ai-v3-support-tile small { @apply block text-[10px] text-ink-400; }
+  .ai-v3-support-tile small { @apply block text-[12px] text-ink-400; }
   .ai-v3-mistake-card { @apply rounded-2xl bg-danger-50 p-4; }
-  .ai-v3-mistake-card b { @apply text-sm text-danger-800; } .ai-v3-mistake-card span { @apply rounded-full bg-danger-100 px-2 py-1 text-[10px] text-danger-700; }
+  .ai-v3-mistake-card b { @apply text-sm text-danger-800; } .ai-v3-mistake-card span { @apply rounded-full bg-danger-100 px-2 py-1 text-[12px] text-danger-700; }
   .ai-v3-mistake-card p { @apply mt-2 text-xs leading-5 text-danger-700; }
 
   .ai-v3-studio-statusbar { @apply flex flex-wrap items-center gap-3 rounded-2xl border border-ink-200 bg-white p-3 text-xs text-ink-600 shadow-2xs; }
@@ -343,7 +343,7 @@
 
   .ai-v3-guide-panel { @apply xl:sticky; top:6rem; }
   .ai-v3-sketchnote { @apply rounded-2xl border border-brand/10 bg-surface-page p-4; background-image:radial-gradient(var(--color-ink-200) 1px,transparent 1px); background-size:16px 16px; }
-  .ai-v3-sketchnote > span { @apply inline-flex rounded-full bg-brand-50 px-2 py-1 text-[10px] font-bold text-brand; }
+  .ai-v3-sketchnote > span { @apply inline-flex rounded-full bg-brand-50 px-2 py-1 text-[12px] font-bold text-brand; }
   .ai-v3-sketchnote > strong { @apply mt-4 block text-sm text-brand; }
   .ai-v3-sketchnote > code { @apply my-4 block rounded-xl bg-white p-3 text-center text-lg font-bold text-brand shadow-2xs; }
   .ai-v3-sketchnote i { @apply rounded-xl bg-white p-2 text-center text-xs not-italic text-ink-600; }
@@ -367,11 +367,11 @@
   .ai-v3-replay-metrics > div { @apply min-w-28 rounded-xl bg-surface-page p-3 text-center; }
   .ai-v3-replay-metrics svg,.ai-v3-replay-metrics > div > span:first-child { @apply mx-auto text-brand; }
   .ai-v3-replay-metrics strong,.ai-v3-replay-metrics small { @apply block; }
-  .ai-v3-replay-metrics strong { @apply mt-1 text-lg text-brand; } .ai-v3-replay-metrics small { @apply text-[10px] text-ink-500; }
+  .ai-v3-replay-metrics strong { @apply mt-1 text-lg text-brand; } .ai-v3-replay-metrics small { @apply text-[12px] text-ink-500; }
 
   .ai-v3-replay-player { @apply rounded-[1.6rem] border border-ink-200 bg-white p-4 shadow-card sm:p-5; }
   .ai-v3-play-button { @apply h-14 w-14 shrink-0 rounded-full bg-brand text-xl text-white; }
-  .ai-v3-speed { @apply min-h-7 px-2 text-[10px]; } .ai-v3-speed.is-active { @apply bg-brand text-white; }
+  .ai-v3-speed { @apply min-h-7 px-2 text-[12px]; } .ai-v3-speed.is-active { @apply bg-brand text-white; }
   .ai-v3-replay-track { @apply relative mt-4 h-2 rounded-full bg-ink-100; }
   .ai-v3-replay-track__fill { @apply absolute inset-y-0 left-0 w-[72%] rounded-full bg-brand; }
   .ai-v3-replay-track i { @apply absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand shadow; }
@@ -380,7 +380,7 @@
   .ai-v3-replay-track i[data-state="success"] { @apply bg-success-500; }
   .ai-v3-replay-labels { @apply mt-3 grid grid-cols-6 gap-1 text-center; }
   .ai-v3-replay-labels b,.ai-v3-replay-labels small { @apply block; }
-  .ai-v3-replay-labels b { @apply text-[10px] font-mono text-ink-500; } .ai-v3-replay-labels small { @apply text-[10px] text-ink-400; }
+  .ai-v3-replay-labels b { @apply text-[12px] font-mono text-ink-500; } .ai-v3-replay-labels small { @apply text-[12px] text-ink-400; }
   .ai-v3-replay-layout { @apply grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]; }
 
   .ai-v3-thought-log { @apply space-y-1; }
@@ -389,7 +389,7 @@
   .ai-v3-thought-event__rail::after { content:""; @apply absolute bottom-[-1rem] top-5 w-px bg-ink-200; }
   .ai-v3-thought-event:last-child .ai-v3-thought-event__rail::after { @apply hidden; }
   .ai-v3-thought-event__rail i { @apply z-10 h-3.5 w-3.5 rounded-full bg-brand ring-4 ring-brand-50; }
-  .ai-v3-thought-event__rail time { @apply mt-2 font-mono text-[10px] text-ink-400; }
+  .ai-v3-thought-event__rail time { @apply mt-2 font-mono text-[12px] text-ink-400; }
   .ai-v3-thought-event[data-state="danger"] .ai-v3-thought-event__rail i { @apply bg-danger-500 ring-danger-50; }
   .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__rail i { @apply bg-brand-500 ring-brand-50; }
   .ai-v3-thought-event[data-state="success"] .ai-v3-thought-event__rail i { @apply bg-success-500 ring-success-50; }
@@ -410,7 +410,7 @@
   .ai-v3-tip span { @apply min-w-0; } .ai-v3-tip b,.ai-v3-tip small { @apply block; } .ai-v3-tip small { @apply mt-1 text-xs leading-5; }
   .ai-v3-signal-badge { @apply flex items-center gap-2 rounded-xl bg-surface-page p-3; }
   .ai-v3-signal-badge > svg,.ai-v3-signal-badge > span:first-child { @apply text-accent-strong; }
-  .ai-v3-signal-badge b,.ai-v3-signal-badge small { @apply block; } .ai-v3-signal-badge b { @apply text-xs text-brand; } .ai-v3-signal-badge small { @apply text-[10px] text-ink-500; }
+  .ai-v3-signal-badge b,.ai-v3-signal-badge small { @apply block; } .ai-v3-signal-badge b { @apply text-xs text-brand; } .ai-v3-signal-badge small { @apply text-[12px] text-ink-500; }
 
   .ai-v3-stroke-card { @apply rounded-2xl border border-ink-100 bg-surface-page p-4; }
   .ai-v3-stroke-card b { @apply text-xs text-brand; }
