@@ -7,6 +7,7 @@ export const storageKeys = {
   dailyGp: "genai-student-daily-gp-v1",
   studentGoals: "genai-student-goals-v1",
   studentSchedule: "genai-student-schedule-v1",
+  studentSidebarExpanded: "genai-student-sidebar-expanded-v1",
   teacherAssignments: "genai-k12-teacher-assignments-v1",
   adminUsers: "genai-admin-users-v1",
   practiceSession: "genai-practice-session-v1",
