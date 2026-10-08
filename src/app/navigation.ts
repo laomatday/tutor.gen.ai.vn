@@ -21,8 +21,9 @@ export function readRoute(pathname: string): AppRoute {
       return { role, section: route.id, label: route.label };
     }
   }
-  const route =
-    studentRoutes.find((item) => item.path === path) ?? studentRoutes[0];
+  // Preserve old links after consolidating exam statistics into "Tiến bộ".
+  const canonical = path === "/thi-thu" ? "/tien-bo" : path;
+  const route = studentRoutes.find((item) => item.path === canonical) ?? studentRoutes[0];
   return { role: "Học sinh", section: route.id, label: route.label };
 }
 

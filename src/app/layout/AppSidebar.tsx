@@ -4,14 +4,10 @@ import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
 import { appConfig } from "../../config/app";
 import {
-  roleHome,
-  rolePresentation,
-  studentRoutes,
-  workspaceRoutes,
-  workspacePath,
-  type UserRole,
+  roleHome, rolePresentation, studentRoutes, workspaceRoutes, workspacePath, type UserRole,
 } from "../../config/routes";
 import { studentProfile } from "../../features/curriculum";
+import { StudentAvatar } from "../../components/student/StudentAvatar";
 
 interface Props {
   role: UserRole;
@@ -27,325 +23,86 @@ interface Props {
   balance: number;
   pinned?: boolean;
   onToggleSidebar?: () => void;
-  onTogglePinned?: () => void;
-  recentPaths?: string[];
 }
 
 export function AppSidebar({
-  role,
-  section,
-  open,
-  sidebarRef,
-  closeRef,
-  onClose,
-  onNavigate,
-  onOpenProfile,
-  nextLessonPath,
-  progress,
-  balance,
-  pinned = false,
-  onToggleSidebar,
-  onTogglePinned,
-  recentPaths = [],
+  role, section, open, sidebarRef, closeRef, onClose,
+  onNavigate, onOpenProfile, nextLessonPath, progress, balance,
+  pinned = true,
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
-    const secondary = studentRoutes.filter((item) => item.group !== "Core");
-    const visible = open || pinned;
-    const routeForPath = (path: string) =>
-      studentRoutes.find((item) => item.path === path) ??
-      studentRoutes.find((item) => path.startsWith(item.path) && item.path !== "/");
-    const recentItems = recentPaths
-      .map((path) => ({ path, route: routeForPath(path) }))
-      .filter(
-        (item): item is {
-          path: string;
-          route: (typeof studentRoutes)[number];
-        } => Boolean(item.route),
-      )
-      .slice(0, 5);
-    const pinnedItems = [
-      { label: "Nhiệm vụ tiếp theo", path: nextLessonPath, icon: "target" },
-      { label: "Knowledge Universe", path: "/hoc-bai", icon: "account_tree" },
-      { label: "Focus Studio", path: "/tu-giai", icon: "edit_square" },
-    ];
-
+    const other = studentRoutes.filter((item) => item.group !== "Core");
     return (
       <aside
         ref={sidebarRef}
         id="main-navigation"
-        aria-label="Điều hướng học sinh"
+        aria-label="Menu học tập"
         className={`app-sidebar app-sidebar--student ${open ? "is-open" : ""} ${pinned ? "is-pinned" : ""}`}
       >
-        <div className="student-icon-rail" aria-label="Điều hướng nhanh">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={visible ? "Đóng sidebar" : "Mở sidebar"}
-            aria-expanded={visible}
-            aria-controls="student-sidebar-panel"
-            onClick={onToggleSidebar}
-            className="student-logo-trigger"
-            title={visible ? "Đóng sidebar" : "Mở sidebar"}
-          >
-            <img
-              src={appConfig.brand.logoUrl}
-              alt=""
-              className="h-8 w-8 object-contain"
-            />
+        <div className="student-sidebar-panel__header">
+          <Button variant="ghost" className="student-sidebar-brand" onClick={() => onNavigate(roleHome[role])} aria-label="genAi Tutor — Trang chủ">
+            <BrandLogo compact />
           </Button>
-
-          <nav className="student-icon-rail__nav" aria-label="Điều hướng nhanh">
-            {core.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                size="icon"
-                onClick={() => onNavigate(item.path)}
-                aria-current={section === item.id ? "page" : undefined}
-                aria-label={item.label}
-                className="student-icon-rail__item"
-                title={item.label}
-              >
-                <Icon name={item.icon} />
-              </Button>
-            ))}
-          </nav>
-
-          <div className="student-icon-rail__footer">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onOpenProfile}
-              aria-label="Mở hồ sơ học tập"
-              className="student-icon-rail__avatar"
-              title="Hồ sơ học tập"
-            >
-              <img
-                src={studentProfile.avatarUrl}
-                alt=""
-                className="h-8 w-8 rounded-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </Button>
-          </div>
+          <Button ref={closeRef} variant="ghost" size="icon" aria-label="Đóng menu" onClick={onClose} className="student-sidebar-close lg:hidden">
+            <Icon name="close" />
+          </Button>
         </div>
 
-        <div id="student-sidebar-panel" className="student-sidebar-panel">
-          <div className="student-sidebar-panel__header">
-            <Button
-              variant="ghost"
-              onClick={() => onNavigate(roleHome[role])}
-              className="student-sidebar-brand"
-              aria-label="Về trang chủ Tutor genAI"
-            >
-              <span className="student-sidebar-brand__mark">
-                <Icon name="school" />
-              </span>
-              <span>
-                <strong>Tutor genAI</strong>
-                <small>AI Learning OS</small>
-              </span>
-            </Button>
+        <div className="student-sidebar-scroll">
+          <div className="student-sidebar-section__label">TIẾP TỤC</div>
+          <Button onClick={() => onNavigate(nextLessonPath)} className="student-sidebar-next">
+            <span className="student-sidebar-next__symbol"><Icon name="play_arrow" /></span>
+            <span className="min-w-0 flex-1 text-left">
+              <strong>Tiếp tục học</strong>
+              <small>Mở bài học tiếp theo</small>
+            </span>
+            <Icon name="arrow_forward" />
+          </Button>
 
-            <div className="student-sidebar-panel__header-actions">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onToggleSidebar}
-                aria-label="Thu sidebar"
-                className="hidden lg:inline-flex"
-                title="Thu sidebar"
-              >
-                <Icon name="chevron_left" />
-              </Button>
-              <Button
-                ref={closeRef}
-                variant="ghost"
-                size="icon"
-                aria-label="Đóng menu"
-                onClick={onClose}
-                className="lg:hidden"
-              >
-                <Icon name="close" />
-              </Button>
+          <nav className="student-sidebar-navigation" aria-label="Các trang học tập">
+            <p className="student-sidebar-section__label" id="student-nav-core">HỌC TẬP</p>
+            <div role="group" aria-labelledby="student-nav-core">
+              {core.map((item) => (
+                <Button key={item.id} variant="ghost" onClick={() => onNavigate(item.path)}
+                  aria-current={section === item.id ? "page" : undefined}
+                  className="student-sidebar-row">
+                  <Icon name={item.icon} className="student-sidebar-row__icon" />
+                  <span>{item.label}</span>
+                </Button>
+              ))}
             </div>
-          </div>
-
-          <div className="student-sidebar-panel__body">
-            <Button
-              onClick={() => onNavigate(nextLessonPath)}
-              className="student-new-session"
-            >
-              <Icon name="edit_square" />
-              <span>Bắt đầu phiên học mới</span>
-              <Icon name="arrow_forward" />
-            </Button>
-
-            <div className="student-sidebar-pin-row hidden lg:flex">
-              <div>
-                <strong>Giữ sidebar mở</strong>
-                <span>Không tự thu khi chuyển trang</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-pressed={pinned}
-                aria-label={pinned ? "Bỏ ghim sidebar" : "Giữ sidebar mở"}
-                onClick={onTogglePinned}
-                className="student-sidebar-pin-toggle"
-              >
-                <span className="student-sidebar-pin-toggle__track">
-                  <span className="student-sidebar-pin-toggle__thumb" />
-                </span>
-                <span>{pinned ? "Bật" : "Tắt"}</span>
-              </Button>
+            <p className="student-sidebar-section__label" id="student-nav-other">CÁ NHÂN</p>
+            <div role="group" aria-labelledby="student-nav-other">
+              {other.map((item) => (
+                <Button key={item.id} variant="ghost" onClick={() => onNavigate(item.path)}
+                  aria-current={section === item.id ? "page" : undefined}
+                  className="student-sidebar-row">
+                  <Icon name={item.icon} className="student-sidebar-row__icon" />
+                  <span>{item.label}</span>
+                </Button>
+              ))}
             </div>
+          </nav>
+        </div>
 
-            <section className="student-sidebar-section" aria-labelledby="student-pinned-nav">
-              <p id="student-pinned-nav" className="student-sidebar-section__label">
-                Đã ghim
-              </p>
-              <div className="student-sidebar-list">
-                {pinnedItems.map((item) => (
-                  <Button
-                    key={item.label}
-                    variant="ghost"
-                    onClick={() => onNavigate(item.path)}
-                    className="student-sidebar-row student-sidebar-row--compact"
-                  >
-                    <span className="student-sidebar-row__icon">
-                      <Icon name={item.icon} />
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-left text-sm">
-                      {item.label}
-                    </span>
-                  </Button>
-                ))}
-              </div>
-            </section>
-
-            <section className="student-sidebar-section" aria-labelledby="student-recent-nav">
-              <p id="student-recent-nav" className="student-sidebar-section__label">
-                Gần đây
-              </p>
-              <div className="student-sidebar-list">
-                {recentItems.length ? (
-                  recentItems.map(({ path, route }) => (
-                    <Button
-                      key={path}
-                      variant="ghost"
-                      onClick={() => onNavigate(path)}
-                      className="student-sidebar-row student-sidebar-row--compact"
-                    >
-                      <span className="student-sidebar-row__icon">
-                        <Icon name={route.icon} />
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-left text-sm">
-                        {route.label}
-                      </span>
-                    </Button>
-                  ))
-                ) : (
-                  <p className="px-2 py-2 text-xs text-ink-400">
-                    Các trang vừa mở sẽ xuất hiện ở đây.
-                  </p>
-                )}
-              </div>
-            </section>
-
-            <section className="student-sidebar-section" aria-labelledby="student-core-nav">
-              <p id="student-core-nav" className="student-sidebar-section__label">
-                Không gian học tập
-              </p>
-              <nav className="student-sidebar-list">
-                {core.map((item) => (
-                  <Button
-                    key={item.id}
-                    variant="ghost"
-                    onClick={() => onNavigate(item.path)}
-                    aria-current={section === item.id ? "page" : undefined}
-                    className="student-sidebar-row"
-                  >
-                    <span className="student-sidebar-row__icon">
-                      <Icon name={item.icon} />
-                    </span>
-                    <span className="min-w-0 flex-1 text-left">
-                      <strong>{item.label}</strong>
-                      <small>{item.description}</small>
-                    </span>
-                  </Button>
-                ))}
-              </nav>
-            </section>
-
-            <section className="student-sidebar-section" aria-labelledby="student-tools-nav">
-              <p id="student-tools-nav" className="student-sidebar-section__label">
-                Công cụ & tiến độ
-              </p>
-              <nav className="student-sidebar-list">
-                {secondary.map((item) => (
-                  <Button
-                    key={item.id}
-                    variant="ghost"
-                    onClick={() => onNavigate(item.path)}
-                    aria-current={section === item.id ? "page" : undefined}
-                    className="student-sidebar-row"
-                  >
-                    <span className="student-sidebar-row__icon">
-                      <Icon name={item.icon} />
-                    </span>
-                    <span className="min-w-0 flex-1 text-left">
-                      <strong>{item.label}</strong>
-                      <small>{item.description}</small>
-                    </span>
-                  </Button>
-                ))}
-              </nav>
-            </section>
-          </div>
-
-          <div className="student-sidebar-panel__footer">
-            <div className="student-sidebar-mastery">
-              <div
-                className="student-progress-orb"
-                title={`Mastery ${progress}%`}
-                style={{
-                  background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-200) 0)`,
-                }}
-              >
-                <span>{progress}</span>
-              </div>
-              <span className="min-w-0 flex-1">
-                <strong>Mastery {progress}%</strong>
-                <small>{balance} GP · {studentProfile.levelLabel}</small>
-              </span>
+        <div className="student-sidebar-panel__footer">
+          <div className="student-sidebar-progress">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold">Bài học đã hoàn thành</span>
+              <strong className="text-sm">{progress}%</strong>
             </div>
-
-            <Button
-              variant="ghost"
-              onClick={onOpenProfile}
-              className="student-sidebar-profile"
-            >
-              <img
-                src={studentProfile.avatarUrl}
-                alt=""
-                className="h-9 w-9 rounded-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <span className="min-w-0 flex-1 text-left">
-                <strong className="truncate">{studentProfile.name}</strong>
-                <small>Lớp {studentProfile.className}</small>
-              </span>
-              <Icon name="chevron_right" />
-            </Button>
-
-            <PWAInstallButton
-              variant="ghost"
-              size="sm"
-              className="student-sidebar-install w-full justify-center"
-            />
+            <div className="student-sidebar-progress__track" role="progressbar" aria-label="Tiến độ hoàn thành" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+              <span style={{ width: `${progress}%` }} />
+            </div>
+            <small>{balance} GP · Dữ liệu minh họa</small>
           </div>
+          <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile">
+            <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-10 w-10 shrink-0 rounded-full" />
+            <span className="min-w-0 flex-1 text-left"><strong>{studentProfile.name}</strong><small>Lớp {studentProfile.className}</small></span>
+            <Icon name="chevron_right" />
+          </Button>
+          <PWAInstallButton variant="ghost" size="sm" className="student-sidebar-install w-full justify-center" />
         </div>
       </aside>
     );

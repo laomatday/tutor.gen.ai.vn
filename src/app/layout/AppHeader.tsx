@@ -1,9 +1,10 @@
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Button, Icon, Input } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
-import { roles, roleHome, routePath, type UserRole } from "../../config/routes";
+import { roles, roleHome, type UserRole } from "../../config/routes";
 import { studentProfile } from "../../features/learning/data/student";
+import { StudentAvatar } from "../../components/student/StudentAvatar";
 
 interface Props {
   role: UserRole;
@@ -15,237 +16,84 @@ interface Props {
   onOpenProfile?: () => void;
 }
 
-export function AppHeader({
-  role,
-  label,
-  menuOpen,
-  menuRef,
-  onMenu,
-  onNavigate,
-  onOpenProfile,
-}: Props) {
+export function AppHeader({ role, label, menuOpen, menuRef, onMenu, onNavigate, onOpenProfile }: Props) {
   const searchRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState("");
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     if (role !== "Học sinh") return;
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        searchRef.current?.focus();
+        setMobileSearchOpen(true);
+        requestAnimationFrame(() => searchRef.current?.focus());
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [role]);
 
-  if (role === "Học sinh") {
-    return (
-      <header className="app-header app-header--student gemini-header">
-        <div className="gemini-header__left">
-          <Button
-            ref={menuRef}
-            variant="ghost"
-            size="icon"
-            onClick={onMenu}
-            aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            aria-expanded={menuOpen}
-            aria-controls="main-navigation"
-            className="gemini-mobile-menu lg:hidden"
-          >
-            <Icon name="menu" />
-          </Button>
+  const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = search.trim();
+    if (!query) { searchRef.current?.focus(); return; }
+    setMobileSearchOpen(false);
+    onNavigate(`/hoc-bai?q=${encodeURIComponent(query)}`);
+  };
 
-          <Button
-            variant="ghost"
-            onClick={onMenu}
-            aria-label="Mở điều hướng học tập"
-            aria-expanded={menuOpen}
-            className="gemini-context-pill"
-          >
-            <span className="gemini-context-pill__icon">
-              <Icon name="auto_awesome" />
-            </span>
-            <span className="min-w-0">
-              <strong>AI Pulse</strong>
-              <small>{label}</small>
-            </span>
-            <Icon name="expand_more" className="gemini-context-pill__chevron" />
-          </Button>
+  if (role === "Học sinh") return (
+    <header className="app-header app-header--student">
+      <div className="app-header__start">
+        <Button ref={menuRef} variant="ghost" size="icon" onClick={onMenu}
+          aria-label={menuOpen ? "Thu gọn menu" : "Mở menu"}
+          aria-expanded={menuOpen} aria-controls="main-navigation" className="app-header__menu">
+          <Icon name="menu" />
+        </Button>
+        <span className="app-header__breadcrumb">
+          <strong>genAi Tutor</strong><Icon name="chevron_right" /><span>{label}</span>
+        </span>
+      </div>
 
-          <div className="gemini-header__tools hidden lg:flex" aria-label="Công cụ nhanh">
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Tìm kiếm"
-              onClick={() => searchRef.current?.focus()}
-              title="Tìm kiếm"
-            >
-              <Icon name="search" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Mở Knowledge Map"
-              onClick={() => onNavigate(routePath("hoc-bai"))}
-              title="Knowledge Map"
-            >
-              <Icon name="account_tree" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Bắt đầu Focus Studio"
-              onClick={() => onNavigate(routePath("tu-giai"))}
-              title="Focus Studio"
-            >
-              <Icon name="edit_square" />
-            </Button>
-          </div>
-        </div>
-
-        <form
-          className="gemini-command-search"
-          role="search"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onNavigate(routePath("hoc-bai"));
-          }}
-        >
-          <Icon name="search" className="gemini-command-search__icon" />
-          <Input
-            ref={searchRef}
-            type="search"
-            aria-label="Tìm bài học, chủ đề hoặc câu hỏi"
-            placeholder="Tìm bài học, chủ đề hoặc hỏi Tutor..."
-            className="gemini-command-search__input"
-          />
-          <kbd className="gemini-command-search__kbd">⌘K</kbd>
-        </form>
-
-        <div className="gemini-header__right">
-          <div className="gemini-status-pill hidden xl:flex" title="Chuỗi học tập">
-            <span className="text-base">🔥</span>
-            <span>
-              <strong>14 ngày</strong>
-              <small>Streak</small>
-            </span>
-          </div>
-
-          <Button
-            variant="ghost"
-            onClick={() => onNavigate(routePath("tu-giai"))}
-            className="gemini-status-pill hidden 2xl:flex"
-            title="Vào Deep Focus"
-          >
-            <Icon name="graphic_eq" className="text-accent-strong" />
-            <span>
-              <strong>Deep Focus</strong>
-              <small>25 phút</small>
-            </span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onNavigate(routePath("replay"))}
-            aria-label="Mở Thinking Replay"
-            className="gemini-header-icon"
-            title="Replay Mode"
-          >
-            <Icon name="history" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Thông báo"
-            className="gemini-header-icon relative"
-          >
-            <Icon name="notifications" />
-            <span className="gemini-notification-dot" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={onOpenProfile}
-            aria-label="Mở hồ sơ học tập"
-            className="gemini-profile-trigger"
-          >
-            <img
-              alt={studentProfile.name}
-              className="h-8 w-8 rounded-full object-cover"
-              src={studentProfile.avatarUrl}
-              referrerPolicy="no-referrer"
-            />
-            <span className="hidden min-w-0 text-left xl:block">
-              <strong className="block truncate">{studentProfile.name}</strong>
-              <small className="block truncate">
-                Lớp {studentProfile.className} · {studentProfile.levelLabel}
-              </small>
-            </span>
-            <Icon name="expand_more" className="hidden xl:block" />
-          </Button>
-        </div>
-      </header>
-    );
-  }
+      <form className={`app-header__search ${mobileSearchOpen ? "is-open" : ""}`} role="search" onSubmit={submitSearch}>
+        <Icon name="search" className="app-header__search-icon" />
+        <Input ref={searchRef} type="search" value={search} onChange={(event) => setSearch(event.target.value)}
+          aria-label="Tìm bài học theo tên, chủ đề hoặc từ khóa"
+          placeholder="Tìm bài học, chủ đề…" className="app-header__search-input" />
+        <Button type="submit" size="sm" variant="ghost" aria-label="Tìm kiếm bài học" className="app-header__search-submit">
+          <Icon name="arrow_forward" />
+        </Button>
+      </form>
+      <div className="app-header__end">
+        <Button variant="ghost" size="icon" className="app-header__mobile-search" aria-label="Mở tìm kiếm"
+          aria-expanded={mobileSearchOpen} onClick={() => {setMobileSearchOpen((value) => !value);requestAnimationFrame(() => searchRef.current?.focus());}}>
+          <Icon name="search" />
+        </Button>
+        <Button variant="ghost" onClick={onOpenProfile} className="app-header__profile" aria-label="Mở hồ sơ học tập">
+          <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-9 w-9 rounded-full" />
+        </Button>
+      </div>
+    </header>
+  );
 
   return (
     <header className="app-header">
       <div className="flex min-w-0 items-center gap-2">
-        <Button
-          ref={menuRef}
-          variant="ghost"
-          size="icon"
-          onClick={onMenu}
-          aria-label="Mở menu"
-          aria-expanded={menuOpen}
-          aria-controls="main-navigation"
-          className="lg:hidden"
-        >
+        <Button ref={menuRef} variant="ghost" size="icon" onClick={onMenu}
+          aria-label="Mở menu" aria-expanded={menuOpen} aria-controls="main-navigation" className="lg:hidden">
           <Icon name="menu" />
         </Button>
-        <BrandLogo
-          compact
-          showProduct={false}
-          className="hidden sm:inline-flex md:hidden"
-        />
-        <nav
-          aria-label="Trang hiện tại"
-          className="hidden min-w-0 items-center gap-2 text-sm text-on-surface-variant md:flex"
-        >
-          <span>Quản lý</span>
-          <Icon name="chevron_right" />
-          <span className="truncate font-semibold text-primary">{label}</span>
+        <BrandLogo compact showProduct={false} className="hidden sm:inline-flex md:hidden" />
+        <nav aria-label="Trang hiện tại" className="hidden min-w-0 items-center gap-2 text-sm text-on-surface-variant md:flex">
+          <span>Quản lý</span><Icon name="chevron_right" /><span className="truncate font-semibold text-primary">{label}</span>
         </nav>
       </div>
-
       <div className="flex items-center gap-3">
-        <PWAInstallButton
-          variant="surface"
-          size="sm"
-          className="hidden sm:inline-flex"
-        />
+        <PWAInstallButton variant="surface" size="sm" className="hidden sm:inline-flex" />
         {import.meta.env.DEV && (
-          <div
-            className="ui-segmented"
-            role="group"
-            aria-label="Chọn không gian thử nghiệm"
-          >
-            {roles.map((item) => (
-              <Button
-                key={item}
-                variant="ghost"
-                size="sm"
-                aria-pressed={role === item}
-                onClick={() =>
-                  role !== item && onNavigate(roleHome[item])
-                }
-                className="ui-segment"
-              >
-                {item}
-              </Button>
-            ))}
+          <div className="ui-segmented" role="group" aria-label="Chọn không gian thử nghiệm">
+            {roles.map((item) => <Button key={item} variant="ghost" size="sm" aria-pressed={role === item}
+              onClick={() => role !== item && onNavigate(roleHome[item])} className="ui-segment">{item}</Button>)}
           </div>
         )}
         <span className="hidden h-9 w-9 items-center justify-center rounded-full bg-primary text-white sm:flex">

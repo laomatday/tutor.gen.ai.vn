@@ -29,3 +29,25 @@ export function summarizeProgress(lessons: Lesson[], completedIds: string[]) {
   return { completed, total: lessons.length, percent: lessons.length ? Math.round(completed / lessons.length * 100) : 0,
     nextLesson: lessons.find(lesson => !completedIds.includes(lesson.id)) ?? lessons[0] };
 }
+
+/** Canonical completion selector shared by Home, Map, sidebar, lessons and progress.
+ * Completion is NOT a mastery/assessment score. */
+export function getCourseProgress(
+  lessons: Lesson[],
+  topics: Topic[],
+  completedIds: string[],
+  enrollment?: { gradeId: string; subjectId: string },
+) {
+  const available = ownedPublishedLessons(lessons, topics).filter(
+    (lesson) => !enrollment || (lesson.gradeId === enrollment.gradeId && lesson.subjectId === enrollment.subjectId),
+  );
+  const done = new Set(completedIds);
+  const completed = available.filter((lesson) => done.has(lesson.id)).length;
+  return {
+    lessons: available,
+    completed,
+    total: available.length,
+    percent: available.length ? Math.round(completed / available.length * 100) : 0,
+    nextLesson: available.find((lesson) => !done.has(lesson.id)),
+  };
+}

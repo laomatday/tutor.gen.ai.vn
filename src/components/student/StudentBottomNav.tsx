@@ -20,7 +20,7 @@ export function StudentBottomNav({
           className="student-bottom-nav__item"
         >
           <Icon name={item.icon} className="text-xl" />
-          <span>{item.label}</span>
+          <span>{item.id === "replay" ? "Xem lại" : item.label}</span>
         </Button>
       ))}
     </nav>
