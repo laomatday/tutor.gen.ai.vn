@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Alert, Icon } from "../components/ui";
 import { OfflineIndicator } from "../components/pwa/OfflineIndicator";
+import { StudentBottomNav } from "../components/student/StudentBottomNav";
 import { appConfig } from "../config/app";
 import { routePath, workspacePath, type NavTab } from "../config/routes";
 import { useCurriculum } from "../context/CurriculumContext";
@@ -21,6 +22,8 @@ import { navigateTo, readRoute } from "./navigation";
 import { useAppLocation } from "./useAppLocation";
 import { useNotice } from "./useNotice";
 import { useRewardWallet } from "./useRewardWallet";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { storageKeys } from "../config/storage";
 import { ScreenErrorBoundary } from "./ScreenErrorBoundary";
 import "./layout/shell.css";
 
@@ -83,6 +86,11 @@ export default function App() {
   const wallet = useRewardWallet(notice.show);
   const menu = useMobileNavigation();
   const isStudent = role === "Học sinh";
+  const [studentSidebarExpanded, setStudentSidebarExpanded] = useLocalStorage<boolean>(
+    storageKeys.studentSidebarExpanded,
+    false,
+    (value): value is boolean => typeof value === "boolean",
+  );
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
@@ -134,11 +142,17 @@ export default function App() {
         nextLessonPath={nextLessonPath}
         progress={progress.percent}
         balance={wallet.balance}
+        expanded={studentSidebarExpanded}
+        onToggleExpanded={() => setStudentSidebarExpanded((value) => !value)}
       />
 
       <div
         ref={menu.content}
-        className={isStudent ? "app-frame app-frame--student" : "app-frame"}
+        className={
+          isStudent
+            ? `app-frame app-frame--student ${studentSidebarExpanded ? "app-frame--student-expanded" : ""}`
+            : "app-frame"
+        }
       >
         <AppHeader
           role={role}
@@ -256,6 +270,10 @@ export default function App() {
           </ScreenErrorBoundary>
         </main>
       </div>
+
+      {isStudent && (
+        <StudentBottomNav section={section} onNavigate={navigate} />
+      )}
 
       <StudentProfileModal
         open={isProfileOpen}

@@ -29,10 +29,15 @@
 
   .app-sidebar--student {
     @apply border-r border-ink-200/80 bg-white;
+    transition: width 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   }
 
   .student-rail-brand {
-    @apply flex items-center justify-between gap-2 p-3;
+    @apply relative flex items-center justify-between gap-2 p-3;
+  }
+
+  .student-rail-toggle {
+    @apply absolute -right-4 top-4 z-10 h-8 w-8 min-h-8 min-w-8 rounded-full border border-ink-200 bg-white text-brand shadow-md hover:bg-surface-page;
   }
 
   .student-brand-button {
@@ -77,8 +82,9 @@
     @apply text-white/70;
   }
 
+  .student-mastery-summary { @apply flex items-center justify-center gap-3 rounded-2xl p-1.5; }
   .student-progress-orb {
-    @apply mx-auto flex h-11 w-11 items-center justify-center rounded-full p-1 text-xs font-bold text-brand;
+    @apply mx-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full p-1 text-xs font-bold text-brand;
   }
 
   .student-progress-orb > span {
@@ -108,6 +114,15 @@
       @apply hidden;
     }
 
+    .app-sidebar--student.is-expanded {
+      width: 17.5rem;
+      box-shadow: 8px 0 28px -22px rgb(13 26 41 / 0.28);
+    }
+
+    .app-sidebar--student.is-expanded .student-rail-label {
+      @apply block;
+    }
+
     .app-sidebar--student .student-rail-brand {
       @apply justify-center px-2;
     }
@@ -132,12 +147,54 @@
       @apply justify-center px-0;
     }
 
+    .app-sidebar--student.is-expanded .student-rail-brand {
+      @apply justify-between px-3;
+    }
+
+    .app-sidebar--student.is-expanded .student-brand-button {
+      @apply justify-start px-2;
+    }
+
+    .app-sidebar--student.is-expanded .student-rail-mission {
+      @apply px-3;
+    }
+
+    .app-sidebar--student.is-expanded .student-mission-launch {
+      @apply justify-start px-4;
+    }
+
+    .app-sidebar--student.is-expanded .student-rail-item {
+      @apply justify-start px-3;
+    }
+
+    .app-sidebar--student.is-expanded .student-profile-orb {
+      @apply justify-start px-1.5;
+    }
+
+    .app-sidebar--student.is-expanded .student-mastery-summary {
+      @apply justify-start bg-surface-page px-2;
+    }
+
+    .app-sidebar--student.is-expanded .student-progress-orb {
+      @apply mx-0;
+    }
+
     .app-frame--student {
       padding-left: 5rem;
+      transition: padding-left 180ms ease;
     }
 
     .app-frame--student .app-header {
       left: 5rem;
+      transition: left 180ms ease;
+    }
+
+    .app-frame--student-expanded {
+      padding-left: 17.5rem;
+    }
+
+    .app-frame--student-expanded .app-header {
+      left: 17.5rem;
     }
 
     .app-main--student {

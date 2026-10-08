@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Icon, Modal, Input, Select } from "../../components/ui";
+import { StudentPageHeader, StudentSignalStrip } from "../../components/student/StudentExperience";
 import {
   DAYS_OF_WEEK,
   initialScheduleSessions,
@@ -142,78 +143,65 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
   };
 
   return (
-    <div className="w-full space-y-6 pb-12">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
-              <Icon name="calendar_month" className="text-xl" />
-            </span>
-            <p className="text-xs font-bold uppercase tracking-wider text-secondary">
-              LỊCH HỌC & BUỔI CỐ VẤN TUTOR
-            </p>
-          </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-primary sm:text-3xl">
-            Thời khóa biểu lớp {studentProfile.className}
-          </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
-            Theo dõi lịch học chính khóa, các buổi hướng dẫn cùng Tutor và kế
-            hoạch tự học.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Daily vs Weekly toggle */}
-          <div className="inline-flex rounded-full border border-outline-variant bg-white p-1 text-xs">
+    <div className="learning-os-page">
+      <StudentPageHeader
+        eyebrow="Learning rhythm"
+        icon="calendar_month"
+        title={`Nhịp học tuần này của lớp ${studentProfile.className}`}
+        description="Lịch học không chỉ để xem giờ. Tutor gom chính khóa, tự học và buổi cố vấn thành một nhịp học rõ ràng để bạn luôn biết bước kế tiếp."
+        meta={
+          <span className="inline-flex items-center gap-2 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
+            <Icon name="auto_awesome" />
+            AI ưu tiên phiên học gần nhất
+          </span>
+        }
+        actions={
+          <>
+            <div className="ui-segmented" role="group" aria-label="Chế độ xem lịch">
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-pressed={viewMode === "daily"}
+                onClick={() => setViewMode("daily")}
+                className="ui-segment"
+              >
+                Theo ngày
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-pressed={viewMode === "weekly"}
+                onClick={() => setViewMode("weekly")}
+                className="ui-segment"
+              >
+                Cả tuần
+              </Button>
+            </div>
             <Button
-              variant={viewMode === "daily" ? "primary" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("daily")}
-              className="flex items-center gap-1.5 rounded-full text-xs h-8"
+              onClick={() => {
+                setNewDay(selectedDay);
+                setIsAddModalOpen(true);
+              }}
             >
-              <Icon name="view_day" className="text-sm" />
-              Theo ngày
+              <Icon name="add" />
+              Thêm lịch
             </Button>
-            <Button
-              variant={viewMode === "weekly" ? "primary" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("weekly")}
-              className="flex items-center gap-1.5 rounded-full text-xs h-8"
-            >
-              <Icon name="view_week" className="text-sm" />
-              Cả tuần
-            </Button>
-          </div>
+          </>
+        }
+      />
 
-          <Button
-            variant="surface"
-            size="sm"
-            onClick={() => window.print()}
-            className="rounded-full border border-outline-variant text-xs font-semibold hover:bg-surface-container-low hidden sm:inline-flex h-8"
-          >
-            <Icon name="print" className="text-base" />
-            In lịch
-          </Button>
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setNewDay(selectedDay);
-              setIsAddModalOpen(true);
-            }}
-            className="rounded-full text-xs font-bold h-8"
-          >
-            <Icon name="add" className="text-base" />
-            Thêm lịch học
-          </Button>
-        </div>
-      </div>
+      <StudentSignalStrip
+        items={[
+          { icon: "schedule", label: "Phiên hôm nay", value: `${sessions.filter((s) => s.dayOfWeek === currentVnDay).length} phiên` },
+          { icon: "psychology", label: "Buổi Tutor", value: `${sessions.filter((s) => s.sessionType === "tutor").length} phiên` },
+          { icon: "target", label: "Đang xem", value: viewMode === "daily" ? DAYS_OF_WEEK.find((d) => d.day === selectedDay)?.full ?? "Hôm nay" : "Cả tuần" },
+          { icon: "auto_awesome", label: "Next up", value: nextSession ? `${nextSession.startTime} · ${nextSession.subjectName}` : "Chưa có lịch" },
+        ]}
+      />
 
       {/* Next Upcoming Highlight Banner */}
       {nextSession && (
-        <section className="overflow-hidden rounded-3xl border border-secondary/30 bg-linear-to-r from-secondary/15 via-primary/10 to-transparent p-5 sm:p-6 shadow-xs">
+        <section className="signal-card signal-card--accent overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
