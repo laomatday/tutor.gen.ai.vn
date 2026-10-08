@@ -21,14 +21,14 @@ function RewardWallet({ balance, dailyGp }: { balance: number; dailyGp: number }
   const remaining = Math.max(0, limit - dailyGp);
   return <>
     <StudentPageHeader
-      eyebrow="Mastery rewards"
+      eyebrow="Điểm thưởng"
       icon="workspace_premium"
       title="Nỗ lực học tập phải được nhìn thấy."
       description="GP là tín hiệu ghi nhận hành vi học tốt: hoàn thành mission, tự giải và tự sửa lỗi. Phần thưởng là lớp trải nghiệm sau cùng, không phải mục tiêu học tập chính."
       meta={
         <span className="inline-flex items-center gap-2 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
           <Icon name="auto_awesome" />
-          Mastery identity đang hoạt động
+          Đang ghi nhận các phần thưởng minh họa
         </span>
       }
     />
@@ -67,7 +67,7 @@ export function RewardsStoreView({ gpBalance, dailyGp, onNavigate, onSpendGp }: 
     <section className="signal-card signal-card--accent">
       <StudentSectionHeader
         eyebrow="Reward loop"
-        title="Học trước. Nhận tín hiệu mastery. Phần thưởng đến sau."
+        title="Hoàn thành bài học để nhận điểm thưởng minh họa."
         description="Danh mục hiện là dữ liệu mẫu được lưu trên thiết bị. Tutor ưu tiên hành vi học tốt hơn việc tích điểm đơn thuần."
         action={<Button variant="secondary" onClick={() => setShowFlow(true)}><Icon name="account_tree" />Xem quy trình</Button>}
       />

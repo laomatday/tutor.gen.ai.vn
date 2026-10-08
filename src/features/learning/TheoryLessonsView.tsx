@@ -360,7 +360,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
             description={
               lesson?.summary ??
               topic?.description ??
-              `Theo dõi mastery, chọn chủ đề và học theo nhịp phù hợp trong ${ownedLabel}.`
+              `Theo dõi tiến độ hoàn thành, chọn chủ đề và học theo nhịp phù hợp trong ${ownedLabel}.`
             }
             meta={
               <>
@@ -397,7 +397,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                 : [
                     { icon: "account_tree", label: "Chủ đề", value: `${courseTopics.length} chủ đề` },
                     { icon: "auto_stories", label: "Learning objects", value: `${courseLessons.length} bài` },
-                    { icon: "progress_activity", label: "Mastery", value: `${progress}%` },
+                    { icon: "progress_activity", label: "Đã hoàn thành", value: `${progress}%` },
                     { icon: "play_arrow", label: "Next", value: resumeLesson?.title ?? "Đã hoàn tất" },
                   ]
             }

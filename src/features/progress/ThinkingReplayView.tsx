@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Icon, Select } from "../../components/ui";
+import { Button, Icon, Select, Input } from "../../components/ui";
 import { storageKeys } from "../../config/storage";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { useCurriculum } from "../../context/CurriculumContext";
@@ -78,7 +78,7 @@ export function ThinkingReplayView({ onNavigate }: Props) {
             </Select>
           </label>
         </div>
-        <input type="range" className="mt-4 w-full accent-primary" aria-label="Vị trí phát lại"
+        <Input type="range" className="mt-4 w-full accent-primary" aria-label="Vị trí phát lại"
           min={0} max={events.length - 1} step={1} value={Math.max(0,cursor)}
           onChange={(event) => {setPlaying(false);setCursor(Number(event.target.value));}}/>
       </section>

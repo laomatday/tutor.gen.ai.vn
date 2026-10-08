@@ -27,6 +27,7 @@ function walk(dir) {
   }
 }
 walk(path.join(root, "src"));
+if (process.argv.includes("--probe-missing")) used.set("__unknown_icon__", ["probe"]);
 const missing = [...used].filter(([name]) => !known.has(name));
 if (missing.length) {
   for (const [name, sources] of missing) console.error("Missing icon:", name, sources.slice(0, 3).join(", "));
