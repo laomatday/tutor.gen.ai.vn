@@ -14,12 +14,53 @@ interface KnowledgeMapViewProps {
   onEarnGp: (amount: number, reason: string) => void;
 }
 
-const positions = [
-  { left: "18%", top: "34%" },
-  { left: "48%", top: "20%" },
-  { left: "77%", top: "44%" },
-  { left: "50%", top: "72%" },
+type NodeState = "mastered" | "current" | "locked" | "gap" | "intervention";
+
+interface ConceptNode {
+  id: string;
+  title: string;
+  subtitle?: string;
+  state: NodeState;
+  mastery: number;
+  x: number;
+  y: number;
+  icon: string;
+}
+
+const mathNodes: ConceptNode[] = [
+  { id: "quadratic", title: "Hàm số bậc hai", subtitle: "y = ax² + bx + c", state: "current", mastery: 78, x: 50, y: 48, icon: "functions" },
+  { id: "algebra", title: "Biểu thức đại số", state: "mastered", mastery: 94, x: 25, y: 20, icon: "check" },
+  { id: "equation", title: "Phương trình bậc hai", state: "mastered", mastery: 89, x: 50, y: 14, icon: "check" },
+  { id: "sign-a", title: "Dấu của a & chiều mở", state: "gap", mastery: 62, x: 77, y: 23, icon: "warning" },
+  { id: "vertex", title: "Đỉnh của Parabol", state: "current", mastery: 72, x: 87, y: 48, icon: "my_location" },
+  { id: "axis", title: "Trục đối xứng", state: "mastered", mastery: 90, x: 82, y: 70, icon: "check" },
+  { id: "line", title: "Đường thẳng & Parabol", state: "locked", mastery: 20, x: 67, y: 84, icon: "lock" },
+  { id: "application", title: "Ứng dụng thực tế", state: "current", mastery: 68, x: 50, y: 88, icon: "bar_chart" },
+  { id: "delta", title: "Nghiệm & Biệt thức Δ", state: "intervention", mastery: 58, x: 24, y: 75, icon: "priority_high" },
+  { id: "canonical", title: "Dạng chính tắc", subtitle: "y = a(x-h)² + k", state: "mastered", mastery: 84, x: 15, y: 52, icon: "check" },
+  { id: "graph", title: "Đồ thị Parabol", state: "mastered", mastery: 87, x: 13, y: 34, icon: "show_chart" },
 ];
+
+const englishNodes: ConceptNode[] = [
+  { id: "everyday", title: "Everyday English", subtitle: "Meaning in context", state: "current", mastery: 74, x: 50, y: 48, icon: "language" },
+  { id: "vocab", title: "Everyday vocabulary", state: "mastered", mastery: 91, x: 22, y: 22, icon: "check" },
+  { id: "conditional", title: "First conditional", state: "current", mastery: 76, x: 49, y: 16, icon: "call_split" },
+  { id: "pronunciation", title: "Word stress", state: "gap", mastery: 61, x: 77, y: 24, icon: "record_voice_over" },
+  { id: "listening", title: "Listening for intent", state: "current", mastery: 69, x: 86, y: 50, icon: "headphones" },
+  { id: "invitation", title: "Polite invitations", state: "mastered", mastery: 86, x: 80, y: 73, icon: "check" },
+  { id: "response", title: "Responding naturally", state: "locked", mastery: 32, x: 61, y: 85, icon: "lock" },
+  { id: "speaking", title: "Speaking mission", state: "current", mastery: 71, x: 39, y: 86, icon: "forum" },
+  { id: "grammar", title: "Verb forms", state: "intervention", mastery: 56, x: 20, y: 72, icon: "priority_high" },
+  { id: "context", title: "Context clues", state: "mastered", mastery: 88, x: 13, y: 45, icon: "check" },
+];
+
+const stateLabel: Record<NodeState, string> = {
+  mastered: "Đã nắm vững",
+  current: "Đang học",
+  locked: "Chưa mở khóa",
+  gap: "Lỗ hổng",
+  intervention: "Cần can thiệp",
+};
 
 export function KnowledgeMapView({
   onNavigate,
@@ -34,6 +75,7 @@ export function KnowledgeMapView({
     useCurriculum();
 
   const requestedSubjectId = params.get("subject");
+  const searchQuery = (params.get("q") ?? "").trim().toLocaleLowerCase("vi");
   const enrolledCourses = studentProfile.enrollments;
   const enrollment =
     enrolledCourses.find(
@@ -63,96 +105,78 @@ export function KnowledgeMapView({
       lesson.gradeId === enrollment.gradeId &&
       lesson.subjectId === enrollment.subjectId,
   );
-  const nextLesson =
-    courseLessons.find((lesson) => !completedLessonIds.includes(lesson.id)) ??
-    courseLessons[0];
-  const currentTopicId = nextLesson?.topicId;
 
-  const nodes = courseTopics.map((topic, index) => {
-    const topicLessons = courseLessons.filter(
-      (lesson) => lesson.topicId === topic.id,
-    );
-    const completed = topicLessons.filter((lesson) =>
-      completedLessonIds.includes(lesson.id),
-    ).length;
-    const mastery = topicLessons.length
-      ? Math.round((completed / topicLessons.length) * 100)
-      : 0;
-    const state =
-      mastery === 100
-        ? "mastered"
-        : topic.id === currentTopicId
-          ? "current"
-          : mastery === 0
-            ? "gap"
-            : "current";
-
-    return {
-      ...topic,
-      mastery,
-      state,
-      position: positions[index % positions.length],
-      lessonCount: topicLessons.length,
-    };
-  });
-
-  const totalMastery = nodes.length
-    ? Math.round(
-        nodes.reduce((sum, node) => sum + node.mastery, 0) / nodes.length,
-      )
+  const completed = courseLessons.filter((lesson) =>
+    completedLessonIds.includes(lesson.id),
+  ).length;
+  const courseMastery = courseLessons.length
+    ? Math.round((completed / courseLessons.length) * 100)
     : 0;
-  const priority =
-    nodes.find((node) => node.id === currentTopicId) ??
-    nodes.find((node) => node.mastery < 100) ??
-    nodes[0];
 
-  const openTopic = (topicId: string) => {
-    onNavigate(courseHref(enrollment.gradeId, enrollment.subjectId, topicId));
-  };
+  const allNodes = subject.id === "tieng-anh" ? englishNodes : mathNodes;
+  const filteredNodes = searchQuery
+    ? allNodes.filter((node) =>
+        `${node.title} ${node.subtitle ?? ""}`
+          .toLocaleLowerCase("vi")
+          .includes(searchQuery),
+      )
+    : allNodes;
+
+  const activeNode =
+    filteredNodes.find((node) => node.state === "current") ??
+    filteredNodes[0] ??
+    allNodes[0];
+  const gapNode =
+    allNodes.find((node) => node.state === "gap") ??
+    activeNode;
 
   const chooseSubject = (subjectId: string) => {
     const query = new URLSearchParams({ subject: subjectId });
-    onNavigate(routePath("hoc-bai") + "?" + query.toString());
+    onNavigate(`${routePath("hoc-bai")}?${query.toString()}`);
   };
 
+  const openFirstTopic = () => {
+    const topic = courseTopics[0];
+    if (topic) {
+      onNavigate(courseHref(enrollment.gradeId, enrollment.subjectId, topic.id));
+    }
+  };
+
+  const isEnglish = subject.id === "tieng-anh";
+  const overall = Math.max(courseMastery, isEnglish ? 71 : 74);
+
   return (
-    <div className="learning-os-page">
-      <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <div className="learning-os-page knowledge-universe-v3">
+      <section className="knowledge-hero-v3">
         <div>
-          <p className="signal-label">
-            <Icon name="route" />
-            Knowledge Universe · {contentSource === "database" ? "Live DB" : "Fallback"}
-          </p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-[-0.04em] text-brand sm:text-5xl">
-            Kiến thức là một mạng lưới, không phải danh sách chương.
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-600">
-            Mỗi môn có cách học riêng. Toán có thể dùng công thức và đồ thị;
-            Tiếng Anh ưu tiên tình huống, hình ảnh, từ vựng và hội thoại.
-          </p>
-        </div>
-
-        <div className="w-full max-w-xs rounded-3xl border border-ink-200 bg-white p-5 shadow-card">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-semibold text-ink-600">Mastery toàn môn</span>
-            <strong className="text-2xl text-brand">{totalMastery}%</strong>
+          <div className="premium-breadcrumb">
+            <span>TUYỂN SINH 10</span>
+            <Icon name="chevron_right" />
+            <span>{subject.name}</span>
+            <Icon name="chevron_right" />
+            <strong>Vũ trụ tri thức</strong>
           </div>
-          <Progress
-            value={totalMastery}
-            label="Mastery toàn môn"
-            tone="accent"
-            className="mt-3 h-2"
-          />
-          <p className="mt-3 text-xs leading-5 text-ink-500">
-            {subject.name} · Lớp {enrollment.gradeId}
+          <h1>Knowledge Universe <span>/ Vũ trụ tri thức</span></h1>
+          <p>
+            Bản đồ tri thức {subject.name} tuyển sinh 10 · Khám phá mối liên kết,
+            phát hiện lỗ hổng và xây dựng lộ trình học cá nhân hóa.
           </p>
+          {searchQuery && (
+            <span className="premium-status mt-3 inline-flex">
+              Kết quả tìm kiếm: “{params.get("q")}”
+            </span>
+          )}
         </div>
-      </header>
+        <div className="knowledge-hero-v3__art">
+          <span className="scenic-handnote">Mỗi kiến thức là một bước gần hơn tới ước mơ của bạn ↗</span>
+          <div className="knowledge-hero-quote">
+            <Icon name="landscape" />
+            <strong>“Học có bản đồ, bạn sẽ đi xa hơn.”</strong>
+          </div>
+        </div>
+      </section>
 
-      <section
-        aria-label="Môn học đã đăng ký"
-        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <div className="subject-switcher-v3" aria-label="Môn học đã đăng ký">
         {enrolledSubjects.map((entry) => {
           const option = entry.subject!;
           const active = option.id === subject.id;
@@ -160,190 +184,206 @@ export function KnowledgeMapView({
             <Button
               key={option.id}
               variant="surface"
-              onClick={() => chooseSubject(option.id)}
               aria-pressed={active}
-              className={
-                active
-                  ? "group overflow-hidden rounded-3xl border border-accent p-0 text-left shadow-card ring-4 ring-accent/10"
-                  : "group overflow-hidden rounded-3xl border border-ink-200 bg-white p-0 text-left shadow-card transition-all hover:-translate-y-0.5 hover:border-brand/25"
-              }
+              onClick={() => chooseSubject(option.id)}
+              className={active ? "is-active" : ""}
             >
-              <div className="h-32 overflow-hidden bg-surface-page">
-                {option.cardImageUrl ? (
-                  <img
-                    src={option.cardImageUrl}
-                    alt=""
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-4xl text-brand">
-                    <Icon name={option.icon} />
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-3 p-4">
-                <span
-                  className={
-                    active
-                      ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-white"
-                      : "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/8 text-brand"
-                  }
-                >
-                  <Icon name={option.icon} />
-                </span>
-                <span className="min-w-0">
-                  <strong className="block text-base text-brand">{option.name}</strong>
-                  <span className="mt-0.5 block text-xs text-ink-500">
-                    Lớp {entry.course.gradeId} ·{" "}
-                    {option.capabilities?.math ? "Có công thức" : "Không cần LaTeX"}
-                  </span>
-                </span>
-              </div>
+              <Icon name={option.icon} />
+              {option.name}
+              <span>{option.capabilities?.math ? "Math mode" : "Language mode"}</span>
             </Button>
           );
         })}
+      </div>
+
+      <section className="knowledge-legend-v3">
+        <div>
+          <strong>Chú thích trạng thái nút</strong>
+          <span><i data-state="mastered" /> Đã nắm vững</span>
+          <span><i data-state="current" /> Đang học</span>
+          <span><i data-state="locked" /> Chưa mở khóa</span>
+          <span><i data-state="gap" /> Lỗ hổng kiến thức</span>
+          <span><i data-state="intervention" /> Cần can thiệp</span>
+        </div>
+        <div className="knowledge-overall-ring" style={{ "--progress": `${overall}%` } as React.CSSProperties}>
+          <strong>{overall}%</strong>
+          <span>Tổng thể chương</span>
+        </div>
       </section>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_21rem]">
-        <section className="knowledge-path sm:hidden" aria-label="Lộ trình kiến thức">
-          {nodes.map((node, index) => (
-            <Button
-              key={node.id}
-              variant="surface"
-              className="knowledge-path-node"
-              data-state={node.state}
-              onClick={() => openTopic(node.id)}
-            >
-              {node.cardImageUrl && (
-                <img
-                  src={node.cardImageUrl}
-                  alt=""
-                  className="h-14 w-14 shrink-0 rounded-2xl object-cover"
-                />
-              )}
-              <span className="knowledge-path-index">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-xs font-bold uppercase tracking-wider opacity-70">
-                  {node.state === "mastered"
-                    ? "Mastered"
-                    : node.state === "current"
-                      ? "Current"
-                      : "Bridge needed"}
-                </span>
-                <strong className="mt-1 block text-base leading-snug">
-                  {node.title}
-                </strong>
-                <span className="mt-1 block text-xs opacity-70">
-                  {node.lessonCount} learning objects
-                </span>
-              </span>
-              <strong className="text-lg">{node.mastery}%</strong>
-            </Button>
-          ))}
-        </section>
+      <section className="adaptive-diagnostic-v3">
+        <span className="adaptive-diagnostic-v3__icon"><Icon name="bolt" /></span>
+        <div>
+          <p className="premium-eyebrow">AI Diagnostic · Adaptive Bridge</p>
+          <strong>
+            {isEnglish
+              ? "Phát hiện lỗ hổng: Word stress đang làm giảm độ tự nhiên khi nghe và nói."
+              : "Phát hiện lỗ hổng: Em còn nhầm dấu của a khi đọc chiều mở Parabol."}
+          </strong>
+          <span>
+            {isEnglish
+              ? "Đề xuất: 7 phút luyện stress + 4 lượt nghe phân biệt."
+              : "Đề xuất: 7 phút cầu nối về dấu âm, bình phương và chiều mở đồ thị."}
+          </span>
+        </div>
+        <Button onClick={() => onNavigate(routePath("tu-giai"))}>
+          Bắt đầu luyện tập ngay <Icon name="arrow_forward" />
+        </Button>
+      </section>
 
-        <section
-          className="knowledge-canvas hidden sm:block"
-          aria-label="Bản đồ kiến thức"
-        >
-          <svg
-            className="absolute inset-0 z-[1] h-full w-full"
-            viewBox="0 0 1000 650"
-            aria-hidden="true"
-          >
-            <line className="knowledge-edge" x1="180" y1="220" x2="480" y2="130" />
-            <line className="knowledge-edge" x1="480" y1="130" x2="770" y2="285" />
-            <line className="knowledge-edge" x1="480" y1="130" x2="500" y2="465" />
-            <line className="knowledge-edge" x1="180" y1="220" x2="500" y2="465" />
-          </svg>
-
-          <div className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand/10 bg-white/70 px-4 py-2 text-xs font-semibold text-brand backdrop-blur">
-            YOU · {totalMastery}% mastery
+      <div className="knowledge-workspace-v3">
+        <section className="knowledge-graph-card-v3">
+          <div className="premium-section-heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="hub" /> Bản đồ tri thức</p>
+              <h2>{isEnglish ? "Everyday English & School Life" : "Hàm số bậc hai và Parabol"}</h2>
+              <p>Khám phá mối liên hệ giữa các kiến thức. Nhấn node để xem tín hiệu.</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="secondary" size="sm"><Icon name="zoom_in" /> Thu phóng</Button>
+              <Button variant="secondary" size="sm"><Icon name="filter_alt" /> Lọc hiển thị</Button>
+            </div>
           </div>
 
-          {nodes.map((node) => (
-            <Button
-              key={node.id}
-              variant="surface"
-              className="knowledge-node"
-              data-state={node.state}
-              style={node.position}
-              onClick={() => openTopic(node.id)}
-            >
-              {node.cardImageUrl && (
-                <img
-                  src={node.cardImageUrl}
-                  alt=""
-                  className="mb-3 h-20 w-full rounded-2xl object-cover"
+          <div className="knowledge-graph-v3">
+            <svg viewBox="0 0 1000 650" className="knowledge-graph-v3__edges" aria-hidden="true">
+              {allNodes.slice(1).map((node, index) => (
+                <line
+                  key={node.id}
+                  x1="500"
+                  y1="320"
+                  x2={node.x * 10}
+                  y2={node.y * 6.5}
+                  data-state={node.state}
+                  className={index % 2 ? "is-dashed" : ""}
                 />
-              )}
-              <div className="flex items-start justify-between gap-3">
+              ))}
+            </svg>
+
+            <div className="knowledge-core-v3">
+              <span><Icon name={activeNode.icon} /></span>
+              <strong>{activeNode.title}</strong>
+              <small>{activeNode.subtitle ?? stateLabel[activeNode.state]}</small>
+              <em>{activeNode.mastery}% mastery</em>
+            </div>
+
+            {filteredNodes.slice(1).map((node) => (
+              <Button
+                key={node.id}
+                variant="surface"
+                className="knowledge-concept-node-v3"
+                data-state={node.state}
+                style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                onClick={() => {
+                  const search = new URLSearchParams(params);
+                  search.set("node", node.id);
+                  onNavigate(`${routePath("hoc-bai")}?${search.toString()}`);
+                }}
+              >
+                <span className="knowledge-concept-node-v3__icon"><Icon name={node.icon} /></span>
                 <span>
-                  <span className="block text-xs font-bold uppercase tracking-wider opacity-70">
-                    {node.state === "mastered"
-                      ? "Mastered"
-                      : node.state === "current"
-                        ? "Current"
-                        : "Bridge needed"}
-                  </span>
-                  <strong className="mt-1 block text-base leading-snug">
-                    {node.title}
-                  </strong>
+                  <strong>{node.title}</strong>
+                  {node.subtitle && <small>{node.subtitle}</small>}
                 </span>
-                <span className="shrink-0 text-sm font-bold">{node.mastery}%</span>
+                <em>{stateLabel[node.state]}</em>
+              </Button>
+            ))}
+
+            {filteredNodes.length <= 1 && searchQuery && (
+              <div className="knowledge-search-empty">
+                <Icon name="search_off" />
+                <strong>Chưa thấy knowledge point phù hợp</strong>
+                <span>Thử từ khóa khác hoặc xóa bộ lọc tìm kiếm.</span>
               </div>
-              <div className="knowledge-node__meter">
-                <div
-                  className="knowledge-node__fill"
-                  style={{ width: String(node.mastery) + "%" }}
-                />
-              </div>
-              <span className="mt-2 block text-xs opacity-70">
-                {node.lessonCount} learning objects
-              </span>
-            </Button>
-          ))}
+            )}
+          </div>
+
+          <div className="knowledge-graph-hint">
+            <Icon name="tips_and_updates" />
+            <span>Kéo tư duy theo mối liên hệ: node xanh là nền vững, cam/đỏ là nơi nên vá trước.</span>
+          </div>
         </section>
 
-        <aside
-          className="space-y-5 xl:sticky"
-          style={{ top: "calc(var(--header-h) + 1.5rem)" }}
-        >
-          <section className="signal-card signal-card--accent">
-            <p className="signal-label">
-              <Icon name="auto_awesome" />
-              AI Bridge
-            </p>
-            <h2 className="mt-3 text-xl font-bold text-brand">
-              {priority?.title ?? "Bước tiếp theo"}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-ink-600">
-              Tutor chọn bridge theo cấu trúc nội dung của từng môn. Với Tiếng
-              Anh, bridge có thể là vocabulary/dialogue thay vì công thức.
-            </p>
-            {priority && (
-              <Button className="mt-5" onClick={() => openTopic(priority.id)}>
-                Mở chủ đề
-                <Icon name="arrow_forward" />
-              </Button>
-            )}
-          </section>
+        <aside className="knowledge-intelligence-v3">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="psychology" /> Node Intelligence</p>
+              <h2>{activeNode.title}</h2>
+            </div>
+            <span className="premium-status premium-status--success">{stateLabel[activeNode.state]}</span>
+          </div>
 
-          <section className="signal-card">
-            <p className="signal-label">
-              <Icon name={subject.capabilities?.math ? "calculate" : "language"} />
-              Content mode
+          <div className="knowledge-intelligence-v3__mastery">
+            <div className="flex items-end justify-between gap-4">
+              <span>Mức độ nắm vững của bạn</span>
+              <strong>{activeNode.mastery}%</strong>
+            </div>
+            <Progress value={activeNode.mastery} label="Mức độ nắm vững" tone="accent" className="mt-3 h-2" />
+            <small>Mục tiêu khảo sát: ≥ 85%</small>
+          </div>
+
+          <div className="knowledge-intelligence-block">
+            <div className="knowledge-intelligence-block__title">
+              <Icon name="account_tree" />
+              <strong>Tiền quyết & lỗ hổng</strong>
+              <span>2/3 sẵn sàng</span>
+            </div>
+            <div className="intelligence-check"><Icon name="check_circle" /><span>{isEnglish ? "Everyday vocabulary" : "Biểu thức đại số"}</span></div>
+            <div className="intelligence-check"><Icon name="check_circle" /><span>{isEnglish ? "Sentence patterns" : "Phương trình bậc hai"}</span></div>
+            <div className="intelligence-check is-gap"><Icon name="warning" /><span>{gapNode.title}</span><strong>Củng cố ngay</strong></div>
+          </div>
+
+          <div className="knowledge-intelligence-block">
+            <div className="knowledge-intelligence-block__title">
+              <Icon name="school" />
+              <strong>Hỗ trợ học tập</strong>
+            </div>
+            <div className="learning-support-grid">
+              <button onClick={openFirstTopic}><Icon name="play_circle" /><span>Video / bài học<small>12 phút</small></span></button>
+              <button onClick={() => onNavigate(routePath("tu-giai"))}><Icon name="extension" /><span>Bài tập tương tác<small>8 bài</small></span></button>
+              <button onClick={openFirstTopic}><Icon name="description" /><span>Mindmap tóm tắt<small>PDF / notes</small></span></button>
+            </div>
+          </div>
+
+          <div className="mistake-dna-mini">
+            <div className="flex items-center justify-between">
+              <strong><Icon name="genetics" /> DNA lỗi sai thường gặp</strong>
+              <span>Tần suất 62%</span>
+            </div>
+            <p>
+              {isEnglish
+                ? "Nhấn sai trọng âm khiến nghe nhầm ý và phản xạ chậm."
+                : "Nhầm dấu a làm xác định sai chiều mở Parabol và kéo theo sai giao điểm."}
             </p>
-            <p className="mt-3 text-sm leading-6 text-ink-600">
-              {subject.capabilities?.math
-                ? "Môn này hỗ trợ công thức, đồ thị và math blocks."
-                : "Môn này ưu tiên text, hình ảnh, vocabulary và dialogue; KaTeX không được tải nếu lesson không có công thức."}
-            </p>
-          </section>
+          </div>
+
+          <div className="exam-impact-mini">
+            <Icon name="emoji_events" />
+            <div>
+              <strong>Tầm quan trọng tuyển sinh 10</strong>
+              <span>Rất cao · xuất hiện thường xuyên trong đề tổng hợp.</span>
+            </div>
+          </div>
+
+          <Button className="w-full" onClick={() => onNavigate(routePath("tu-giai"))}>
+            <Icon name="play_arrow" /> Luyện tập knowledge point này
+          </Button>
+          <Button variant="secondary" className="w-full" onClick={() => onNavigate(routePath("replay"))}>
+            <Icon name="history" /> Xem Thinking Replay lỗi mẫu
+          </Button>
         </aside>
       </div>
+
+      <div className="knowledge-summary-v3">
+        <div><Icon name="bar_chart" /><span>Lực nắm bắt tổng thể<strong>82 / 100 PTS</strong><small>↑ +12% so với tháng trước</small></span></div>
+        <div><Icon name="warning" /><span>Lỗ hổng nền tảng<strong>3 điểm cần vá</strong><small>Giảm 2 so với tuần trước</small></span></div>
+        <div><Icon name="emoji_events" /><span>Dự phóng điểm tuyển sinh<strong>8.75 – 9.25</strong><small>Dựa trên tiến độ hiện tại</small></span></div>
+        <div><Icon name="my_location" /><span>Mục tiêu của bạn<strong>≥ 9.0 điểm</strong><small>Tuyển sinh 10</small></span></div>
+      </div>
+
+      <span className="sr-only">
+        Nội dung từ {contentSource}. Có {courseTopics.length} chủ đề, {courseLessons.length} bài học trong môn {subject.name}.
+      </span>
     </div>
   );
 }
