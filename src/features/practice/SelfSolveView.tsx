@@ -371,17 +371,17 @@ export function SelfSolveView({ onEarnGp, onNavigate }: SelfSolveViewProps) {
             </div>
             <div className="socratic-question-list">
               {practiceProblem.prompts.map((prompt, index) => (
-                <button key={prompt.question} onClick={() => openHint(Math.min(3, index + 1))}>
+                <Button variant="surface" key={prompt.question} onClick={() => openHint(Math.min(3, index + 1))}>
                   <span>{index + 1}</span>
                   <strong>{prompt.question}</strong>
                   <Icon name="arrow_forward" />
-                </button>
+                </Button>
               ))}
-              <button onClick={() => openHint(3)}>
+              <Button variant="surface" onClick={() => openHint(3)}>
                 <span>3</span>
                 <strong>Em đã kiểm tra điều kiện a ≠ 0 chưa?</strong>
                 <Icon name="arrow_forward" />
-              </button>
+              </Button>
             </div>
           </section>
 
