@@ -9,3 +9,4 @@ export type { StatusTone } from "./Surface";
 export { Modal } from "./Modal";
 export { cn } from "./utils";
 export { Tabs } from "./Tabs";
+export { DemoDataNotice } from "./DemoDataNotice";

@@ -1,13 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-/**
- * Student navigation: mobile drawer <768px, persistent rail at >=768px,
- * overlay expansion through 1439px, then a pinnable desktop sidebar.
- * Teacher/admin navigation retains the 1024px desktop breakpoint.
- */
-const studentRailQuery = "(min-width: 768px)";
-const studentWideQuery = "(min-width: 1440px)";
-const workspaceDesktopQuery = "(min-width: 1024px)";
+const desktopQuery = "(min-width: 1024px)";
 
 function getFocusableElements(container: HTMLElement | null) {
   return Array.from(
@@ -22,80 +15,61 @@ function getFocusableElements(container: HTMLElement | null) {
   );
 }
 
-function layoutFor(isStudent: boolean) {
-  return {
-    isDesktop: window.matchMedia(
-      isStudent ? studentRailQuery : workspaceDesktopQuery,
-    ).matches,
-    isWideDesktop: window.matchMedia(
-      isStudent ? studentWideQuery : workspaceDesktopQuery,
-    ).matches,
-  };
-}
-
-export function useMobileNavigation(
-  desktopSidebarVisible = true,
-  isStudent = false,
-) {
+export function useMobileNavigation(desktopSidebarVisible = true) {
   const [open, setOpen] = useState(false);
-  const [layout, setLayout] = useState(() => layoutFor(isStudent));
-  const { isDesktop, isWideDesktop } = layout;
-  const overlayOpen = open && !isWideDesktop;
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia(desktopQuery).matches,
+  );
   const sidebar = useRef<HTMLElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const wasDrawerOpen = useRef(false);
-
   useEffect(() => {
-    const rail = window.matchMedia(
-      isStudent ? studentRailQuery : workspaceDesktopQuery,
-    );
-    const wide = window.matchMedia(
-      isStudent ? studentWideQuery : workspaceDesktopQuery,
-    );
+    const media = window.matchMedia(desktopQuery);
     const updateViewport = () => {
-      const next = layoutFor(isStudent);
-      setLayout(next);
-      if (next.isWideDesktop) setOpen(false);
+      setIsDesktop(media.matches);
+      if (media.matches) setOpen(false);
     };
     updateViewport();
-    rail.addEventListener("change", updateViewport);
-    wide.addEventListener("change", updateViewport);
-    return () => {
-      rail.removeEventListener("change", updateViewport);
-      wide.removeEventListener("change", updateViewport);
-    };
-  }, [isStudent]);
+    media.addEventListener("change", updateViewport);
+    return () => media.removeEventListener("change", updateViewport);
+  }, []);
 
   useLayoutEffect(() => {
     const sidebarElement = sidebar.current;
     const contentElement = content.current;
     const activeElement = document.activeElement;
+    const drawerOpen = open && !isDesktop;
     const previousOverflow = document.body.style.overflow;
 
-    // The tablet icon rail remains accessible even when not expanded.
-    if (sidebarElement) sidebarElement.inert = !isDesktop && !overlayOpen;
-    if (contentElement) contentElement.inert = overlayOpen;
-    if (overlayOpen) document.body.style.overflow = "hidden";
+    if (sidebarElement) sidebarElement.inert = !isDesktop && !drawerOpen;
+    if (contentElement) contentElement.inert = drawerOpen;
+    if (drawerOpen) document.body.style.overflow = "hidden";
 
-    if (overlayOpen && !wasDrawerOpen.current) {
+    if (drawerOpen && !wasDrawerOpen.current) {
       closeButton.current?.focus();
-    } else if (wasDrawerOpen.current && !overlayOpen) {
-      const target = isDesktop ? getFocusableElements(sidebarElement)[0] : trigger.current;
+    } else if (wasDrawerOpen.current && !drawerOpen) {
+      // Desktop may hide drawer controls after their visibility transition.
+      const target = isDesktop
+        ? getFocusableElements(sidebarElement)[0]
+        : trigger.current;
       target?.focus();
     } else if (
       activeElement instanceof HTMLElement &&
       sidebarElement?.contains(activeElement) &&
       (sidebarElement.inert || activeElement.getClientRects().length === 0)
     ) {
-      const target = isDesktop ? getFocusableElements(sidebarElement)[0] : trigger.current;
+      // A breakpoint or rail collapse can hide the currently focused control.
+      const target = isDesktop
+        ? getFocusableElements(sidebarElement)[0]
+        : trigger.current;
       target?.focus();
     }
-    wasDrawerOpen.current = overlayOpen;
+    wasDrawerOpen.current = drawerOpen;
 
     const handleKey = (event: KeyboardEvent) => {
-      if (!overlayOpen) return;
+      if (!drawerOpen) return;
       if (event.key === "Escape") {
         event.preventDefault();
         setOpen(false);
@@ -103,12 +77,21 @@ export function useMobileNavigation(
       }
       if (event.key !== "Tab") return;
       const focusables = getFocusableElements(sidebarElement);
-      const first = focusables[0], last = focusables.at(-1);
-      const outside = !sidebarElement?.contains(document.activeElement);
-      if (event.shiftKey && (document.activeElement === first || outside)) {
+      const first = focusables[0],
+        last = focusables.at(-1);
+      const focusOutsideDrawer = !sidebarElement?.contains(
+        document.activeElement,
+      );
+      if (
+        event.shiftKey &&
+        (document.activeElement === first || focusOutsideDrawer)
+      ) {
         event.preventDefault();
         last?.focus();
-      } else if (!event.shiftKey && (document.activeElement === last || outside)) {
+      } else if (
+        !event.shiftKey &&
+        (document.activeElement === last || focusOutsideDrawer)
+      ) {
         event.preventDefault();
         first?.focus();
       }
@@ -116,14 +99,10 @@ export function useMobileNavigation(
     window.addEventListener("keydown", handleKey);
     return () => {
       window.removeEventListener("keydown", handleKey);
-      if (overlayOpen) document.body.style.overflow = previousOverflow;
+      if (drawerOpen) document.body.style.overflow = previousOverflow;
       if (sidebarElement) sidebarElement.inert = false;
       if (contentElement) contentElement.inert = false;
     };
-  }, [overlayOpen, isDesktop, desktopSidebarVisible]);
-
-  return {
-    open, setOpen, isDesktop, isWideDesktop,
-    sidebar, content, trigger, closeButton,
-  };
+  }, [open, isDesktop, desktopSidebarVisible]);
+  return { open, setOpen, isDesktop, sidebar, content, trigger, closeButton };
 }

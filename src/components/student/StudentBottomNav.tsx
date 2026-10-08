@@ -10,7 +10,7 @@ export function StudentBottomNav({
 }) {
   const core = studentRoutes.filter((item) => item.group === "Core");
   return (
-    <nav className="student-bottom-nav md:hidden" aria-label="Điều hướng học tập chính">
+    <nav className="student-bottom-nav lg:hidden" aria-label="Điều hướng học tập chính">
       {core.map((item) => (
         <Button
           key={item.id}

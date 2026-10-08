@@ -6,6 +6,7 @@ import {
   roles,
   roleHome,
   routePath,
+  studentRoutes,
   type UserRole,
 } from "../../config/routes";
 import { appConfig } from "../../config/app";
@@ -24,7 +25,7 @@ interface PageContextProps {
   onNavigate: (path: string) => void;
 }
 
-export function StudentPageContext({
+function StudentPageContext({
   section,
   label,
   search,
@@ -68,12 +69,20 @@ export function StudentPageContext({
           item.gradeId === selected.gradeId,
       )
     : undefined;
-  if (!selected || lesson) return null;
+  const route = studentRoutes.find((item) => item.id === section);
 
-  const backPath = routePath("hoc-bai");
-  const backLabel = "Môn học";
+  if (!selected)
+    return (
+      <div className="student-header-context student-header-context--section">
+        <Icon name={route?.icon ?? "menu_book"} />
+        <span>{label}</span>
+      </div>
+    );
+
+  const backPath = lesson ? selected.href : routePath("hoc-bai");
+  const backLabel = lesson ? selected.label : "Môn học";
   return (
-    <nav className="student-header-context student-course-context" aria-label="Điều hướng môn học">
+    <nav className="student-header-context" aria-label="Điều hướng môn học">
       <a
         href={backPath}
         className="student-header-context__back"
@@ -91,7 +100,11 @@ export function StudentPageContext({
       <span className="student-header-context__divider" aria-hidden="true">
         /
       </span>
-      {courses.length > 1 ? (
+      {lesson ? (
+        <span className="student-header-context__current" title={lesson.title}>
+          {lesson.title}
+        </span>
+      ) : courses.length > 1 ? (
         <Select
           className="student-header-context__course"
           value={selected.href}
@@ -125,6 +138,9 @@ interface Props extends PageContextProps {
 
 export function AppHeader({
   role,
+  section,
+  label,
+  search: locationSearch,
   menuOpen,
   menuRef,
   onMenu,
@@ -176,10 +192,16 @@ export function AppHeader({
             aria-label={menuOpen ? "Đóng menu học tập" : "Mở menu học tập"}
             aria-expanded={menuOpen}
             aria-controls="main-navigation"
-            className="app-header__menu app-header__logo md:hidden"
+            className="app-header__menu app-header__logo lg:hidden"
           >
             <img src={appConfig.brand.logoUrl} alt="" width={28} height={28} />
           </Button>
+          <StudentPageContext
+            section={section}
+            label={label}
+            search={locationSearch}
+            onNavigate={onNavigate}
+          />
         </div>
         <div className="app-header__end">
           <Button

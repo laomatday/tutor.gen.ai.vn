@@ -59,11 +59,9 @@ function FocusStudio({
   const [session, updateSession, storageError] = usePracticeSession(problem.id);
   const [check, setCheck] = useState<AnswerCheck | null>(null);
   const [tool, setTool] = useState<Tool>("math");
-  const [toolsExpanded, setToolsExpanded] = useState(false);
   const [promptIndex, setPromptIndex] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now);
   const textarea = useRef<HTMLTextAreaElement>(null);
-  const coach = useRef<HTMLElement>(null);
   const rewardRef = useRef(session.rewarded);
   const stats = getPracticeStats(session);
   const usedHelp = getUsedPracticeHelp(session);
@@ -194,12 +192,15 @@ function FocusStudio({
     <div className="studio-page">
       <header className="studio-welcome">
         <div className="studio-welcome-copy">
-          <p className="studio-eyebrow">
+          <p
+            className="studio-eyebrow"
+            title="Góc tự học tập trung để rèn luyện phương pháp giải"
+          >
             <Icon name="gesture" />
             Góc tự học <span>· Focus Studio</span>
           </p>
-          <h1>Cứ thử một bước trước đã.</h1>
-          <p>Viết ý tưởng của em. Có gợi ý nhỏ bên cạnh khi cần.</p>
+          <h1>Luyện tập</h1>
+          <p>Cứ thử một bước trước đã. Có gợi ý nhỏ bên cạnh khi cần.</p>
         </div>
         <ol className="studio-checkpoints" aria-label="Hành trình giải bài">
           <li
@@ -275,11 +276,17 @@ function FocusStudio({
             <h2 className="studio-problem-statement">
               <RichMathText text={problem.statement} />
             </h2>
-            <Button className="studio-mobile-start" onClick={focusWriter}>
-              <Icon name="gesture" />
-              Viết ý tưởng
-              <Icon name="arrow_forward" />
-            </Button>
+            {!session.input.trim() && (
+              <Button
+                variant="secondary"
+                className="studio-mobile-start"
+                onClick={focusWriter}
+              >
+                <Icon name="gesture" />
+                Viết ý tưởng
+                <Icon name="arrow_forward" />
+              </Button>
+            )}
             <label className="studio-problem-picker">
               <span>Đổi bài tập</span>
               <Select
@@ -298,6 +305,65 @@ function FocusStudio({
               </Select>
             </label>
           </section>
+          <section
+            className="studio-card studio-toolbar"
+            aria-label="Công cụ học tập"
+          >
+            <Tabs
+              tabs={toolTabs}
+              value={tool}
+              onChange={setTool}
+              label="Công cụ Focus Studio"
+              variant="pill"
+            />
+            <div className="studio-toolbar-actions">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Đưa con trỏ về bài làm"
+                onClick={() => {
+                  setTool("math");
+                  requestAnimationFrame(() => textarea.current?.focus());
+                }}
+              >
+                <Icon name="center_focus_strong" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Xóa nháp để thử lại"
+                onClick={reset}
+              >
+                <Icon name="restart_alt" />
+              </Button>
+            </div>
+          </section>
+          {tool === "sketch" && (
+            <section className="studio-card">
+              <SketchPad
+                strokes={session.sketch ?? []}
+                onChange={(sketch) =>
+                  updateSession((current) => ({ ...current, sketch }))
+                }
+              />
+            </section>
+          )}
+          {tool === "graph" && (
+            <section className="studio-card">
+              <GraphStudy
+                problem={problem}
+                unlocked={
+                  stats.solved ||
+                  session.openedHints.includes(problem.hints.at(-1)?.id ?? 0)
+                }
+              />
+            </section>
+          )}
+          {tool === "tiles" && (
+            <section className="studio-card">
+              <AlgebraTiles problem={problem} />
+            </section>
+          )}
           <section className="studio-card studio-reasoning">
             <div className="studio-section-head">
               <h2>
@@ -389,14 +455,29 @@ function FocusStudio({
                 </div>
               )}
               <div className="studio-editor-actions">
-                <Button onClick={() => inspect(true)}>
-                  <Icon name="send" />
-                  Nộp bài
-                </Button>
-                <Button variant="secondary" onClick={() => inspect()}>
-                  <Icon name="fact_check" />
-                  Kiểm tra bước giải
-                </Button>
+                {stats.checks.length > 0 ? (
+                  <>
+                    <Button onClick={() => inspect(true)}>
+                      <Icon name="send" />
+                      Nộp bài
+                    </Button>
+                    <Button variant="secondary" onClick={() => inspect()}>
+                      <Icon name="fact_check" />
+                      Kiểm tra bước giải
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => inspect()}>
+                      <Icon name="fact_check" />
+                      Kiểm tra bước giải
+                    </Button>
+                    <Button variant="secondary" onClick={() => inspect(true)}>
+                      <Icon name="send" />
+                      Nộp bài
+                    </Button>
+                  </>
+                )}
                 {onNavigate && !showAchievement && (
                   <Button
                     variant="ghost"
@@ -492,97 +573,13 @@ function FocusStudio({
               </div>
             )}
           </section>
-          <Button
-            variant="secondary"
-            className="studio-help-jump"
-            onClick={() => {
-              coach.current?.scrollIntoView({
-                block: "start",
-                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-              });
-              coach.current?.focus({ preventScroll: true });
-            }}
-          >
-            <Icon name="lightbulb" /> Xem gợi ý từng bước
-          </Button>
-          <Button
-            variant="secondary"
-            className="studio-tool-dock-toggle"
-            aria-controls="studio-tools"
-            aria-expanded={toolsExpanded}
-            onClick={() => setToolsExpanded((value) => !value)}
-          >
-            <Icon name="edit_square" />
-            {toolsExpanded ? "Thu gọn công cụ" : "Công cụ hỗ trợ"}
-            <Icon name={toolsExpanded ? "close" : "add"} />
-          </Button>
-          <section
-            id="studio-tools"
-            className={`studio-card studio-toolbar ${toolsExpanded ? "is-expanded" : ""}`}
-            aria-label="Công cụ học tập"
-          >
-            <Tabs
-              tabs={toolTabs}
-              value={tool}
-              onChange={setTool}
-              label="Công cụ Focus Studio"
-              variant="pill"
-            />
-            <div className="studio-toolbar-actions">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Đưa con trỏ về bài làm"
-                onClick={() => {
-                  setTool("math");
-                  requestAnimationFrame(() => textarea.current?.focus());
-                }}
-              >
-                <Icon name="center_focus_strong" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Xóa nháp để thử lại"
-                onClick={reset}
-              >
-                <Icon name="restart_alt" />
-              </Button>
-            </div>
-          </section>
-          {tool === "sketch" && (
-            <section className="studio-card">
-              <SketchPad
-                strokes={session.sketch ?? []}
-                onChange={(sketch) =>
-                  updateSession((current) => ({ ...current, sketch }))
-                }
-              />
-            </section>
-          )}
-          {tool === "graph" && (
-            <section className="studio-card">
-              <GraphStudy
-                problem={problem}
-                unlocked={
-                  stats.solved ||
-                  session.openedHints.includes(problem.hints.at(-1)?.id ?? 0)
-                }
-              />
-            </section>
-          )}
-          {tool === "tiles" && (
-            <section className="studio-card">
-              <AlgebraTiles problem={problem} />
-            </section>
-          )}
           {tool !== "tiles" && problem.quadratic && (
             <section className="studio-card">
               <AlgebraTiles problem={problem} />
             </section>
           )}
         </div>
-        <aside ref={coach} tabIndex={-1} className="studio-coach studio-card" aria-label="Hỗ trợ làm bài">
+        <aside className="studio-coach studio-card" aria-label="Hỗ trợ làm bài">
           <div className="studio-coach-title">
             <span className="studio-coach-icon">
               <Icon name="psychology" />

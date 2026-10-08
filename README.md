@@ -24,7 +24,7 @@ Hai không gian mới sử dụng dữ liệu minh họa. Bài tập giao và h�
 
 Có thể chạy bằng Bun: `bun install` rồi `bun --bun run dev`. Kiểm tra mã bằng `bun --bun run lint` và `bun --bun run build`.
 
-Kiểm thử: `npm run lint`, `npm test`, `npm run build`. Để kiểm tra trình duyệt, chạy `npx playwright install chromium` một lần rồi `npm run test:e2e`. Responsive QA chạy 9 kích thước (360–1920px), kiểm tra điều hướng, overflow, map toàn màn hình, Focus Studio và không gian giáo viên/quản trị trong `tests/e2e/responsive-layout.spec.cjs`. Playwright dùng học liệu cục bộ ở cổng 3001 để không phụ thuộc dữ liệu dịch vụ; có thể đổi cổng bằng `PLAYWRIGHT_PORT` hoặc chọn Chromium có sẵn bằng `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+Kiểm thử: `npm run lint`, `npm test`, `npm run build`. Để kiểm tra trình duyệt, chạy `npx playwright install chromium` một lần rồi `npm run test:e2e`. Playwright dùng học liệu cục bộ ở cổng 3001 để không phụ thuộc dữ liệu dịch vụ; có thể đổi cổng bằng `PLAYWRIGHT_PORT` hoặc chọn Chromium có sẵn bằng `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
 ### Trải nghiệm học sinh
 
@@ -33,7 +33,7 @@ Kiểm thử: `npm run lint`, `npm test`, `npm run build`. Để kiểm tra trì
 - Focus Studio: kiểm tra các dạng toán được hỗ trợ, gợi ý từng bước, lưu nháp riêng từng bài, bảng vẽ, đồ thị và Algebra Tiles.
 - Thinking Replay: phát/dừng, tua, đổi tốc độ, lưu lỗi cần xem lại và xem bản phác thảo đã lưu. Dòng thời gian chỉ lấy từ thao tác đã ghi nhận; gợi ý hiện theo quy tắc biên soạn, chưa kết nối mô hình AI hay nhận dạng chữ viết.
 
-Logo điều khiển sidebar: điện thoại <768px dùng drawer + bottom nav; tablet/laptop 768–1439px dùng icon rail 72px mở overlay; desktop từ 1440px có thể ghim sidebar rộng 288px. Tìm kiếm mở từ icon trên header hoặc Ctrl/⌘ K. Course navigation và breadcrumb nằm trong nội dung, không phải fixed header. Trạng thái menu và bài làm được lưu trên thiết bị. Chi tiết: [Responsive Layout](docs/responsive-layout.md).
+Logo trên sidebar đóng/mở menu; tìm kiếm mở từ icon trên header hoặc phím Ctrl/⌘ K. Trạng thái menu và bài làm được lưu trên thiết bị.
 
 ### Cấu trúc học liệu
 

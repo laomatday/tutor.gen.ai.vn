@@ -64,7 +64,7 @@ export function CurriculumAdminView({ initialLessonId, onNotice }: CurriculumAdm
   </div>;
 
   if (!draft) return null;
-  return <div className="curriculum-editor min-w-0 space-y-5 pb-24">
+  return <div className="min-w-0 space-y-5 pb-24 lg:pb-0">
     <header className="flex flex-wrap items-start justify-between gap-4">
       <div><Button variant="ghost" size="sm" type="button" aria-label="Quay lại danh sách học liệu" onClick={backToList} className={`-ml-2 mb-2`}><Icon className="text-base">arrow_back</Icon>Quản lý học liệu</Button><h1 ref={editorHeadingRef} tabIndex={-1} className="text-2xl font-bold tracking-tight text-on-surface outline-none md:text-3xl">{preview ? 'Xem trước bài học' : persistedLesson ? 'Chỉnh sửa bài học' : 'Biên soạn bài học mới'}</h1><p className="mt-2 text-sm leading-6 text-on-surface-variant">{preview ? 'Kiểm tra nội dung trước khi đưa vào chương trình học.' : 'Hoàn thiện nội dung, kiểm tra và chủ động xuất bản khi sẵn sàng.'}</p></div>
       <div aria-label="Chế độ biên soạn" className="flex rounded-full border border-outline-variant/30 bg-surface-container-low p-1"><Button variant="surface" type="button" aria-pressed={!preview} onClick={() => { setPreview(false); requestAnimationFrame(() => titleRef.current?.focus()); }} className={`rounded-full px-4 py-2 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-primary cursor-pointer ${!preview ? 'bg-white text-primary shadow-sm' : 'text-outline'}`}>Chỉnh sửa</Button><Button variant="surface" type="button" aria-pressed={preview} onClick={() => setPreview(true)} className={`rounded-full px-4 py-2 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-primary cursor-pointer ${preview ? 'bg-white text-primary shadow-sm' : 'text-outline'}`}>Xem trước</Button></div>
@@ -72,7 +72,7 @@ export function CurriculumAdminView({ initialLessonId, onNotice }: CurriculumAdm
 
     {errors.length > 0 && <div ref={errorsRef} tabIndex={-1} role="alert" className="rounded-2xl border border-error/15 bg-error-container/60 p-4 text-sm text-on-error-container outline-none"><p className="font-bold">Vui lòng kiểm tra nội dung</p><ul className="mt-2 list-disc space-y-1 pl-5">{errors.map(message => <li key={message}>{message}</li>)}</ul></div>}
 
-    <div className="curriculum-editor-layout grid min-w-0 items-start gap-5">
+    <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div aria-label="Nội dung biên soạn" className="min-w-0 space-y-5">
         <section className={`ui-card p-5 md:p-6`}>
           {preview ? <><p className="text-xs font-semibold text-secondary">{GRADES.find(item => item.id === draft.gradeId)?.label} · {SUBJECTS.find(item => item.id === draft.subjectId)?.name} · {editorTopic?.title}</p><h2 className="mt-3 text-2xl font-bold leading-8 text-on-surface"><RichMathText text={draft.title || 'Bài học chưa có tên'} /></h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-on-surface-variant"><RichMathText text={draft.summary || 'Chưa có mô tả bài học.'} /></p><p className="mt-4 text-xs text-outline">{draft.kind === 'problem-type' ? 'Dạng bài' : 'Bài học'} · {draft.durationMinutes} phút</p></> : <div className="space-y-5"><Field label={<> Tên bài học / dạng bài </>}>
@@ -87,12 +87,12 @@ export function CurriculumAdminView({ initialLessonId, onNotice }: CurriculumAdm
         </section>
       </div>
 
-      <aside aria-label="Phân loại và xuất bản" className="curriculum-publish-panel min-w-0 space-y-4">
+      <aside aria-label="Phân loại và xuất bản" className="min-w-0 space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:pr-1">
         <section aria-labelledby="curriculum-publish-title" className={`ui-card space-y-4 p-4`}>
           <div className="flex items-center justify-between gap-2"><h2 id="curriculum-publish-title" className="text-xs font-bold uppercase tracking-wider text-outline">Xuất bản</h2><Badge role="status" tone={dirty ? 'warning' : 'success'}>{dirty ? 'Chưa lưu' : 'Đã lưu'}</Badge></div>
           <div className="flex items-center justify-between gap-2"><span className="text-xs text-outline">Trạng thái hiện tại</span><Status published={persistedLesson?.status === 'published'} /></div>
           <p className="text-xs leading-5 text-on-surface-variant">{persistedLesson?.status === 'published' ? 'Bài đang hiển thị với học sinh đã đăng ký. Nội dung chỉ thay đổi khi bạn bấm Lưu thay đổi.' : 'Bản nháp chỉ hiển thị với quản trị. Xuất bản để đưa bài vào chương trình của học sinh đã đăng ký.'}</p>
-          <div className="curriculum-desktop-save hidden flex-col gap-2">{saveButtons}</div>
+          <div className="hidden flex-col gap-2 lg:flex">{saveButtons}</div>
           {(dirty || persistedLesson?.status === 'published') && <div className="flex flex-col gap-1 border-t border-outline-variant/30 pt-3">{dirty && <Button variant="ghost" size="sm" type="button" onClick={() => { if (!persistedLesson) backToList(); else if (canLeave()) { adoptLesson(persistedLesson); resetTopicEditor(); } }} ><Icon className="text-base">undo</Icon>{persistedLesson ? 'Hoàn tác thay đổi' : 'Hủy bài mới'}</Button>}{persistedLesson?.status === 'published' && <Button variant="ghost" size="sm" type="button" onClick={unpublish} ><Icon className="text-base">visibility_off</Icon>Ngừng xuất bản</Button>}</div>}
         </section>
         <section className={`ui-card space-y-4 p-4`}>
@@ -125,6 +125,6 @@ export function CurriculumAdminView({ initialLessonId, onNotice }: CurriculumAdm
 
       </aside>
     </div>
-    <div aria-label="Lưu bài học" className="curriculum-mobile-save fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-outline-variant/50 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">{saveButtons}</div>
+    <div aria-label="Lưu bài học" className="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-outline-variant/50 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">{saveButtons}</div>
   </div>;
 }

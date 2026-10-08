@@ -1,4 +1,4 @@
-import { Button, Icon, Progress } from "../../components/ui";
+import { Button, DemoDataNotice, Icon, Progress } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
   courseHref,
@@ -34,15 +34,15 @@ export function ExamIntelligenceView({ onNavigate, onOpenBadges }: Props) {
     <div className="learning-os-page learning-mvp-page">
       <header className="learning-mvp-page-heading">
         <p className="learning-mvp-kicker">KẾT QUẢ HỌC TẬP</p>
-        <h1>Tiến bộ của bạn</h1>
+        <h1>Tiến bộ</h1>
         <p>
-          Hiển thị số bài bạn đã hoàn thành, không suy ra “mastery”, điểm thi dự
-          đoán hoặc năng lực khi chưa có dữ liệu đánh giá phù hợp.
+          Theo dõi số bài học và bài tập em đã hoàn thành ở từng môn. Ghi nhận
+          trung thực từng bước tiến bộ của em.
         </p>
       </header>
       <section className="learning-mvp-card">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-bold text-brand">Tổng tiến độ</h2>
+          <h2 className="text-lg font-bold text-brand">Tiến độ tổng thể</h2>
           <strong className="text-2xl text-brand">{progress.percent}%</strong>
         </div>
         <Progress
@@ -109,29 +109,33 @@ export function ExamIntelligenceView({ onNavigate, onOpenBadges }: Props) {
         ))}
       </section>
       <section className="learning-mvp-card">
-        <h2 className="text-lg font-bold text-brand">
-          Bài thi mẫu (dữ liệu minh họa)
-        </h2>
+        <DemoDataNotice
+          className="mb-4"
+          message="Đây là dữ liệu minh họa phương pháp phản hồi, chưa phải kết quả thi thật của bạn."
+        />
+        <h2 className="text-lg font-bold text-brand">Bài thi thử tham khảo</h2>
         <p className="mt-2 text-sm leading-6 text-ink-600">
-          Đây là dữ liệu được biên soạn để minh họa phương pháp phản hồi, chưa
-          phải kết quả thi của học sinh.
+          Minh họa cách hệ thống phân tích chi tiết các kỹ năng và điểm cần củng
+          cố sau mỗi bài thi.
         </p>
         <details className="mt-3 rounded-xl border border-ink-200 p-4">
           <summary className="cursor-pointer font-semibold">
-            Xem thông tin bài thi mẫu
+            Xem phân tích bài thi
           </summary>
           <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <p>Đề: {sampleAssessment.title}</p>
             <p>
-              Điểm mẫu: {sampleAssessment.score}/{sampleAssessment.maximumScore}
+              Điểm số: {sampleAssessment.score}/{sampleAssessment.maximumScore}
             </p>
-            <p>Điểm mất trong mẫu: {summary.recoverablePoints}</p>
-            <p>Các nhóm cần hỗ trợ (mẫu): {summary.developingSkills.length}</p>
+            <p>Điểm có thể cải thiện: {summary.recoverablePoints}</p>
+            <p>
+              Nhóm kỹ năng cần luyện thêm: {summary.developingSkills.length}
+            </p>
           </div>
         </details>
         {onOpenBadges && (
           <Button variant="ghost" className="mt-3" onClick={onOpenBadges}>
-            Xem hồ sơ điểm thưởng minh họa
+            Xem huy hiệu và điểm thưởng
           </Button>
         )}
       </section>

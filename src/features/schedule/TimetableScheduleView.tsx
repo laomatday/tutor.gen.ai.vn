@@ -221,7 +221,7 @@ export function TimetableScheduleView({
       };
     if (session.sessionType === "thi-thu")
       return {
-        label: "Xem bài thi mẫu",
+        label: "Xem tiến bộ",
         path: routePath("tien-bo"),
         icon: "quiz",
       };
@@ -349,7 +349,7 @@ export function TimetableScheduleView({
             <Icon name="calendar_today" />
             Một tuần theo nhịp của em
           </p>
-          <h1>Lịch học của mình</h1>
+          <h1>Lịch học</h1>
           <p>Biết lúc nào học, sẵn sàng cho điều tiếp theo.</p>
         </div>
         <Button onClick={openAdd}>

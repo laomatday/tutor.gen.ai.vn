@@ -101,9 +101,7 @@ test("Advanced Tutor: learning mission, graph and workspace identity are present
     page.getByRole("heading", { name: "Bạn muốn khám phá môn nào?" }),
   ).toBeVisible();
   await page.goto("/hoc-bai");
-  await expect(
-    page.getByRole("heading", { name: "Mỗi bước, hiểu thêm một chút." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Môn học" })).toBeVisible();
   await page.getByRole("tab", { name: "Bản đồ", exact: true }).click();
   const nodes = page.locator(".knowledge-graph button[aria-pressed]");
   expect(await nodes.count()).toBeGreaterThan(1);
@@ -115,9 +113,7 @@ test("Advanced Tutor: learning mission, graph and workspace identity are present
       .getByRole("heading", { level: 2 }),
   ).toBeVisible();
   await page.goto("/tu-giai?problem=parabola-coefficient-03");
-  await expect(
-    page.getByRole("heading", { name: "Cứ thử một bước trước đã." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Luyện tập" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Bài làm của em" }),
   ).toBeVisible();
@@ -125,9 +121,7 @@ test("Advanced Tutor: learning mission, graph and workspace identity are present
     page.getByRole("complementary", { name: "Hỗ trợ làm bài" }),
   ).toBeVisible();
   await page.goto("/replay?problem=parabola-coefficient-03");
-  await expect(
-    page.getByRole("heading", { name: "Nhìn lại để lần sau tự tin hơn." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Xem lại" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Chưa có lần thử nào? Bắt đầu thôi." }),
   ).toBeVisible();

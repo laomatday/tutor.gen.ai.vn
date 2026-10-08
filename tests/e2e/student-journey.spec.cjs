@@ -129,31 +129,43 @@ test("Môn học: list view supports filtering, choosing a topic and opening its
   await expect(page.locator("#main-content h1")).toHaveCount(1);
 });
 
-test("Môn học: laptop overlay expands without squeezing the map", async ({
+test("Môn học: opening the sidebar on a small laptop gives the map a full row", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/hoc-bai");
   const sidebar = page.locator("#main-navigation");
-  const mapPage = page.locator(".knowledge-map");
   await page.getByRole("tab", { name: "Bản đồ", exact: true }).click();
-  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
-  const before = await mapPage.boundingBox();
-  // On a tablet/laptop the rail logo opens an overlay, not a pinned column.
-  await expect(sidebar.getByRole("button", { name: "Mở menu", exact: true })).toBeVisible();
-  await sidebar.locator(".student-sidebar-brand").click();
-  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(288);
-  await expect(page.locator(".app-frame--student")).toHaveJSProperty("inert", true);
-  const overlayMap = await mapPage.boundingBox();
-  expect(overlayMap.x).toBe(before.x);
-  expect(overlayMap.width).toBe(before.width);
-  await page.keyboard.press("Escape");
-  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
-  await expect(page.locator(".app-frame--student")).toHaveJSProperty("inert", false);
-  const detail = await page.getByRole("complementary", { name: "Thông tin chủ đề" }).boundingBox();
-  const map = await mapPage.boundingBox();
+  await sidebar
+    .getByRole("button", { name: "Mở rộng menu", exact: true })
+    .click();
+  await expect
+    .poll(async () => Math.round((await sidebar.boundingBox()).width))
+    .toBe(288);
+  const map = await page.locator(".knowledge-map").boundingBox();
+  const detail = await page
+    .getByRole("complementary", { name: "Thông tin chủ đề" })
+    .boundingBox();
+  expect(map.x).toBe(312);
+  expect(map.width).toBeGreaterThan(640);
   expect(detail.y).toBeGreaterThan(map.y + map.height);
+  await expect(
+    page.getByRole("button", { name: /^Xem \d+ bài học$/ }),
+  ).toBeVisible();
+  await sidebar
+    .getByRole("button", { name: "Thu gọn menu", exact: true })
+    .click();
+  await page.setViewportSize({ width: 1040, height: 900 });
+  const collapsedMap = await page.locator(".knowledge-map").boundingBox();
+  const collapsedDetail = await page
+    .getByRole("complementary", { name: "Thông tin chủ đề" })
+    .boundingBox();
+  expect(collapsedMap.x).toBe(96);
+  expect(collapsedMap.width).toBeGreaterThan(860);
+  expect(collapsedDetail.y).toBeGreaterThan(
+    collapsedMap.y + collapsedMap.height,
+  );
 });
 
 for (const width of [360, 390]) {

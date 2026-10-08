@@ -122,23 +122,15 @@ function ReplaySession({
             <Icon name="history" />
             Hành trình của em <span>· Thinking Replay</span>
           </p>
-          <h1>Nhìn lại để lần sau tự tin hơn.</h1>
+          <h1>Xem lại</h1>
           <p>
-            Mỗi lần thử đều có điều đáng nhớ. Cùng xem em đã tìm ra lời giải thế
-            nào.
+            Nhìn lại để lần sau tự tin hơn. Mỗi lần thử đều có điều đáng nhớ.
+            Cùng xem em đã tìm ra lời giải thế nào.
           </p>
         </div>
-        {hasReplay ? (
-          <span className="replay-welcome-symbol" aria-hidden="true">
-            <Icon name="route" />
-          </span>
-        ) : (
-          <Button className="replay-start-entry" onClick={navigateToPractice}>
-            <Icon name="gesture" />
-            Viết lời giải đầu tiên
-            <Icon name="arrow_forward" />
-          </Button>
-        )}
+        <span className="replay-welcome-symbol" aria-hidden="true">
+          <Icon name="route" />
+        </span>
       </header>
       {storageError && <Alert tone="warning">{storageError}</Alert>}
       <section className="studio-card replay-player">
@@ -428,7 +420,7 @@ function ReplaySession({
               <Icon name="auto_awesome" />
               Thử thêm một chút
             </p>
-            <h2>Mang điều vừa hiểu vào lần thử mới</h2>
+            <h2>Bước tiếp theo</h2>
             <p>
               {latestMistake
                 ? "Quay về lời giải, kiểm tra lại bước chưa khớp rồi thử một lần nữa. Bản nháp của em vẫn được giữ nguyên."
@@ -468,7 +460,7 @@ function ReplaySession({
               <Icon name="military_tech" />
               Những điều em đã làm
             </p>
-            <h2>Tự thử, tự tìm ra</h2>
+            <h2>Thành tích phiên học</h2>
             <div className="replay-milestones">
               <div>
                 <Icon name="verified_user" />

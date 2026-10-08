@@ -1,6 +1,6 @@
 # genAi Tutor — Quy định sản phẩm và giao diện
 
-Phiên bản 7.0. Quy định giao diện học sinh hướng tới cuối Gen Z và Gen Alpha: một góc học để khám phá, dễ bắt đầu và thấy tiến bộ từ việc học thật. Khi thay đổi shell, kiến trúc thông tin hoặc nguyên tắc, sửa đúng mục tương ứng trong file này và xóa nội dung cũ. Không thêm mục "phiên bản tiếp theo" vào cuối file.
+Phiên bản 6.0. Quy định giao diện học sinh hướng tới cuối Gen Z và Gen Alpha: một góc học để khám phá, dễ bắt đầu và thấy tiến bộ từ việc học thật. Khi thay đổi shell, kiến trúc thông tin hoặc nguyên tắc, sửa đúng mục tương ứng trong file này và xóa nội dung cũ. Không thêm mục "phiên bản tiếp theo" vào cuối file.
 
 Quy tắc bảo vệ: không được bỏ bốn trụ cột Nhiệm vụ học tập, Knowledge Universe, Focus Studio và Thinking Replay chỉ vì một số số liệu chưa có nguồn. Cần thay dữ liệu giả bằng dữ liệu thật hoặc empty state, giữ trải nghiệm người học. Xem docs/product-differentiators.md.
 
@@ -38,25 +38,21 @@ Giọng nói gần gũi, tôn trọng học sinh và khuyến khích thử lại
 
 Mỗi đích xuất hiện tối đa một lần trong mỗi vùng điều hướng. Một đích có một tên duy nhất ở mọi nơi: nav, nút, tiêu đề trang, breadcrumb. Chỉ thêm mục vào nhóm Chính khi nó phục vụ trực tiếp chu trình Hôm nay → Môn học hoặc Luyện tập → Xem lại.
 
-## 4. Shell và Responsive Layout
+## 4. Shell
 
-**Học sinh — mobile dưới 768px.** Header cố định cao 72px giữ logo mở drawer, nút tìm kiếm và hồ sơ. Bottom navigation có bốn mục Chính (Hôm nay, Môn học, Luyện tập, Xem lại); nhóm Phụ trong drawer. Logo trong drawer đóng drawer. Drawer phải hỗ trợ Escape, nền phủ, focus trap và focus return. Nội dung chừa đủ khoảng trống cho bottom navigation, safe-area và bàn phím ảo.
+**Desktop (từ 1024px).** Sidebar trắng rộng 288px, thu gọn thành thanh biểu tượng 72px và lưu lựa chọn. Logo là nút đóng/mở duy nhất của sidebar học sinh, luôn giữ nguyên vị trí và có vùng bấm 44px, tên truy cập, tooltip. Không dùng hamburger hoặc nút khung sidebar bên cạnh logo. Trạng thái thu gọn dùng vùng bấm hình chữ nhật bo nhẹ, không bọc biểu tượng bằng hình tròn. Nhãn mờ dần và chiều rộng đổi trong 260ms, tôn trọng giảm chuyển động. Sidebar không chứa thông tin người dùng, điểm thưởng hoặc khối bài học đã hoàn thành.
 
-**Tablet và laptop 768–1439px.** Sidebar thu gọn thành icon rail 72px, luôn hiện; bottom navigation ẩn. Logo trên rail mở rộng sidebar thành **overlay 288px**, không dịch chuyển nội dung và không thu hẹp workspace đang học. Escape/chạm nền phủ đóng overlay và đưa focus về logo; khóa cuộn thân trang khi overlay mở. Sidebar chỉ có navigation và CTA tiếp tục học, không nhân bản hồ sơ/điểm thưởng.
+Nội dung học sinh dùng chiều rộng còn lại bên cạnh sidebar, với lề ngang 24px (16px dưới 640px), giữ nguyên khi đóng/mở menu. Shell quản lý lề chung; khung ngoài của từng trang không thêm padding ngang hoặc giới hạn chiều rộng để căn giữa. Giới hạn độ dài dòng, nếu cần, đặt ở nội dung đọc bên trong.
 
-**Desktop từ 1440px.** Sidebar icon rail 72px, người dùng có thể ghim rộng 288px bằng logo; trạng thái ghim lưu trên thiết bị. Khi ghim, nội dung và header dịch sang, và **feature dùng container query để tự xếp lại theo vùng rộng còn lại**. Không sử dụng hamburger. Chuyển động width và opacity trong 260ms, tôn trọng reduced motion.
+Header giữ chiều cao và vị trí cố định hiện tại: bỏ tên genAi Tutor; tìm kiếm chỉ hiện icon, mở hộp tìm kiếm có thể dùng Ctrl/⌘ K, Escape và Enter; hồ sơ chỉ có trên header. Ngữ cảnh trang học sinh nằm bên trái header, không có hàng breadcrumb riêng bên dưới. Khi mở môn học, hiện liên kết về Môn học và bộ chọn môn từ đăng ký/học liệu đã xuất bản; khi mở bài, hiện liên kết về môn cùng tên bài. Trên điện thoại, rút gọn phần chữ của liên kết quay lại nhưng giữ tên truy cập và vùng bấm 44px. Không thêm streak hoặc chỉ số nhận thức chưa có nguồn dữ liệu.
 
-**Header và breadcrumbs.** Header học sinh chỉ giữ công cụ toàn cục: tìm kiếm icon (Ctrl/⌘ K, Enter, Escape) và avatar; trên mobile thêm logo điều hướng. Không đưa breadcrumb vào fixed header. Khi xem một môn đã đăng ký, liên kết về Môn học và bộ chọn môn xuất hiện trong vùng nội dung, trước phần chính. Bài học chi tiết sử dụng breadcrumb trong nội dung bài. Điều khiển phải có vùng bấm ít nhất 44px và không cắt ở 360px.
+**Mobile (dưới 1024px).** Bottom nav gồm 4 mục Chính, mỗi nhãn nằm trên một dòng. Logo trên header mở drawer chứa nhóm Phụ; logo trong drawer đóng drawer. Escape hoặc chạm nền phủ đóng drawer và trả focus về nút mở. Chuyển sang desktop xóa trạng thái mở drawer. Nội dung trang chừa khoảng an toàn cho bottom nav.
 
-**Kích thước nghiệm thu.** 360–479 mobile nhỏ, 480–767 mobile lớn, 768–1023 tablet dọc, 1024–1279 tablet ngang/laptop nhỏ, 1280–1439 laptop, 1440–1919 desktop, từ 1920 desktop lớn. Layout trang sử dụng **container query** cho Home, Knowledge Universe, Focus Studio, Thinking Replay, lịch học, giáo viên và curriculum editor; breakpoint chỉ dành cho shell và thiết bị chạm.
-
-**Giáo viên và Quản trị.** Vẫn dùng drawer dưới 1024px và sidebar cố định từ 1024px; breadcrumbs đặt trong main, không ở header. Dashboard thống kê và các bộ lọc/phần biên soạn đổi số cột theo chiều rộng workspace, không theo breakpoint viewport. Editor có thanh Lưu/Xuất bản cố định ở đáy khi thiếu chỗ cho panel phải.
-
-**Độ rộng nội dung.** Shell sở hữu gutter 16px ở mobile và 24px từ sm; từ 1920px học sinh dùng gutter 32px. Dashboard Hôm nay tối đa 1600px; bố cục bài học chi tiết tối đa 1160px với vùng đọc nội dung tối ưu khoảng 760–800px. Bản đồ, đồ thị và canvas phải giữ công cụ tương tác, không bị cắt khuất hay tạo scroll ngang toàn trang. Quy tắc đầy đủ: [docs/responsive-layout.md](docs/responsive-layout.md).
+**Giáo viên và Quản trị.** Giữ shell hiện tại (sidebar có nhãn và breadcrumb). H1 là tên trang, không dùng khẩu hiệu.
 
 ## 5. Bố cục trang
 
-Mỗi trang có đúng một H1, mô tả ngắn và một hành động chính rõ ràng. Trang học sinh dùng lời mời học tự nhiên; ngữ cảnh môn học nằm trong nội dung, còn header chỉ giữ tìm kiếm/hồ sơ. Các trang chức năng khác dùng `PageHeader`. Đầu trang chức năng không đặt ảnh minh họa trang trí; bản xem trước trong nhiệm vụ phải là nội dung của bài sắp mở.
+Mỗi trang có đúng một H1, mô tả ngắn và một hành động chính rõ ràng. H1 của trang = tên đích trong thanh điều hướng; lời mời nằm ở dòng mô tả. Các trang chức năng khác dùng `PageHeader`. Đầu trang chức năng không đặt ảnh minh họa trang trí; bản xem trước trong nhiệm vụ phải là nội dung của bài sắp mở.
 
 Bốn màn chính dùng component và màu của gen.ai.vn. Hướng khám phá lấy cảm hứng từ [Brilliant: học Toán qua thao tác](https://brilliant.org/mathematics/), hướng chặng học tham khảo [lộ trình của Duolingo](https://blog.duolingo.com/new-duolingo-home-screen-design/): học sinh có một bước tiếp theo rõ ràng và được thử ý tưởng trước khi đọc giải thích. Không sao chép thương hiệu hoặc suy ra hiệu quả học tập từ việc đổi giao diện.
 
@@ -69,7 +65,7 @@ Bốn màn chính dùng component và màu của gen.ai.vn. Hướng khám phá 
 
 **Khám phá trong bài:** hoạt động ngắn mở đầu phần lý thuyết, dùng câu hỏi/đáp án/giải thích của học liệu hiện tại. Giải thích chỉ xuất hiện sau khi học sinh kiểm tra lựa chọn. Mô hình hình vuông/Parabol được gắn với cấu hình nội dung đã kiểm tra, hiển thị biến và phản hồi theo thao tác thật; bài không có mô hình dùng câu hỏi tương tác. Không có câu hỏi hợp lệ thì không dựng hoạt động giả. Thử ở bản xem trước không đánh dấu hoàn thành bài hoặc cộng GP; việc hoàn thành vẫn qua toàn bộ câu tự kiểm tra của bài.
 
-Mobile chuyển các cột thành một luồng đọc, giữ đủ tính năng và không tràn ngang ở 360px. Nút "Bắt đầu" mở thẳng bài học hoặc đề. Knowledge Universe có nút xem bản đồ toàn màn hình trên điện thoại, đóng được bằng Escape. Focus Studio giữ thứ tự DOM: Đề → Trình bày lời giải/Kiểm tra → nút gợi ý → dock bốn công cụ → panel hỗ trợ; tablet dùng một cột khi workspace hẹp, desktop mới có panel trợ giúp bên phải. Thinking Replay giữ player và timeline trước phần phân tích trên điện thoại.
+Mobile chuyển các cột thành một luồng đọc, giữ đủ tính năng và không tràn ngang ở 360px. Nút "Bắt đầu" mở thẳng bài học hoặc đề.
 
 Mọi danh sách và bảng phải có đủ ba trạng thái:
 
@@ -112,7 +108,7 @@ Nội dung tải từ DB theo quy tắc sau:
 
 1. Thay đổi shell, kiến trúc thông tin hoặc nguyên tắc: sửa mục tương ứng trong file này trong cùng PR và xóa phần cũ.
 2. Mượn pattern từ sản phẩm khác: PR phải nêu rõ việc người dùng mà pattern đó giải quyết trong Tutor. Ví dụ, sidebar lịch sử hội thoại chỉ hợp lý khi sản phẩm có hội thoại.
-3. PR có thay đổi giao diện: đính kèm ảnh trước và sau tại 390×844 và 1440×900; với thay đổi shell còn phải có 768×1024, 1024×768 và 1920×1080. E2E của hai luồng chính phải pass:
+3. PR có thay đổi giao diện: đính kèm ảnh trước và sau ở 390×844 và 1440×900. E2E của hai luồng chính phải pass:
    - Hôm nay → Luyện tập → Nộp bài → Xem lại.
    - Môn học → Bài học → Hoàn thành.
 
@@ -123,7 +119,7 @@ Một thay đổi giao diện chỉ được coi là xong khi:
 - Dữ liệu là dữ liệu thật, hoặc được gắn nhãn minh họa.
 - Có đủ trạng thái loading, empty và error.
 - Dùng được hoàn toàn bằng bàn phím, focus nhìn thấy được.
-- Không tràn ngang ở mọi viewport thuộc matrix 360, 390, 430, 768, 820, 1024, 1280, 1440, 1920px.
+- Không tràn ngang ở 360px.
 - Câu chữ tiếng Việt, động từ rõ ràng.
 - Không có icon rơi vào fallback.
 - E2E và visual diff đều pass.

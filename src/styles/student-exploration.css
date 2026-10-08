@@ -7,11 +7,12 @@
     --exploration-paper: var(--color-accent-50);
     container: exploration / inline-size;
     min-width: 0;
-    padding: 24px;
+    padding: clamp(20px, 2.5vw, 28px);
     border: 1px solid var(--exploration-border);
-    border-radius: 20px;
+    border-radius: 22px;
     background: var(--exploration-surface);
     color: var(--exploration-ink);
+    box-shadow: var(--shadow-card);
   }
   .lesson-discovery__header {
     margin-bottom: 22px;

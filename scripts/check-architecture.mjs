@@ -2,14 +2,25 @@ import { readFileSync, readdirSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 
 const errors = [];
-const textExtensions = new Set([".ts", ".tsx", ".css", ".html", ".svg", ".mjs", ".json", ".md"]);
+const textExtensions = new Set([
+  ".ts",
+  ".tsx",
+  ".css",
+  ".html",
+  ".svg",
+  ".mjs",
+  ".json",
+  ".md",
+]);
 
 function lineAt(text, index) {
   return text.slice(0, index).split("\n").length;
 }
 
 function report(path, text, match, message) {
-  errors.push(`${relative(".", path)}:${lineAt(text, match.index ?? 0)} ${message}`);
+  errors.push(
+    `${relative(".", path)}:${lineAt(text, match.index ?? 0)} ${message}`,
+  );
 }
 
 function visitDirectory(directory) {
@@ -28,8 +39,15 @@ function visitDirectory(directory) {
     const isTest = /\.test\./.test(path);
 
     // Global brand regression guard: these were the pre-alignment Tailwind blues.
-    for (const match of text.matchAll(/#(?:1d4ed8|2563eb|3b82f6|38bdf8|0284c7)\b/gi)) {
-      report(path, text, match, "Off-brand blue detected. Use the genAi navy/teal/cyan/sky palette.");
+    for (const match of text.matchAll(
+      /#(?:1d4ed8|2563eb|3b82f6|38bdf8|0284c7)\b/gi,
+    )) {
+      report(
+        path,
+        text,
+        match,
+        "Off-brand blue detected. Use the genAi navy/teal/cyan/sky palette.",
+      );
     }
 
     if (!isSource || !isTs || isTest) continue;
@@ -57,7 +75,10 @@ function visitDirectory(directory) {
       {
         pattern: /https?:\/\//g,
         message: "Move asset/service URLs to configuration or feature data.",
-        exempt: !path.endsWith(".tsx") || path.includes("/dev/") || path.includes("/components/icons/"),
+        exempt:
+          !path.endsWith(".tsx") ||
+          path.includes("/dev/") ||
+          path.includes("/components/icons/"),
       },
       {
         pattern: /material-symbols|lucide-react/g,
@@ -77,13 +98,32 @@ function visitDirectory(directory) {
 
     for (const rule of rules) {
       if (rule.exempt) continue;
-      for (const match of text.matchAll(rule.pattern)) report(path, text, match, rule.message);
+      for (const match of text.matchAll(rule.pattern))
+        report(path, text, match, rule.message);
     }
 
     for (const match of text.matchAll(/text-\[(\d+(?:\.\d+)?)px\]/g)) {
       if (Number(match[1]) < 12) {
-        report(path, text, match, "Text smaller than the 12px genAi caption minimum.");
+        report(
+          path,
+          text,
+          match,
+          "Text smaller than the 12px genAi caption minimum.",
+        );
       }
+    }
+
+    if (
+      path.endsWith(".tsx") &&
+      /(?:src\/data\/demo|sampleAssessment)/.test(text) &&
+      !/DemoDataNotice/.test(text)
+    ) {
+      report(
+        path,
+        text,
+        { index: 0 },
+        "File importing demo data or sampleAssessment must import and display DemoDataNotice.",
+      );
     }
   }
 }
@@ -94,7 +134,9 @@ visitDirectory("public");
 
 const indexCss = readFileSync("src/index.css", "utf8");
 if (
-  !/@theme\s+inline\s*\{[\s\S]*?--color-primary:\s*var\(--color-brand\);/.test(indexCss)
+  !/@theme\s+inline\s*\{[\s\S]*?--color-primary:\s*var\(--color-brand\);/.test(
+    indexCss,
+  )
 ) {
   errors.push(
     "src/index.css Tutor semantic aliases must be compiled in @theme inline so legacy utilities resolve to genAi tokens.",
@@ -114,7 +156,9 @@ if (
 
 for (const rootFile of ["index.html", "vite.config.ts"]) {
   const text = readFileSync(rootFile, "utf8");
-  for (const match of text.matchAll(/#(?:1d4ed8|2563eb|3b82f6|38bdf8|0284c7)\b/gi)) {
+  for (const match of text.matchAll(
+    /#(?:1d4ed8|2563eb|3b82f6|38bdf8|0284c7)\b/gi,
+  )) {
     report(rootFile, text, match, "Off-brand blue detected in app metadata.");
   }
 }

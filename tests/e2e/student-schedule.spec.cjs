@@ -15,7 +15,7 @@ const thursday = (page) =>
 async function openSchedule(page) {
   await page.goto(schedulePath);
   await expect(
-    page.getByRole("heading", { level: 1, name: "Lịch học của mình" }),
+    page.getByRole("heading", { level: 1, name: "Lịch học" }),
   ).toBeVisible();
 }
 

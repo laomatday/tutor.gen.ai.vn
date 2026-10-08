@@ -11,10 +11,10 @@ export function StudentPageHeader({
   actions,
   className,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description?: string;
-  icon: string;
+  icon?: string;
   meta?: ReactNode;
   actions?: ReactNode;
   className?: string;
@@ -22,14 +22,21 @@ export function StudentPageHeader({
   return (
     <header className={cn("student-page-hero", className)}>
       <div className="student-page-hero__main">
-        <span className="student-page-hero__icon" aria-hidden="true">
-          <Icon name={icon} />
-        </span>
+        {icon && (
+          <span
+            className="student-page-hero__icon hidden sm:flex"
+            aria-hidden="true"
+          >
+            <Icon name={icon} />
+          </span>
+        )}
         <div className="min-w-0">
-          <p className="student-page-eyebrow">{eyebrow}</p>
+          {eyebrow && <p className="student-page-eyebrow">{eyebrow}</p>}
           <h1 className="student-page-title">{title}</h1>
           {description && (
-            <p className="student-page-description">{description}</p>
+            <p className="student-page-description line-clamp-1 sm:line-clamp-none">
+              {description}
+            </p>
           )}
           {meta && <div className="student-page-meta">{meta}</div>}
         </div>
@@ -69,18 +76,19 @@ export function StudentSignalStrip({
 }: {
   items: Array<{ icon: string; label: string; value: ReactNode }>;
 }) {
+  const displayItems = items.slice(0, 3);
   return (
     <div className="student-signal-strip">
-      {items.map((item) => (
+      {displayItems.map((item) => (
         <div key={item.label} className="student-signal-item">
           <span className="student-signal-icon">
             <Icon name={item.icon} />
           </span>
-          <span className="min-w-0">
+          <span className="min-w-0 flex-1">
             <span className="block text-xs font-semibold text-ink-500">
               {item.label}
             </span>
-            <strong className="mt-0.5 block truncate text-sm text-brand">
+            <strong className="mt-0.5 block line-clamp-2 text-sm text-brand font-bold leading-snug">
               {item.value}
             </strong>
           </span>

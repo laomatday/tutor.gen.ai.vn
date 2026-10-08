@@ -55,7 +55,7 @@
     @apply mt-2 max-w-2xl text-sm leading-6 text-ink-600;
   }
   .student-signal-strip {
-    @apply grid gap-3 sm:grid-cols-2 xl:grid-cols-4;
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3;
   }
   .student-signal-item {
     @apply flex min-h-20 items-center gap-3 rounded-2xl border border-ink-200/70 bg-white px-4 py-3 shadow-2xs;

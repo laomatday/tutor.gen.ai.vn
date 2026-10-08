@@ -61,9 +61,7 @@ export function AppSidebar({
                 ? pinned
                   ? "Thu gọn menu"
                   : "Mở rộng menu"
-                : open
-                  ? "Đóng menu"
-                  : "Mở menu"
+                : "Đóng menu"
             }
             aria-expanded={isDesktop ? pinned : open}
             aria-controls="main-navigation"
@@ -72,9 +70,7 @@ export function AppSidebar({
                 ? pinned
                   ? "Thu gọn menu"
                   : "Mở rộng menu"
-                : open
-                  ? "Đóng menu"
-                  : "Mở menu"
+                : "Đóng menu"
             }
           >
             <img
