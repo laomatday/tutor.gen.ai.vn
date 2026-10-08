@@ -14,7 +14,7 @@
   }
 
   .app-header {
-    @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-ink-200 bg-white/95 px-4 backdrop-blur-md sm:px-6;
+    @apply fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-ink-200 bg-white/95 px-4 backdrop-blur-xl sm:px-5;
     height: var(--header-h);
   }
 
@@ -38,13 +38,13 @@
     top: calc(var(--header-h) + 1rem);
   }
 
-  /* Student shell — mobile drawer first */
+  /* Student sidebar — light by default, dark only under .dark. */
   .app-sidebar--student {
     width: min(88vw, 20rem);
-    border-right: 1px solid rgb(255 255 255 / 0.08);
-    background: #292a30;
-    color: #f3f4f6;
-    box-shadow: 18px 0 48px rgb(5 7 12 / 0.28);
+    border-right: 1px solid var(--color-ink-200);
+    background: #f7f7f8;
+    color: var(--color-ink-800);
+    box-shadow: 18px 0 48px rgb(15 23 42 / 0.12);
   }
 
   .student-icon-rail {
@@ -53,8 +53,8 @@
 
   .student-sidebar-panel {
     @apply flex h-full min-h-0 flex-col;
-    background: #292a30;
-    color: #f3f4f6;
+    background: #f7f7f8;
+    color: var(--color-ink-800);
   }
 
   .student-sidebar-panel__header {
@@ -67,20 +67,20 @@
 
   .student-sidebar-brand {
     @apply flex min-h-11 min-w-0 items-center gap-3 rounded-xl px-2 text-left;
-    color: #f3f4f6;
+    color: var(--color-ink-900);
     background: transparent;
     border: 0;
     box-shadow: none;
   }
 
   .student-sidebar-brand:hover {
-    background: rgb(255 255 255 / 0.06);
+    background: rgb(15 23 42 / 0.045);
   }
 
   .student-sidebar-brand__mark {
     @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg;
-    background: rgb(255 255 255 / 0.08);
-    color: #c7d2fe;
+    background: var(--color-brand-50);
+    color: var(--color-brand);
   }
 
   .student-sidebar-brand strong {
@@ -89,55 +89,55 @@
 
   .student-sidebar-brand small {
     @apply mt-0.5 block truncate text-xs;
-    color: rgb(229 231 235 / 0.58);
+    color: var(--color-ink-500);
   }
 
   .student-sidebar-panel__header-actions .ui-btn {
-    color: rgb(229 231 235 / 0.72);
+    color: var(--color-ink-500);
   }
 
   .student-sidebar-panel__header-actions .ui-btn:hover {
-    background: rgb(255 255 255 / 0.07);
-    color: white;
+    background: rgb(15 23 42 / 0.055);
+    color: var(--color-ink-900);
   }
 
   .student-sidebar-panel__body {
     @apply min-h-0 flex-1 overflow-y-auto px-3 pb-3;
     scrollbar-width: thin;
-    scrollbar-color: rgb(255 255 255 / 0.16) transparent;
+    scrollbar-color: var(--color-ink-200) transparent;
   }
 
   .student-new-session {
     @apply mt-1 min-h-11 w-full justify-between rounded-xl px-3 text-sm font-semibold;
-    background: transparent;
-    border: 1px solid rgb(255 255 255 / 0.13);
-    color: #f3f4f6;
-    box-shadow: none;
+    background: #fff;
+    border: 1px solid var(--color-ink-200);
+    color: var(--color-ink-800);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
   }
 
   .student-new-session:hover {
-    background: rgb(255 255 255 / 0.065);
-    border-color: rgb(255 255 255 / 0.2);
+    background: var(--color-surface-page);
+    border-color: var(--color-brand-100);
   }
 
   .student-sidebar-pin-row {
-    @apply mt-3 flex items-center justify-between gap-3 rounded-xl px-3 py-2.5;
-    background: rgb(255 255 255 / 0.035);
+    @apply mt-3 items-center justify-between gap-3 rounded-xl px-3 py-2.5;
+    background: rgb(15 23 42 / 0.035);
   }
 
   .student-sidebar-pin-row strong {
     @apply block text-xs font-semibold;
-    color: #e5e7eb;
+    color: var(--color-ink-800);
   }
 
   .student-sidebar-pin-row > div > span {
     @apply mt-0.5 block text-xs;
-    color: rgb(229 231 235 / 0.48);
+    color: var(--color-ink-500);
   }
 
   .student-sidebar-pin-toggle {
-    @apply flex min-h-9 shrink-0 items-center gap-2 rounded-lg px-2 text-xs font-semibold;
-    color: rgb(229 231 235 / 0.7);
+    @apply min-h-9 shrink-0 items-center gap-2 rounded-lg px-2 text-xs font-semibold;
+    color: var(--color-ink-600);
     background: transparent;
     border: 0;
     box-shadow: none;
@@ -145,7 +145,7 @@
 
   .student-sidebar-pin-toggle__track {
     @apply relative block h-5 w-9 rounded-full;
-    background: rgb(255 255 255 / 0.14);
+    background: var(--color-ink-200);
     transition: background 150ms ease;
   }
 
@@ -168,7 +168,7 @@
 
   .student-sidebar-section__label {
     @apply px-2 pb-1.5 text-xs font-semibold;
-    color: rgb(229 231 235 / 0.42);
+    color: var(--color-ink-400);
   }
 
   .student-sidebar-list {
@@ -177,30 +177,35 @@
 
   .student-sidebar-row {
     @apply flex min-h-12 w-full items-center gap-3 rounded-xl px-2.5 text-left;
-    color: rgb(243 244 246 / 0.82);
+    color: var(--color-ink-700);
     background: transparent;
     border: 0;
     box-shadow: none;
   }
 
+  .student-sidebar-row--compact {
+    @apply min-h-10;
+  }
+
   .student-sidebar-row:hover {
-    background: rgb(255 255 255 / 0.055);
-    color: white;
+    background: rgb(15 23 42 / 0.05);
+    color: var(--color-ink-950);
   }
 
   .student-sidebar-row[aria-current="page"] {
-    background: #42434a;
-    color: white;
+    background: #e9e9ec;
+    color: var(--color-ink-950);
   }
 
   .student-sidebar-row__icon {
     @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg;
-    color: rgb(229 231 235 / 0.72);
+    color: var(--color-ink-500);
   }
 
   .student-sidebar-row[aria-current="page"] .student-sidebar-row__icon {
-    background: rgb(255 255 255 / 0.08);
-    color: #dbeafe;
+    background: #fff;
+    color: var(--color-brand);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
   }
 
   .student-sidebar-row strong {
@@ -209,54 +214,52 @@
 
   .student-sidebar-row small {
     @apply mt-0.5 block truncate text-xs;
-    color: rgb(229 231 235 / 0.42);
+    color: var(--color-ink-400);
   }
 
   .student-sidebar-row[aria-current="page"] small {
-    color: rgb(255 255 255 / 0.58);
+    color: var(--color-ink-500);
   }
 
   .student-sidebar-panel__footer {
     @apply space-y-2 border-t px-3 pb-3 pt-3;
-    border-color: rgb(255 255 255 / 0.07);
+    border-color: var(--color-ink-200);
   }
 
   .student-sidebar-mastery {
     @apply flex items-center gap-3 rounded-xl px-2 py-2;
-    background: rgb(255 255 255 / 0.035);
+    background: rgb(15 23 42 / 0.035);
   }
 
   .student-sidebar-mastery strong {
     @apply block text-sm font-semibold;
-    color: #f3f4f6;
+    color: var(--color-ink-800);
   }
 
   .student-sidebar-mastery small {
     @apply mt-0.5 block text-xs;
-    color: rgb(229 231 235 / 0.48);
+    color: var(--color-ink-500);
   }
 
   .student-progress-orb {
     @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-1 text-xs font-bold;
-    color: #dbeafe;
+    color: var(--color-brand);
   }
 
   .student-progress-orb > span {
-    @apply flex h-full w-full items-center justify-center rounded-full;
-    background: #292a30;
+    @apply flex h-full w-full items-center justify-center rounded-full bg-white;
   }
 
   .student-sidebar-profile {
     @apply flex min-h-12 w-full items-center gap-3 rounded-xl px-2;
-    color: rgb(243 244 246 / 0.86);
+    color: var(--color-ink-800);
     background: transparent;
     border: 0;
     box-shadow: none;
   }
 
   .student-sidebar-profile:hover {
-    background: rgb(255 255 255 / 0.055);
-    color: white;
+    background: rgb(15 23 42 / 0.05);
   }
 
   .student-sidebar-profile strong {
@@ -265,16 +268,28 @@
 
   .student-sidebar-profile small {
     @apply mt-0.5 block truncate text-xs;
-    color: rgb(229 231 235 / 0.48);
+    color: var(--color-ink-500);
   }
 
-  /* Gemini-inspired student header */
+  .student-sidebar-install {
+    color: var(--color-ink-500);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .student-sidebar-install:hover {
+    color: var(--color-ink-900);
+    background: rgb(15 23 42 / 0.05);
+  }
+
+  /* Gemini-inspired header — light by default. */
   .app-header--student.gemini-header {
     height: 3.75rem;
-    border-color: #34353b;
-    background: rgb(31 32 38 / 0.97);
-    color: #f3f4f6;
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.025);
+    border-color: var(--color-ink-200);
+    background: rgb(255 255 255 / 0.9);
+    color: var(--color-ink-800);
+    box-shadow: 0 1px 0 rgb(15 23 42 / 0.025);
   }
 
   .gemini-header__left,
@@ -291,26 +306,26 @@
   }
 
   .gemini-mobile-menu {
-    color: #e5e7eb;
+    color: var(--color-ink-700);
   }
 
   .gemini-context-pill {
     @apply flex min-h-10 min-w-0 items-center gap-2 rounded-full px-3 text-left;
     max-width: 18rem;
-    color: #f3f4f6;
-    background: #303139;
-    border: 1px solid rgb(255 255 255 / 0.06);
+    color: var(--color-ink-800);
+    background: #f1f3f4;
+    border: 1px solid transparent;
     box-shadow: none;
   }
 
   .gemini-context-pill:hover {
-    background: #383941;
+    background: #e9ebee;
   }
 
   .gemini-context-pill__icon {
     @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm;
-    color: #c7d2fe;
-    background: rgb(129 140 248 / 0.12);
+    color: var(--color-brand);
+    background: var(--color-brand-50);
   }
 
   .gemini-context-pill strong {
@@ -319,23 +334,23 @@
 
   .gemini-context-pill small {
     @apply block truncate text-xs;
-    color: rgb(229 231 235 / 0.5);
+    color: var(--color-ink-500);
   }
 
   .gemini-context-pill__chevron {
     @apply ml-1 shrink-0 text-base;
-    color: rgb(229 231 235 / 0.5);
+    color: var(--color-ink-400);
   }
 
   .gemini-header__tools {
     @apply items-center gap-0.5 rounded-full px-1;
-    background: #303139;
-    border: 1px solid rgb(255 255 255 / 0.055);
+    background: #f1f3f4;
+    border: 1px solid transparent;
   }
 
   .gemini-header__tools .ui-btn,
   .gemini-header-icon {
-    color: rgb(229 231 235 / 0.72);
+    color: var(--color-ink-600);
     background: transparent;
     border: 0;
     box-shadow: none;
@@ -343,48 +358,49 @@
 
   .gemini-header__tools .ui-btn:hover,
   .gemini-header-icon:hover {
-    color: white;
-    background: rgb(255 255 255 / 0.07);
+    color: var(--color-ink-900);
+    background: rgb(15 23 42 / 0.06);
   }
 
   .gemini-command-search {
     @apply relative hidden h-10 items-center md:flex;
-    width: min(33vw, 32rem);
+    width: min(34vw, 36rem);
   }
 
   .gemini-command-search__icon {
     @apply pointer-events-none absolute left-3 text-lg;
-    color: rgb(229 231 235 / 0.48);
+    color: var(--color-ink-400);
   }
 
   .gemini-command-search__input {
     @apply h-full w-full rounded-full border-0 pl-10 pr-12 text-sm outline-none;
-    background: #303139;
-    color: #f3f4f6;
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.055);
+    background: #f1f3f4;
+    color: var(--color-ink-800);
+    box-shadow: inset 0 0 0 1px transparent;
   }
 
   .gemini-command-search__input::placeholder {
-    color: rgb(229 231 235 / 0.42);
+    color: var(--color-ink-400);
   }
 
   .gemini-command-search__input:focus {
+    background: #fff;
     box-shadow:
-      inset 0 0 0 1px rgb(165 180 252 / 0.52),
-      0 0 0 3px rgb(99 102 241 / 0.12);
+      inset 0 0 0 1px color-mix(in oklab, var(--color-brand) 34%, transparent),
+      0 0 0 3px color-mix(in oklab, var(--color-brand) 8%, transparent);
   }
 
   .gemini-command-search__kbd {
     @apply absolute right-3 rounded-md px-1.5 py-0.5 text-xs font-semibold;
-    color: rgb(229 231 235 / 0.42);
-    background: rgb(255 255 255 / 0.045);
-    border: 1px solid rgb(255 255 255 / 0.06);
+    color: var(--color-ink-400);
+    background: #fff;
+    border: 1px solid var(--color-ink-200);
   }
 
   .gemini-status-pill {
     @apply min-h-10 items-center gap-2 rounded-full px-3;
-    background: #303139;
-    border: 1px solid rgb(255 255 255 / 0.055);
+    background: #f1f3f4;
+    border: 1px solid transparent;
   }
 
   .gemini-status-pill strong,
@@ -394,30 +410,30 @@
 
   .gemini-status-pill strong {
     @apply text-xs font-semibold;
-    color: #f3f4f6;
+    color: var(--color-ink-800);
   }
 
   .gemini-status-pill small {
     @apply text-xs;
-    color: rgb(229 231 235 / 0.46);
+    color: var(--color-ink-500);
   }
 
   .gemini-notification-dot {
     @apply absolute right-2 top-2 h-2 w-2 rounded-full;
-    background: #f472b6;
-    box-shadow: 0 0 0 2px #1f2026;
+    background: #ec4899;
+    box-shadow: 0 0 0 2px #fff;
   }
 
   .gemini-profile-trigger {
     @apply flex min-h-10 items-center gap-2 rounded-full px-1.5 pr-2;
-    color: #f3f4f6;
+    color: var(--color-ink-800);
     background: transparent;
     border: 0;
     box-shadow: none;
   }
 
   .gemini-profile-trigger:hover {
-    background: rgb(255 255 255 / 0.06);
+    background: #f1f3f4;
   }
 
   .gemini-profile-trigger strong {
@@ -426,7 +442,107 @@
 
   .gemini-profile-trigger small {
     @apply text-xs;
-    color: rgb(229 231 235 / 0.45);
+    color: var(--color-ink-500);
+  }
+
+  /* Explicit dark theme overrides — light theme never inherits these. */
+  .dark .app-sidebar--student,
+  .dark .student-sidebar-panel {
+    background: #202126;
+    color: #f3f4f6;
+    border-color: #303139;
+  }
+
+  .dark .student-sidebar-brand,
+  .dark .student-sidebar-profile,
+  .dark .student-sidebar-row,
+  .dark .student-sidebar-mastery strong,
+  .dark .student-sidebar-install {
+    color: rgb(243 244 246 / 0.88);
+  }
+
+  .dark .student-sidebar-brand small,
+  .dark .student-sidebar-profile small,
+  .dark .student-sidebar-row small,
+  .dark .student-sidebar-section__label,
+  .dark .student-sidebar-mastery small {
+    color: rgb(229 231 235 / 0.48);
+  }
+
+  .dark .student-sidebar-row:hover,
+  .dark .student-sidebar-profile:hover,
+  .dark .student-sidebar-brand:hover {
+    background: rgb(255 255 255 / 0.06);
+    color: white;
+  }
+
+  .dark .student-sidebar-row[aria-current="page"] {
+    background: #373842;
+    color: white;
+  }
+
+  .dark .student-new-session {
+    background: transparent;
+    border-color: rgb(255 255 255 / 0.13);
+    color: #f3f4f6;
+  }
+
+  .dark .student-sidebar-pin-row,
+  .dark .student-sidebar-mastery {
+    background: rgb(255 255 255 / 0.04);
+  }
+
+  .dark .student-sidebar-pin-row strong {
+    color: #f3f4f6;
+  }
+
+  .dark .student-sidebar-pin-row > div > span {
+    color: rgb(229 231 235 / 0.48);
+  }
+
+  .dark .student-progress-orb > span {
+    background: #202126;
+  }
+
+  .dark .app-header--student.gemini-header {
+    border-color: #34353b;
+    background: rgb(31 32 38 / 0.96);
+    color: #f3f4f6;
+  }
+
+  .dark .gemini-context-pill,
+  .dark .gemini-header__tools,
+  .dark .gemini-command-search__input,
+  .dark .gemini-status-pill {
+    background: #303139;
+    color: #f3f4f6;
+  }
+
+  .dark .gemini-context-pill small,
+  .dark .gemini-profile-trigger small,
+  .dark .gemini-status-pill small {
+    color: rgb(229 231 235 / 0.5);
+  }
+
+  .dark .gemini-header__tools .ui-btn,
+  .dark .gemini-header-icon,
+  .dark .gemini-profile-trigger {
+    color: rgb(229 231 235 / 0.74);
+  }
+
+  .dark .gemini-command-search__input::placeholder,
+  .dark .gemini-command-search__icon {
+    color: rgb(229 231 235 / 0.44);
+  }
+
+  .dark .gemini-command-search__kbd {
+    background: rgb(255 255 255 / 0.05);
+    border-color: rgb(255 255 255 / 0.07);
+    color: rgb(229 231 235 / 0.46);
+  }
+
+  .dark .gemini-notification-dot {
+    box-shadow: 0 0 0 2px #1f2026;
   }
 
   @variant lg {
@@ -445,22 +561,22 @@
     .app-sidebar--student {
       width: 3.75rem;
       overflow: visible;
-      border-right: 1px solid #303139;
-      background: #202126;
+      border-right: 1px solid var(--color-ink-200);
+      background: #f7f7f8;
       box-shadow: none;
       transform: none;
     }
 
     .student-icon-rail {
       @apply flex h-full w-[3.75rem] flex-col items-center px-1.5 py-2;
-      background: #202126;
+      background: #f7f7f8;
     }
 
     .student-logo-trigger,
     .student-icon-rail__item,
     .student-icon-rail__avatar {
       @apply h-11 w-11 min-h-11 min-w-11 rounded-xl;
-      color: rgb(229 231 235 / 0.64);
+      color: var(--color-ink-500);
       background: transparent;
       border: 0;
       box-shadow: none;
@@ -469,13 +585,13 @@
     .student-logo-trigger:hover,
     .student-icon-rail__item:hover,
     .student-icon-rail__avatar:hover {
-      color: white;
-      background: rgb(255 255 255 / 0.065);
+      color: var(--color-ink-900);
+      background: rgb(15 23 42 / 0.055);
     }
 
     .student-logo-trigger[aria-expanded="true"] {
-      background: #383941;
-      box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.065);
+      background: #e7e7ea;
+      box-shadow: inset 0 0 0 1px var(--color-ink-200);
     }
 
     .student-icon-rail__nav {
@@ -483,8 +599,8 @@
     }
 
     .student-icon-rail__item[aria-current="page"] {
-      color: white;
-      background: #373842;
+      color: var(--color-brand);
+      background: #e9e9ec;
     }
 
     .student-icon-rail__footer {
@@ -503,9 +619,9 @@
         opacity 160ms ease,
         transform 180ms ease,
         visibility 160ms linear;
-      background: #292a30;
-      border-right: 1px solid #3a3b42;
-      box-shadow: 18px 0 42px rgb(5 7 12 / 0.18);
+      background: #f7f7f8;
+      border-right: 1px solid var(--color-ink-200);
+      box-shadow: 18px 0 42px rgb(15 23 42 / 0.08);
     }
 
     .app-sidebar--student.is-open .student-sidebar-panel,
@@ -535,8 +651,43 @@
     }
 
     .app-main--student {
-      max-width: 96rem;
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
       padding-top: 5rem;
+      padding-inline: clamp(1rem, 2vw, 2.25rem);
+    }
+
+    .dark .app-sidebar--student,
+    .dark .student-icon-rail {
+      background: #202126;
+      border-color: #303139;
+    }
+
+    .dark .student-sidebar-panel {
+      background: #202126;
+      border-color: #303139;
+      box-shadow: 18px 0 42px rgb(5 7 12 / 0.2);
+    }
+
+    .dark .student-logo-trigger,
+    .dark .student-icon-rail__item,
+    .dark .student-icon-rail__avatar {
+      color: rgb(229 231 235 / 0.65);
+    }
+
+    .dark .student-logo-trigger:hover,
+    .dark .student-icon-rail__item:hover,
+    .dark .student-icon-rail__avatar:hover {
+      color: white;
+      background: rgb(255 255 255 / 0.07);
+    }
+
+    .dark .student-icon-rail__item[aria-current="page"],
+    .dark .student-logo-trigger[aria-expanded="true"] {
+      color: white;
+      background: #373842;
+      box-shadow: none;
     }
   }
 
