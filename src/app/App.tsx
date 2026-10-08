@@ -74,6 +74,12 @@ const AdminView = lazy(() =>
   })),
 );
 
+const TutorPilotView = lazy(() =>
+  import("../features/pilot/TutorPilotView").then(module => ({
+    default: module.TutorPilotView,
+  })),
+);
+
 export default function App() {
   const location = useAppLocation();
   const { role, section, label } = readRoute(location.pathname);
@@ -138,6 +144,15 @@ export default function App() {
 
   const navigateStudent = (tab: string) =>
     navigate(tab.startsWith("/") ? tab : routePath(tab as NavTab));
+
+  // Real pilot records are strictly separated from demonstration data.
+  if (location.pathname === "/pilot") {
+    return (
+      <Suspense fallback={<div role="status" className="p-6">Đang mở không gian học có tài khoản…</div>}>
+        <TutorPilotView />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
