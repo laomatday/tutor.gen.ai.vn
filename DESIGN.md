@@ -100,3 +100,38 @@ Student UX không còn tổ chức quanh một dashboard tính năng. Trục ch�
 6. **Mobile không thu nhỏ desktop graph**: dùng composition riêng cho một tay và viewport hẹp.
 
 Mọi redesign Student mới phải bảo toàn journey `Mission → Map → Studio → Replay → Mission`; thêm feature mới chỉ được vào rail chính nếu nó phục vụ trực tiếp journey này.
+
+
+## Student Experience V2
+
+Student shell có hai trạng thái desktop:
+
+- **Collapsed rail**: 80px, ưu tiên icon và tốc độ chuyển surface.
+- **Expanded sidebar**: 280px, hiển thị label + description + mastery context. Trạng thái được lưu bằng `storageKeys.studentSidebarExpanded`.
+- Toggle expand/collapse nằm ngay trên sidebar, không dùng setting ẩn.
+- Header và content phải dịch cùng chiều rộng sidebar; không được để sidebar chồng nội dung.
+
+Mobile không thu nhỏ sidebar desktop:
+
+- Core journey **Mission / Map / Studio / Replay** luôn có bottom navigation.
+- Drawer hamburger dành cho secondary tools: Đánh giá, Lịch học, Radar, Thành tựu và hồ sơ.
+- Main content phải chừa safe space cho bottom nav.
+
+### Shared student primitives
+
+Các route học sinh ngoài 4 signature surfaces dùng chung:
+
+- `StudentPageHeader`: eyebrow + icon + H1 + description + meta + actions.
+- `StudentSignalStrip`: 2–4 tín hiệu ngắn giúp học sinh biết “đang ở đâu / tiếp theo là gì”.
+- `StudentSectionHeader`: section title + description + action.
+- `learning-os-page`: cùng max-width, vertical rhythm và mobile bottom spacing.
+
+Các route phải dùng cùng grammar này: deep-link bài học/topic, Learning Radar, Learning Rhythm, Mastery Rewards. Không quay lại pattern mỗi module tự thiết kế một header/card system riêng.
+
+### Student-first UX
+
+1. Ưu tiên **next action** hơn tổng quan dữ liệu.
+2. Dùng ngôn ngữ ngắn, động từ rõ: bắt đầu, tiếp tục, quay lại, replay, bridge.
+3. Progress/mastery phải nhìn thấy trong context thay vì chỉ nằm ở trang Tiến bộ.
+4. Ảnh minh họa quan trọng phải local/self-hosted hoặc có fallback nội bộ; không phụ thuộc asset bên ngoài dễ gãy.
+5. Mobile core navigation tối đa 4 điểm; secondary feature không được chen vào bottom nav.
