@@ -11,13 +11,51 @@ import {
   WorkspacePremium, ArrowOutward,
   type IconComponent,
 } from "../icons";
+import {
+  AlarmClock, Bot, CalendarPlus, CalendarX, CloudCheck, Crosshair, DoorOpen,
+  Focus, Headphones, Headset, House, LayoutGrid, Link2, ListVideo, Medal,
+  MessageCircleQuestion, Network, PenTool, PlayCircle, ShieldCheck, Trash2,
+  Video, MapPin, AlertCircle, Filter, Music2, GraduationCap,
+  Workflow
+} from "lucide-react";
 import { cn } from "./utils";
 
 /**
  * Stable Material-name contract for curriculum data while rendering the same
  * local Material Symbols Rounded SVG language as gen.ai.vn.
  */
-const ICONS: Record<string, IconComponent> = {
+export const ICONS: Record<string, IconComponent> = {
+  add_task: CheckCircle,
+  alarm: AlarmClock,
+  calendar_add_on: CalendarPlus,
+  center_focus_strong: Focus,
+  cloud_done: CloudCheck,
+  delete_outline: Trash2,
+  error: AlertCircle,
+  event_busy: CalendarX,
+  filter_alt: Filter,
+  gesture: PenTool,
+  graphic_eq: Music2,
+  grid_view: LayoutGrid,
+  headphones: Headphones,
+  home: House,
+  hub: Network,
+  link: Link2,
+  meeting_room: DoorOpen,
+  military_tech: Medal,
+  play_lesson: PlayCircle,
+  playlist_play: ListVideo,
+  question_answer: MessageCircleQuestion,
+  room: MapPin,
+  shield: ShieldCheck,
+  smart_toy: Bot,
+  sports_score: GraduationCap,
+  support_agent: Headset,
+  timeline: Workflow,
+  track_changes: Crosshair,
+  videocam: Video,
+  warning: Warning,
+  zoom_out: Focus,
   account_tree: AccountTree,
   add: Add,
   arrow_back: ArrowBack,
@@ -138,6 +176,11 @@ interface IconProps extends Omit<SVGProps<SVGSVGElement>, "children" | "name"> {
 }
 
 export function Icon({ name, children, className, ...props }: IconProps) {
-  const Symbol = ICONS[name || children || ""] || Info;
+  const iconName = name || children || "";
+  const Symbol = ICONS[iconName];
+  if (!Symbol) {
+    if (import.meta.env.DEV) throw new Error(`Icon chưa khai báo: ${iconName}`);
+    return null;
+  }
   return <Symbol className={cn("ui-icon", className)} {...props} />;
 }
