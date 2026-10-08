@@ -43,6 +43,24 @@ test.describe("14 routes × 2 viewport visual, semantic and accessibility gates"
   }
 });
 
+// Release gate for small Android/iPhone viewports; 390px smoke alone misses 360px clipping.
+test.describe("360px minimum mobile width", () => {
+  for (const [url, slug] of pages) {
+    test(`${slug} has no page errors or horizontal overflow at 360px`, async ({page}) => {
+      const errors = [];
+      page.on("pageerror", (error) => errors.push(error.message));
+      await page.setViewportSize({width:360,height:800});
+      await page.goto(url);
+      await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
+      await expect(page.locator("h1")).toHaveCount(1);
+      const overflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow, "horizontal overflow at 360px").toBeLessThanOrEqual(1);
+      expect(errors, "uncaught browser errors at 360px").toEqual([]);
+    });
+  }
+});
+
 test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
   await page.goto("/");
   await expect(page.getByRole("heading", {name:/Chào/})).toBeVisible();
