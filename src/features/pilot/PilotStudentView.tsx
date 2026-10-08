@@ -154,7 +154,7 @@ export function PilotStudentView() {
       ...studio,
       openedHints:[...studio.openedHints,id],
       events:[...studio.events,{
-        id:crypto.randomUUID(),kind:"hint",at:Date.now(),
+        id:crypto.randomUUID(),kind:"hint" as const,at:Date.now(),
         detail:"Mở gợi ý "+id+": "+hint.title,
       }].slice(-100),
     };
