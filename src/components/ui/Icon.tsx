@@ -97,6 +97,7 @@ export const ICONS: Record<string, IconComponent> = {
   history: RestartAlt,
   info: Info,
   insights: Dashboard,
+  public: Public,
   language: Public,
   library_books: MenuBook,
   lightbulb: Lightbulb,
