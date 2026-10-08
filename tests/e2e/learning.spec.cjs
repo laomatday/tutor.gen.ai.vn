@@ -68,6 +68,7 @@ test("Reference shell: desktop sidebar, breadcrumb, and collapsed rail", async (
   await expect(crumbs).toContainText("Không gian học tập");
   await expect(crumbs).toContainText("Hôm nay");
   await expect(page.locator(".app-header").getByRole("navigation", {name:"Đường dẫn"})).toHaveCount(0);
+  await expect(page.locator(".app-header .app-header__context")).toBeHidden();
   const sidebar = page.locator("#main-navigation");
   const nav = sidebar.getByRole("navigation", {name:"Các trang học tập"});
   await expect(nav.getByRole("button", {name:"Hôm nay"})).toHaveAttribute("aria-current","page");
@@ -96,6 +97,7 @@ test("Reference shell: mobile drawer preserves navigation and focus", async ({pa
   await page.setViewportSize({width:390,height:844});
   await page.goto("/");
   const toggle = page.getByRole("button",{name:"Mở menu học tập"});
+  await expect(page.locator(".app-header .app-header__context")).toBeVisible();
   await toggle.click();
   const sidebar = page.locator("#main-navigation");
   await expect(sidebar).toHaveClass(/is-open/);
