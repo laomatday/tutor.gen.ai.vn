@@ -1,3 +1,4 @@
+import { practiceProblem } from "../practice/data";
 import { getCourseProgress } from "../curriculum/selectors";
 import { useReadingPosition } from "./useReadingPosition";
 import { normalizeSearch } from "../../lib/search";
@@ -624,7 +625,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               aria-label="Chọn khối lớp"
               className="mb-5 flex flex-wrap gap-2"
             >
-              {GRADES.map((grade) => (
+              {GRADES.filter((grade) => studentProfile.enrollments.some((enrollment) => enrollment.gradeId === grade.id)).map((grade) => (
                 <Button
                   variant="surface"
                   key={grade.id}
@@ -638,7 +639,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               ))}
             </div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {subjects.map((item) => {
+              {subjects.filter((item) => canStudy(gradeId, item.id)).map((item) => {
                 const enrolled = canStudy(gradeId, item.id);
                 const count = enrolled
                   ? lessons.filter(
@@ -1460,7 +1461,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   </Button>
                 </section>
               )}
-              {lesson.gradeId === "9" && lesson.subjectId === "toan" && (
+              {lesson.id === practiceProblem.lessonId && (
                 <section className="rounded-3xl bg-secondary/8 p-5">
                   <Icon name="psychology" className="text-3xl text-secondary" />
                   <h2 className="mt-2 text-sm font-bold text-primary">
@@ -1473,7 +1474,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   <Button
                     variant="surface"
                     type="button"
-                    onClick={() => onNavigate("tu-giai")}
+                    onClick={() => onNavigate(`/tu-giai?problem=${practiceProblem.id}`)}
                     className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg py-2 text-xs font-bold text-primary hover:underline"
                   >
                     Đến không gian Tự giải

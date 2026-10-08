@@ -56,3 +56,10 @@ test("CI icon guard rejects a deliberately unknown icon", () => {
   assert.notEqual(missing.status, 0);
   assert.match(missing.stderr, /__unknown_icon__/);
 });
+
+test("practice link is eligible only for the matching published lesson", () => {
+  const problem = getPracticeProblem("parabola-coefficient-03");
+  const published = getCourseProgress(INITIAL_LESSONS, INITIAL_TOPICS, []).lessons;
+  assert.equal(published.filter((lesson) => lesson.id === problem.lessonId).length, 1);
+  assert.notEqual(problem.lessonId, "rut-gon-can-thuc");
+});

@@ -351,6 +351,10 @@
     @apply block min-h-11 w-full rounded-full border border-transparent bg-chip px-4 py-2 text-base text-ink-900 outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-400 hover:bg-chip-hover focus:border-focus focus:bg-white focus:ring-4 focus:ring-focus/15 sm:text-sm dark:bg-night-chip dark:text-ink-100 dark:hover:bg-night-chip-hover dark:focus:border-focus-soft dark:focus:bg-night-raised;
   }
 
+  .ui-range {
+    @apply block h-10 w-full cursor-pointer accent-brand;
+  }
+
   .ui-check {
     @apply h-4 w-4 shrink-0 cursor-pointer rounded border-ink-300 accent-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus;
   }
