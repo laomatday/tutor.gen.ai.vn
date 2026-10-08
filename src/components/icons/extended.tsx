@@ -1,4 +1,4 @@
-import {
+export {
   AccountTree, Add, ArrowBack, ArrowDownward, ArrowForward, ArrowUpward,
   Bolt, Bookmark, Calculate, CalendarMonth, Campaign, Chat, Check, CheckCircle,
   Close, Code, ContentCopy, Dashboard, Delete, Description, Download, Edit,
