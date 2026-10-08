@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { AdaptiveText } from "../../components/AdaptiveText";
 import { LessonContentRenderer } from "../../components/LessonContentRenderer";
 import { RichMathText } from "../../components/MathLatex";
-import { Alert, Badge, Button, Card, Field, Icon, Input, Progress, Tabs, Textarea } from "../../components/ui";
+import { Alert, Badge, Button, Card, Field, Icon, Input, Progress, Select, Tabs, Textarea } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
 import { getPracticeProblems } from "../practice/data";
 import { verifyPracticeAnswer } from "../practice/domain";
@@ -256,13 +256,13 @@ export function PilotStudentView() {
               </div>
               {activeLesson && <p className="mt-2 text-sm text-ink-600">{activeLesson.summary}</p>}
               <Field label="Chọn bài học đã xuất bản" className="mt-4">
-                <select className="ui-field w-full" value={activeLesson?.id??""} onChange={event=>{
+                <Select className="ui-field w-full" value={activeLesson?.id??""} onChange={event=>{
                   setLessonId(event.target.value);setAnswers({});setQuizResult(null);
                 }}>
                   {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>
                     {subjects.find(s=>s.id===lesson.subjectId)?.name} · {lesson.title}
                   </option>)}
-                </select>
+                </Select>
               </Field>
             </Card>
             {activeLesson && (
@@ -323,12 +323,12 @@ export function PilotStudentView() {
               <Progress value={availableLessons.filter(l=>completed.has(l.id)).length} max={Math.max(1,availableLessons.length)}
                 label="Bài đã hoàn thành trên máy chủ" className="mt-3"/>
               <div className="mt-4 space-y-2">
-                {availableLessons.map(lesson=><button key={lesson.id} type="button"
+                {availableLessons.map(lesson=><Button variant="surface" key={lesson.id} type="button"
                   className="pilot-lesson-row" aria-current={lesson.id===activeLesson?.id?"step":undefined}
                   onClick={()=>{setLessonId(lesson.id);setAnswers({});setQuizResult(null);}}>
                   <Icon name={completed.has(lesson.id)?"check_circle":"menu_book"}/>
                   <span>{lesson.title}</span>
-                </button>)}
+                </Button>)}
               </div>
             </Card>
             <Card className="p-5">
@@ -345,9 +345,9 @@ export function PilotStudentView() {
             <h2 className="text-xl font-bold text-brand">Focus Studio — luyện tập có lưu</h2>
             <p className="mt-1 text-sm text-ink-600">Bản nháp được đồng bộ lên tài khoản. Kết quả kiểm tra của hai bài mẫu chỉ mang tính hỗ trợ, chưa xác nhận năng lực.</p>
             <Field label="Chọn dạng toán" className="mt-4">
-              <select className="ui-field w-full" value={problem?.id??""} onChange={e=>{setProblemId(e.target.value);setTool("formulas");}}>
+              <Select className="ui-field w-full" value={problem?.id??""} onChange={e=>{setProblemId(e.target.value);setTool("formulas");}}>
                 {availableProblems.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}
-              </select>
+              </Select>
             </Field>
           </Card>
           {problem ? <div className="pilot-study-layout">
@@ -423,8 +423,8 @@ export function PilotStudentView() {
         <Card className="p-5">
           <h3 className="font-bold text-brand">Chọn bài để xem lịch sử</h3>
           <div className="mt-3 space-y-2">
-            {availableProblems.map(p=><button type="button" key={p.id} className="pilot-lesson-row" aria-current={p.id===problem?.id?"step":undefined}
-              onClick={()=>setProblemId(p.id)}>{p.title}</button>)}
+            {availableProblems.map(p=><Button variant="surface" type="button" key={p.id} className="pilot-lesson-row" aria-current={p.id===problem?.id?"step":undefined}
+              onClick={()=>setProblemId(p.id)}>{p.title}</Button>)}
           </div>
         </Card>
       </section>}
