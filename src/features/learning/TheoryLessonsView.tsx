@@ -706,9 +706,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
           <p className="mt-6 text-xs font-bold uppercase tracking-widest text-secondary">
             {subject.name} · Lớp {gradeId}
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-primary">
+          <h2 className="mt-2 text-2xl font-bold text-primary">
             Khóa học chưa được đăng ký
-          </h1>
+          </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-on-surface-variant">
             {subject.description} Tài khoản mẫu của bạn hiện chỉ có quyền học{" "}
             {ownedLabel}. Nội dung của môn học này sẽ hiển thị khi tài khoản
@@ -749,9 +749,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
                 Chương trình đã đăng ký
               </p>
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-primary sm:text-3xl">
+              <h2 className="text-3xl font-bold leading-tight tracking-tight text-primary sm:text-3xl">
                 {subject!.name} lớp {gradeId}
-              </h1>
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
                 Học theo từng chủ đề. Hiểu lý thuyết, theo dõi ví dụ và tự mình
                 thực hành.
@@ -991,9 +991,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                 </span>
               )}
             </div>
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl">
+            <h2 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl">
               <AdaptiveText text={lesson.title} />
-            </h1>
+            </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
               <AdaptiveText text={lesson.summary} />
             </p>

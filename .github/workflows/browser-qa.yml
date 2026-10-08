@@ -2,9 +2,6 @@ name: Browser UX Gate
 
 on:
   pull_request:
-  push:
-    branches:
-      - "fix/**"
 
 permissions:
   contents: read

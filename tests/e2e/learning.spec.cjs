@@ -29,7 +29,14 @@ test.describe("14 routes × 2 viewport visual, semantic and accessibility gates"
       const violations = await page.evaluate(async () => {
         const result = await window.axe.run(document,{runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa"]}});
         return result.violations.filter((x) => ["serious","critical"].includes(x.impact))
-          .map((x) => ({id:x.id,impact:x.impact,count:x.nodes.length}));
+          .map((x) => ({
+          id:x.id, impact:x.impact, count:x.nodes.length,
+          targets:x.nodes.slice(0,8).map((node) => ({
+            selector:node.target,
+            html:node.html.slice(0,160),
+            reason:(node.failureSummary || "").slice(0,150),
+          })),
+        }));
       });
       expect(violations, "WCAG serious/critical violations").toEqual([]);
     });
@@ -44,7 +51,7 @@ test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
   await page.getByLabel("Trình bày từng phép biến đổi").fill("12 = a * (-2)^2 ⇔ a = 3");
   await page.getByRole("button", {name:"Nộp bài"}).click();
   await expect(page.getByText(/Các phép tính khớp với bài mẫu/)).toBeVisible();
-  await page.getByRole("button", {name:"Xem lại bài làm"}).click();
+  await page.locator("#main-content").getByRole("button", {name:"Xem lại bài làm"}).click();
   await expect(page.getByRole("heading",{name:"Các bước đã ghi nhận"})).toBeVisible();
   await expect(page.getByText("Nộp bài", {exact:true}).first()).toBeVisible();
 });
@@ -52,6 +59,7 @@ test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
 test("Lộ trình → Bài học → Hoàn thành", async ({page}) => {
   await page.goto("/hoc-bai?grade=9&subject=toan&topic=can-thuc&lesson=rut-gon-can-thuc&stage=exercises");
   await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
+  await expect(page.locator("#main-content").getByRole("heading",{level:1})).toHaveCount(1);
   const exerciseData = require("../../src/data/curriculum/lessons.json");
   const lesson = exerciseData.find((item) => item.id === "rut-gon-can-thuc");
   for (const exercise of lesson.exercises) {

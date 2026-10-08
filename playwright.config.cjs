@@ -15,6 +15,7 @@ module.exports = defineConfig({
   },
   webServer: {
     command: "bun run dev -- --host 127.0.0.1",
+    env: { VITE_CONTENT_SOURCE: "local" },
     url: "http://127.0.0.1:3000",
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
