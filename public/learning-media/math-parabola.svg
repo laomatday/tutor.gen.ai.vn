@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="t d">
+<title id="t">Parabol và hệ trục tọa độ</title><desc id="d">Minh họa đồ thị parabol mở lên trên lưới tọa độ.</desc>
+<rect width="1200" height="700" rx="48" fill="#F7FAFC"/>
+<g stroke="#D8E1EC" stroke-width="2"><path d="M100 140H1100M100 220H1100M100 300H1100M100 380H1100M100 460H1100M100 540H1100"/><path d="M180 80V620M300 80V620M420 80V620M540 80V620M660 80V620M780 80V620M900 80V620M1020 80V620"/></g>
+<g stroke="#243C8F" stroke-width="8" stroke-linecap="round"><path d="M90 540H1110"/><path d="M600 620V70"/></g>
+<path d="M260 130C390 390 485 515 600 540c115-25 210-150 340-410" fill="none" stroke="#19B7A5" stroke-width="16" stroke-linecap="round"/>
+<circle cx="600" cy="540" r="18" fill="#243C8F"/><circle cx="410" cy="360" r="14" fill="#243C8F"/><circle cx="790" cy="360" r="14" fill="#243C8F"/>
+<text x="90" y="95" font-family="Arial,sans-serif" font-size="42" font-weight="700" fill="#243C8F">y = ax²</text>
+</svg>
