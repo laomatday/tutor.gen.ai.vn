@@ -2348,3 +2348,236 @@
     }
   }
 }
+
+/*
+ * Learning Universe / Mission Control
+ * A dominant learning decision followed by evidence, not three competing
+ * dashboard cards. All surfaces continue to use the shared genAi tokens.
+ */
+@layer components {
+  .home-exploration .home-greeting {
+    gap: 16px;
+  }
+
+  .home-exploration .home-greeting h1 {
+    font-size: clamp(27px, 2.7vw, 38px);
+    letter-spacing: -0.055em;
+  }
+
+  .home-exploration .home-hero-trio {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+    grid-template-areas:
+      "mission mission"
+      "journey rhythm";
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 4px;
+  }
+
+  .home-exploration .home-mood-card {
+    grid-area: mission;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    overflow: visible;
+    border: 1px solid var(--color-line-subtle);
+    border-top: 4px solid var(--color-brand);
+    border-radius: 24px;
+    padding: clamp(20px, 2.5vw, 32px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .home-exploration .home-mood-card.has-discovery {
+    display: grid;
+    grid-template-columns: minmax(0, 0.87fr) minmax(0, 1.13fr);
+    grid-template-rows: auto 1fr;
+    align-items: stretch;
+    column-gap: clamp(22px, 3vw, 44px);
+  }
+
+  .home-exploration .home-mood-card .home-trio-head {
+    grid-column: 1;
+    grid-row: 1;
+    align-items: flex-start;
+    padding: 0;
+    margin-bottom: 20px;
+    border-bottom: 0;
+  }
+
+  .home-exploration .home-mood-card .home-trio-head h2 {
+    font-size: clamp(20px, 2vw, 27px);
+    line-height: 1.25;
+    letter-spacing: -0.04em;
+  }
+
+  .home-exploration .home-mood-card .home-trio-action-panel {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  .home-exploration .home-mood-card .home-action-focused {
+    gap: 18px;
+  }
+
+  .home-exploration .home-mood-card .home-action-body h3 {
+    font-size: clamp(21px, 2.1vw, 30px);
+    line-height: 1.25;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  .home-exploration .home-mood-card .home-action-footer {
+    border-top: 0;
+    margin-top: auto;
+    padding-top: 20px;
+  }
+
+  .home-exploration .home-mood-card .home-primary-start-btn.ui-btn {
+    min-height: 52px;
+    width: fit-content;
+    max-width: 100%;
+    padding-inline: 23px;
+    border-radius: 14px;
+  }
+
+  .home-exploration .home-micro-lab {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-width: 0;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    border-radius: 20px;
+    background: var(--color-surface-muted);
+    padding: 9px;
+  }
+
+  .home-exploration .home-micro-lab .lesson-discovery {
+    height: 100%;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+
+  .home-exploration .home-micro-lab .lesson-discovery__header {
+    margin-bottom: 14px;
+  }
+
+  .home-exploration .home-micro-lab__note {
+    padding: 0 10px 3px;
+    color: var(--color-ink-600);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .home-exploration .home-milestones-card {
+    grid-area: journey;
+  }
+
+  .home-exploration .home-rhythm-card.ui-card {
+    grid-area: rhythm;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .home-exploration .home-milestones-card,
+  .home-exploration .home-rhythm-card.ui-card {
+    border-radius: 20px;
+    padding: clamp(18px, 2vw, 26px);
+    box-shadow: none;
+  }
+
+  .home-exploration .home-mood-card .home-mood-tabs.ui-tabs {
+    margin-bottom: 0;
+  }
+
+  .home-exploration .home-mood-card :is(.home-action-step-chip, .home-primary-start-btn):focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .home-exploration .home-micro-lab .lesson-discovery__option:focus-within {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 1259px) {
+    .home-exploration .home-mood-card.has-discovery {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home-exploration .home-micro-lab {
+      margin-top: 24px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .home-exploration .home-hero-trio {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "mission" "journey" "rhythm";
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .home-exploration .home-greeting h1 {
+      font-size: 30px;
+      max-width: none;
+    }
+
+    .home-exploration .home-hub {
+      gap: 14px;
+    }
+
+    .home-exploration .home-mood-card {
+      padding: 19px 16px;
+      border-radius: 20px;
+    }
+
+    .home-exploration .home-mood-card .home-trio-head {
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .home-exploration .home-mood-card .home-trio-head h2 {
+      font-size: 19px;
+    }
+
+    .home-exploration .home-mood-card .home-action-body h3 {
+      font-size: 22px;
+    }
+
+    .home-exploration .home-mood-card .home-action-footer {
+      padding-top: 8px;
+    }
+
+    .home-exploration .home-mood-card .home-primary-start-btn.ui-btn {
+      width: 100%;
+      min-height: 50px;
+    }
+
+    .home-exploration .home-mood-card .home-action-steps {
+      gap: 5px;
+    }
+
+    .home-exploration .home-micro-lab {
+      margin-top: 18px;
+      padding: 6px;
+    }
+
+    .home-exploration .home-micro-lab .lesson-discovery {
+      padding: 17px 14px;
+    }
+
+    .home-exploration .home-milestones-card,
+    .home-exploration .home-rhythm-card.ui-card {
+      padding: 18px 16px;
+    }
+  }
+}
