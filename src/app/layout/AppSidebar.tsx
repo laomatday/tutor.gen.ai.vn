@@ -239,7 +239,7 @@ export function AppSidebar({
                 className="student-progress-orb"
                 title={`Mastery ${progress}%`}
                 style={{
-                  background: `conic-gradient(var(--color-accent) ${progress}%, rgb(255 255 255 / 0.12) 0)`,
+                  background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-600) 0)`,
                 }}
               >
                 <span>{progress}</span>
