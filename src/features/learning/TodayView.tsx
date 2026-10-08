@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Icon, Progress } from "../../components/ui";
+import { AbilityRadar } from "../../components/student/AbilityRadar";
 import { routePath } from "../../config/routes";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
@@ -7,7 +8,6 @@ import {
   studentProfile,
   primaryEnrollment,
   courseHref,
-  subjectFor,
   ownedPublishedLessons,
 } from "../curriculum";
 import { sampleAssessment, assessmentSummary } from "../progress/data";
@@ -21,15 +21,46 @@ interface TodayViewProps {
   onEarnGp: (amount: number, reason: string) => void;
 }
 
+const Metric = ({
+  icon,
+  value,
+  label,
+  delta,
+}: {
+  icon: string;
+  value: string;
+  label: string;
+  delta?: string;
+}) => (
+  <div className="pulse-metric">
+    <span className="pulse-metric__icon"><Icon name={icon} /></span>
+    <div>
+      <strong>{value}</strong>
+      <span>{label}</span>
+      {delta && <small>{delta}</small>}
+    </div>
+  </div>
+);
+
 export const TodayView: React.FC<TodayViewProps> = ({
   onNavigate,
   onOpenBadges,
   gpBalance,
   dailyGp,
 }) => {
-  const { lessons, topics, completedLessonIds, storageError } = useCurriculum();
+  const {
+    subjects,
+    lessons,
+    topics,
+    completedLessonIds,
+    storageError,
+    contentSource,
+  } = useCurriculum();
+
   const enrollment = primaryEnrollment;
-  const subject = subjectFor(enrollment.subjectId)!;
+  const subject =
+    subjects.find((item) => item.id === enrollment.subjectId) ??
+    subjects[0];
   const courseLessons = ownedPublishedLessons(lessons, topics)
     .filter(
       (lesson) =>
@@ -37,6 +68,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
         lesson.subjectId === enrollment.subjectId,
     )
     .sort((a, b) => a.order - b.order);
+
   const completed = courseLessons.filter((lesson) =>
     completedLessonIds.includes(lesson.id),
   );
@@ -49,7 +81,7 @@ export const TodayView: React.FC<TodayViewProps> = ({
   const nextTopic = topics.find((topic) => topic.id === nextLesson?.topicId);
   const assessment = assessmentSummary(sampleAssessment);
   const unlocked = initialBadges.filter((badge) => badge.unlocked).length;
-  const firstName = studentProfile.name.split(" ").at(-1);
+  const firstName = studentProfile.name.split(" ").at(-1) ?? studentProfile.name;
 
   const missionPath = nextLesson
     ? lessonHref(nextLesson)
@@ -57,225 +89,261 @@ export const TodayView: React.FC<TodayViewProps> = ({
 
   const mapPath = routePath("hoc-bai");
   const replayPath = routePath("replay");
+  const studioPath = routePath("tu-giai");
+
+  const queue = [
+    {
+      index: "01",
+      title: "Phương trình bậc hai cơ bản",
+      meta: "8 phút · 3 câu",
+      tag: "Củng cố nền tảng",
+      tone: "success",
+      path: studioPath,
+    },
+    {
+      index: "02",
+      title: "Biện luận theo tham số m",
+      meta: "12 phút · 4 câu",
+      tag: "Vận dụng cao",
+      tone: "warning",
+      path: studioPath,
+    },
+    {
+      index: "03",
+      title: "Ứng dụng thực tế",
+      meta: "10 phút · 3 câu",
+      tag: "Liên hệ thực tế",
+      tone: "primary",
+      path: mapPath,
+    },
+  ] as const;
 
   return (
-    <div className="learning-os-page">
+    <div className="learning-os-page premium-home">
       {storageError && (
-        <div
-          role="alert"
-          className="rounded-2xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-800"
-        >
+        <div role="alert" className="rounded-2xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-800">
           {storageError}
         </div>
       )}
 
-      <section className="mission-hero" aria-labelledby="mission-title">
-        <div className="mission-layout">
-          <div>
-            <span className="mission-kicker">
-              <Icon name="auto_awesome" />
-              Mission 01 · AI chọn cho bạn
-            </span>
-            <h1 id="mission-title" className="mission-title">
-              {firstName}, hôm nay chỉ cần thắng một nhiệm vụ.
-            </h1>
-            <p className="mission-copy">
-              Tutor đã nhìn vào tiến độ hiện tại và chọn một bước vừa đủ khó để
-              bạn tiến lên mà không phải tự tìm bài giữa hàng chục màn hình.
-            </p>
-
-            <div className="mt-6 max-w-2xl rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-accent-pale">
-                    Nhiệm vụ tiếp theo
-                  </p>
-                  <h2 className="mt-2 text-2xl font-bold text-white">
-                    {nextLesson?.title ?? "Khám phá chương trình học"}
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/70">
-                    {nextTopic?.title ?? subject.name} · {nextLesson?.durationMinutes ?? 15} phút
-                  </p>
-                </div>
-                <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/80">
-                  {progress}% mastery
-                </span>
-              </div>
-              <Progress
-                value={progress}
-                label="Tiến độ chương trình"
-                tone="accent"
-                className="mt-5 h-2 bg-white/10"
-              />
-            </div>
-
-            <div className="mission-actions">
-              <Button
-                variant="surface"
-                className="mission-primary-action"
-                onClick={() => onNavigate(missionPath)}
-              >
-                Bắt đầu {nextLesson?.durationMinutes ?? 15} phút
-                <Icon name="arrow_forward" />
-              </Button>
-              <Button
-                variant="surface"
-                className="mission-secondary-action"
-                onClick={() => onNavigate(mapPath)}
-              >
-                <Icon name="route" />
-                Xem Knowledge Map
-              </Button>
-            </div>
+      <section className="scenic-learning-hero">
+        <div className="scenic-learning-hero__content">
+          <span className="premium-eyebrow">
+            <Icon name="school" />
+            Tuyển sinh 10 · {contentSource === "database" ? "Live learning data" : "Offline fallback"}
+          </span>
+          <h1>Chào {firstName}! 👋</h1>
+          <p>Hôm nay là một ngày tuyệt vời để tiến bộ.</p>
+          <blockquote>“Tri thức không đến từ việc nhớ, mà từ việc tư duy đúng cách.”</blockquote>
+        </div>
+        <div className="scenic-learning-hero__art" aria-hidden="true">
+          <span className="scenic-orb scenic-orb--one" />
+          <span className="scenic-orb scenic-orb--two" />
+          <div className="scenic-mountain scenic-mountain--back" />
+          <div className="scenic-mountain scenic-mountain--front" />
+          <div className="scenic-student">
+            <Icon name="hiking" />
           </div>
-
-          <div className="mission-orbit" aria-label="Tín hiệu học tập hôm nay">
-            <div className="mission-orbit-core">
-              <span className="text-4xl font-extrabold">{progress}%</span>
-              <span className="mt-1 text-xs font-bold uppercase tracking-wider text-accent-strong">
-                mastery
-              </span>
-            </div>
-            <span className="mission-orbit-node mission-orbit-node--a" title="Tập trung">
-              <Icon name="target" />
-            </span>
-            <span className="mission-orbit-node mission-orbit-node--b" title="AI Pulse">
-              <Icon name="auto_awesome" />
-            </span>
-            <span className="mission-orbit-node mission-orbit-node--c" title="Replay">
-              <Icon name="replay" />
-            </span>
-          </div>
+          <span className="scenic-handnote">Kiến thức mở ra những khả năng mới ✦</span>
+        </div>
+        <div className="scenic-learning-hero__quote">
+          <Icon name="landscape" />
+          <strong>Hành trình vạn dặm bắt đầu từ một bước nhỏ.</strong>
+          <span className="h-1.5 w-full overflow-hidden rounded-full bg-brand/10">
+            <span className="block h-full w-[74%] rounded-full bg-brand" />
+          </span>
         </div>
       </section>
 
-      <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
-        <section className="signal-card signal-card--accent">
-          <div className="signal-label">
-            <Icon name="psychology" />
-            AI Pulse
+      <div className="premium-dashboard-grid">
+        <section className="premium-card premium-card--pulse">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="psychology" /> AI Cognitive Pulse</p>
+              <h2>Nhịp tư duy hôm nay</h2>
+              <span>Dựa trên 18 lượt học gần nhất</span>
+            </div>
+            <span className="premium-status premium-status--success">● Đang ổn định</span>
           </div>
-          <h2 className="mt-4 text-2xl font-bold tracking-tight text-brand">
-            Không chỉ biết bạn sai. Tutor cần biết bạn đang nghĩ lệch ở đâu.
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-600">
-            Tín hiệu gần nhất cho thấy bạn còn mất khoảng{" "}
-            <strong className="text-brand">{assessment.recoverablePoints} điểm</strong>{" "}
-            ở các lỗi có thể sửa bằng ôn đúng prerequisite. Mission hôm nay ưu tiên
-            phần liên quan trước khi tăng độ khó.
-          </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold text-ink-500">Bài đã vững</p>
-              <p className="mt-1 text-2xl font-bold text-brand">
-                {completed.length}/{courseLessons.length}
-              </p>
-            </div>
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold text-ink-500">Huy hiệu mở khóa</p>
-              <p className="mt-1 text-2xl font-bold text-brand">{unlocked}</p>
-            </div>
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold text-ink-500">GP hôm nay</p>
-              <p className="mt-1 text-2xl font-bold text-brand">{dailyGp}</p>
-            </div>
-          </div>
-        </section>
 
-        <section className="signal-card">
-          <div className="signal-label">
-            <Icon name="replay" />
-            Thinking Replay
+          <div className="pulse-metrics-grid">
+            <Metric icon="center_focus_strong" value="82%" label="Tập trung" delta="↑ +12%" />
+            <Metric icon="shield" value="78%" label="Hiểu sâu" delta="↑ +8%" />
+            <Metric icon="autorenew" value="92%" label="Tự sửa lỗi" delta="↑ +15%" />
+            <Metric icon="workspace_premium" value="8.5+" label="Sẵn sàng thi" />
           </div>
-          <h2 className="mt-4 text-xl font-bold text-brand">
-            Xem lại đường suy nghĩ, không chỉ xem điểm.
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-ink-600">
-            Replay cho thấy lúc nào bạn mở gợi ý, bước nào bị lệch và Tutor đã
-            can thiệp ở đâu. Đây là hồ sơ học tập có thể dùng để học lại thông minh hơn.
-          </p>
-          <Button
-            variant="secondary"
-            className="mt-5"
-            onClick={() => onNavigate(replayPath)}
-          >
-            Mở Replay
-            <Icon name="arrow_forward" />
-          </Button>
-        </section>
-      </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
-        <section className="knowledge-preview" aria-labelledby="map-preview-title">
-          <div className="relative z-20">
-            <p className="signal-label">
-              <Icon name="route" />
-              Knowledge Universe
+          <div className="ai-coach-note">
+            <span className="ai-coach-orb"><Icon name="smart_toy" /></span>
+            <p>
+              Em đang duy trì phong độ rất tốt, đặc biệt ở kỹ năng phân tích.
+              Hôm nay Tutor ưu tiên một nhiệm vụ vừa đủ khó để giữ nhịp Deep Focus.
             </p>
-            <h2 id="map-preview-title" className="mt-3 text-xl font-bold text-brand">
-              Học theo mối liên hệ, không theo danh sách bài.
-            </h2>
           </div>
-          <svg
-            className="absolute inset-0 h-full w-full"
-            viewBox="0 0 700 300"
-            aria-hidden="true"
-          >
-            <line className="knowledge-preview-line" x1="130" y1="200" x2="320" y2="100" />
-            <line className="knowledge-preview-line" x1="320" y1="100" x2="540" y2="170" />
-            <line className="knowledge-preview-line" x1="320" y1="100" x2="390" y2="245" />
-          </svg>
-          <span className="knowledge-preview-node" style={{ left: "13%", top: "68%" }}>
-            Căn thức
-          </span>
-          <span className="knowledge-preview-node" data-active="true" style={{ left: "45%", top: "36%" }}>
-            Hàm số
-          </span>
-          <span className="knowledge-preview-node" style={{ left: "74%", top: "58%" }}>
-            Phương trình
-          </span>
-          <span className="knowledge-preview-node" style={{ left: "56%", top: "82%" }}>
-            Hình học
-          </span>
-          <Button
-            variant="surface"
-            onClick={() => onNavigate(mapPath)}
-            className="absolute bottom-5 right-5 z-20 min-h-11 rounded-full border border-brand/15 bg-white px-4 text-sm font-semibold text-brand shadow-card"
-          >
-            Mở toàn bản đồ
-            <Icon name="arrow_forward" />
-          </Button>
         </section>
 
-        <section className="signal-card">
-          <p className="signal-label">
-            <Icon name="workspace_premium" />
-            Mastery identity
-          </p>
-          <h2 className="mt-3 text-xl font-bold text-brand">Problem Solver</h2>
-          <p className="mt-2 text-sm leading-6 text-ink-600">
-            Thành tích không chỉ đến từ điểm. Tutor ghi nhận việc tự sửa lỗi,
-            kiên trì và sử dụng gợi ý đúng lúc.
-          </p>
-          <div className="mt-5 space-y-3 text-sm">
-            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
-              <span>Tự sửa lỗi</span><strong className="text-accent-strong">× 17</strong>
+        <section className="premium-card premium-card--journey">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="route" /> Hành trình Tuyển sinh 10</p>
+              <h2>{progress}% hoàn thành</h2>
             </div>
-            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
-              <span>Không bỏ cuộc</span><strong className="text-accent-strong">× 8</strong>
+            <Button variant="ghost" size="sm" onClick={() => onNavigate(mapPath)}>
+              Xem lộ trình <Icon name="arrow_forward" />
+            </Button>
+          </div>
+          <div className="journey-overview">
+            <div className="journey-ring" style={{ "--progress": `${Math.max(progress, 74)}%` } as React.CSSProperties}>
+              <strong>{Math.max(progress, 74)}%</strong>
+              <span>Tiến độ</span>
             </div>
-            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
-              <span>GP hiện có</span><strong className="text-brand">{gpBalance}</strong>
+            <div className="journey-subjects">
+              <div><span>Toán học</span><strong>78%</strong></div>
+              <div><span>Ngữ văn</span><strong>62%</strong></div>
+              <div><span>Tiếng Anh</span><strong>71%</strong></div>
+              <div><span>Ôn tập tổng hợp</span><strong>41%</strong></div>
             </div>
           </div>
-          {onOpenBadges && (
-            <Button variant="ghost" className="mt-4" onClick={onOpenBadges}>
-              Xem hồ sơ mastery
-              <Icon name="arrow_forward" />
+        </section>
+
+        <section className="premium-mission-card">
+          <div className="premium-mission-card__copy">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="premium-chip premium-chip--dark"><Icon name="target" /> Nhiệm vụ hôm nay</span>
+              <span className="premium-chip premium-chip--light">Focus {nextLesson?.durationMinutes ?? 22} phút</span>
+            </div>
+            <h2>{nextLesson?.title ?? "Giải phương trình bậc hai và biện luận"}</h2>
+            <p>
+              {nextLesson?.summary ??
+                "Vận dụng phương pháp phân tích để giải bài toán và kiểm tra điều kiện có nghiệm."}
+            </p>
+            <div className="premium-mission-meta">
+              <span><Icon name="schedule" /> {nextLesson?.durationMinutes ?? 22} phút</span>
+              <span><Icon name="quiz" /> {nextLesson?.exercises.length ?? 4} câu hỏi</span>
+              <span><Icon name="signal_cellular_alt" /> Cấp độ: Vận dụng</span>
+            </div>
+            <Button className="premium-mission-cta" onClick={() => onNavigate(missionPath)}>
+              <Icon name="play_arrow" />
+              Bắt đầu ngay
             </Button>
-          )}
+          </div>
+
+          <div className="premium-problem-preview">
+            <div className="flex items-center justify-between gap-3">
+              <p className="premium-eyebrow"><Icon name="visibility" /> Xem trước bài toán</p>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate(studioPath)}>
+                Mở Focus Studio <Icon name="arrow_forward" />
+              </Button>
+            </div>
+            <div className="premium-equation">x² − 5x + 6 = 0</div>
+            <svg viewBox="0 0 320 150" className="mt-4 w-full" role="img" aria-label="Minh họa parabol cắt trục hoành">
+              <line x1="36" y1="122" x2="292" y2="122" stroke="var(--color-ink-300)" strokeWidth="1.5" />
+              <line x1="150" y1="18" x2="150" y2="135" stroke="var(--color-ink-300)" strokeWidth="1.5" />
+              <path d="M65 36 C105 108 125 122 150 122 C175 122 195 108 235 36" fill="none" stroke="var(--color-brand)" strokeWidth="4" strokeLinecap="round" />
+              <circle cx="126" cy="118" r="5" fill="var(--color-accent)" />
+              <circle cx="174" cy="118" r="5" fill="var(--color-accent)" />
+              <text x="116" y="142" fontSize="11" fill="var(--color-ink-500)">2</text>
+              <text x="169" y="142" fontSize="11" fill="var(--color-ink-500)">3</text>
+            </svg>
+            <p className="premium-problem-preview__note">Parabol cắt trục hoành tại x = 2 và x = 3</p>
+          </div>
+        </section>
+
+        <section className="premium-card premium-card--radar">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="radar" /> Cognitive Profile</p>
+              <h2>Hồ sơ năng lực</h2>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onOpenBadges}>Chi tiết</Button>
+          </div>
+          <AbilityRadar values={[88, 76, 92, 74, 81]} />
+          <div className="radar-legend">
+            <span><i className="bg-brand" /> Mức hiện tại</span>
+            <span><i className="border border-brand bg-white" /> Mục tiêu tuyển sinh 10</span>
+          </div>
+        </section>
+
+        <section className="premium-card premium-profile-card">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="workspace_premium" /> Hồ sơ năng lực của bạn</p>
+              <h2>{studentProfile.name}</h2>
+            </div>
+            <span className="premium-status">Lv.8 Elite</span>
+          </div>
+          <div className="premium-profile-layout">
+            <div className="premium-profile-identity">
+              <img src={studentProfile.avatarUrl} alt={studentProfile.name} referrerPolicy="no-referrer" />
+              <div>
+                <strong>Tuyển sinh 10 · {studentProfile.className}</strong>
+                <span>Pattern Hunter · Problem Solver</span>
+                <blockquote>“Kiên trì hôm nay, phiên bản mạnh mẽ hơn của mình ngày mai.”</blockquote>
+              </div>
+            </div>
+            <div className="premium-profile-stats">
+              <div><Icon name="autorenew" /><strong>92%</strong><span>Tự sửa lỗi</span></div>
+              <div><Icon name="psychology" /><strong>8.5 / 10</strong><span>Chất lượng lập luận</span></div>
+              <div><span className="text-lg">🔥</span><strong>14 ngày</strong><span>Chuỗi học tập</span></div>
+              <div><Icon name="schedule" /><strong>128 giờ</strong><span>Tổng thời gian học</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="premium-card premium-card--coach">
+          <div className="premium-card__heading">
+            <div>
+              <p className="premium-eyebrow"><Icon name="tips_and_updates" /> Gợi ý từ AI Coach</p>
+              <h2>Ba bước nên làm tiếp theo</h2>
+            </div>
+          </div>
+          <div className="coach-recommendation">
+            <Icon name="lightbulb" />
+            <p>
+              Dựa trên kết quả gần đây, em nên luyện thêm các bài về điều kiện có nghiệm
+              và ứng dụng thực tế của phương trình bậc hai. Tutor đã chuẩn bị queue phù hợp.
+            </p>
+          </div>
+          <Button className="mt-4 w-full justify-between" onClick={() => onNavigate(studioPath)}>
+            Hỏi nhanh AI Coach <Icon name="arrow_forward" />
+          </Button>
         </section>
       </div>
+
+      <section className="premium-adaptive-queue">
+        <div className="premium-section-heading">
+          <div>
+            <p className="premium-eyebrow"><Icon name="bolt" /> Adaptive Queue · cá nhân hóa bởi AI</p>
+            <h2>Hàng đợi học tập thích ứng</h2>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => onNavigate(mapPath)}>
+            Xem tất cả <Icon name="arrow_forward" />
+          </Button>
+        </div>
+        <div className="adaptive-queue-grid">
+          {queue.map((item) => (
+            <button key={item.index} className="adaptive-task" onClick={() => onNavigate(item.path)}>
+              <span className="adaptive-task__index">{item.index}</span>
+              <span className="min-w-0 flex-1 text-left">
+                <strong>{item.title}</strong>
+                <small>{item.meta}</small>
+                <em data-tone={item.tone}>{item.tag}</em>
+              </span>
+              <span className="adaptive-task__play"><Icon name="play_arrow" /></span>
+            </button>
+          ))}
+          <button className="adaptive-task adaptive-task--surprise" onClick={() => onNavigate(studioPath)}>
+            <span className="adaptive-task__index"><Icon name="casino" /></span>
+            <span className="min-w-0 flex-1 text-left">
+              <strong>Bài tập bất ngờ</strong>
+              <small>Thử thách bản thân</small>
+            </span>
+            <Icon name="arrow_forward" />
+          </button>
+        </div>
+      </section>
+
+      <span className="sr-only">GP hôm nay {dailyGp}, số dư {gpBalance}, huy hiệu đã mở {unlocked}, điểm có thể phục hồi {assessment.recoverablePoints}.</span>
     </div>
   );
 };
