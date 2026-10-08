@@ -101,7 +101,8 @@ jobs:
             const page=await ctx.newPage();
             const requests=[]; page.on('request',r=>requests.push(r.url()));
             await page.goto(process.env.BASE_URL+'/hoc-bai',{waitUntil:'networkidle'});
-            await page.getByText(/Knowledge Universe.*Live DB/i).first().waitFor({state:'visible',timeout:10000});
+            await page.locator('.ai-v3-map-layout').first().waitFor({state:'visible',timeout:10000});
+            await page.waitForTimeout(400);
             if(!requests.some(u=>u.includes('supabase.co/rest/v1/tutor_subjects'))) failures.push('DB-first Map missing tutor_subjects request');
             await ctx.close();
           }
