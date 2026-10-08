@@ -1,0 +1,215 @@
+name: Student Experience V2 Gate
+
+on:
+  push:
+    branches:
+      - feat/student-experience-v2
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
+      - name: Install Playwright
+        run: npm install --no-save --ignore-scripts playwright@1.63.0
+      - name: Start preview
+        run: |
+          bunx vite preview --host 127.0.0.1 --port 4173 > /tmp/student-v2-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/student-v2-preview.log
+          exit 1
+      - name: Audit student module
+        run: |
+          cat > student-v2-audit.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const out='/tmp/student-v2-audit';
+          fs.mkdirSync(out,{recursive:true});
+          const executablePath=['/usr/bin/google-chrome-stable','/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'].find(fs.existsSync);
+          if(!executablePath) throw new Error('No chromium');
+
+          const browser=await chromium.launch({
+            headless:true,
+            executablePath,
+            args:['--no-sandbox','--disable-dev-shm-usage'],
+          });
+
+          const routes=[
+            {name:'mission',path:'/',shared:false},
+            {name:'map',path:'/hoc-bai',shared:false},
+            {name:'lesson',path:'/hoc-bai?grade=9&subject=toan&topic=ham-so&lesson=ham-so-bac-hai&stage=theory',shared:true},
+            {name:'studio',path:'/tu-giai',shared:false},
+            {name:'replay',path:'/replay',shared:false},
+            {name:'assessment',path:'/thi-thu',shared:true},
+            {name:'radar',path:'/tien-bo',shared:true},
+            {name:'schedule',path:'/thoi-khoa-bieu',shared:true},
+            {name:'rewards',path:'/doi-qua',shared:true},
+          ];
+
+          const report=[];
+          const failures=[];
+
+          for(const size of [
+            {name:'mobile',width:390,height:844},
+            {name:'desktop',width:1440,height:1000},
+          ]){
+            const context=await browser.newContext({viewport:{width:size.width,height:size.height}});
+            const page=await context.newPage();
+            const pageErrors=[];
+            const badResponses=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('response',r=>{if(r.status()>=400) badResponses.push({url:r.url(),status:r.status()});});
+
+            for(const route of routes){
+              const res=await page.goto('http://127.0.0.1:4173'+route.path,{waitUntil:'networkidle',timeout:45000});
+              await page.locator('h1').first().waitFor({state:'visible',timeout:10000});
+              await page.waitForTimeout(150);
+              const metrics=await page.evaluate((expectsShared)=>{
+                const visible=el=>{
+                  const r=el.getBoundingClientRect(),s=getComputedStyle(el);
+                  return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden';
+                };
+                return {
+                  width:innerWidth,
+                  scrollWidth:document.documentElement.scrollWidth,
+                  h1:document.querySelector('h1')?.textContent?.trim()||'',
+                  dialogs:[...document.querySelectorAll('dialog')].map(el=>({open:el.open,display:getComputedStyle(el).display})),
+                  tiny:[...document.querySelectorAll('body *')]
+                    .filter(visible)
+                    .filter(el=>parseFloat(getComputedStyle(el).fontSize)<12&&!el.classList.contains('sr-only')&&!el.closest('.katex')).length,
+                  broken:[...document.images].filter(visible).filter(img=>!img.complete||img.naturalWidth===0).map(img=>img.currentSrc||img.src),
+                  sharedHero:document.querySelector('.student-page-hero')!==null,
+                  bottomNav:document.querySelector('.student-bottom-nav')!==null,
+                  expectsShared,
+                };
+              },route.shared);
+
+              const errors=[];
+              if(res?.status()!==200) errors.push(`HTTP ${res?.status()}`);
+              if(metrics.scrollWidth!==metrics.width) errors.push(`overflow ${metrics.scrollWidth}>${metrics.width}`);
+              if(metrics.dialogs.some(d=>!d.open&&d.display!=='none')) errors.push('closed dialog visible');
+              if(metrics.tiny) errors.push(`UI text under 12px: ${metrics.tiny}`);
+              if(metrics.broken.length) errors.push(`broken images: ${JSON.stringify(metrics.broken)}`);
+              if(metrics.expectsShared&&!metrics.sharedHero) errors.push('shared StudentPageHeader missing');
+              if(size.name==='mobile'&&!metrics.bottomNav) errors.push('mobile bottom nav missing');
+
+              report.push({size:size.name,route:route.name,status:res?.status(),metrics,errors});
+              failures.push(...errors.map(e=>`${size.name}/${route.name}: ${e}`));
+
+              if(['mission','lesson','assessment','schedule','rewards'].includes(route.name)){
+                await page.screenshot({path:`${out}/${size.name}-${route.name}.png`,fullPage:true});
+              }
+            }
+
+            if(pageErrors.length) failures.push(`${size.name}: page errors ${JSON.stringify(pageErrors)}`);
+            if(badResponses.length) failures.push(`${size.name}: bad responses ${JSON.stringify(badResponses)}`);
+            await context.close();
+          }
+
+          // Desktop expand/collapse + persistence
+          {
+            const context=await browser.newContext({viewport:{width:1440,height:1000}});
+            const page=await context.newPage();
+            await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
+            await page.locator('h1').first().waitFor({state:'visible'});
+            const readLayout=()=>page.evaluate(()=>{
+              const nav=document.querySelector('#main-navigation');
+              const frame=document.querySelector('.app-frame--student');
+              const header=document.querySelector('.app-header--student');
+              return {
+                navWidth:nav?Math.round(nav.getBoundingClientRect().width):0,
+                framePadding:frame?Math.round(parseFloat(getComputedStyle(frame).paddingLeft)):0,
+                headerLeft:header?Math.round(parseFloat(getComputedStyle(header).left)):0,
+                labelVisible:[...document.querySelectorAll('.student-rail-label')].some(el=>getComputedStyle(el).display!=='none'),
+                stored:localStorage.getItem('genai-student-sidebar-expanded-v1'),
+              };
+            });
+
+            const collapsed=await readLayout();
+            const toggle=page.getByRole('button',{name:/mở rộng thanh điều hướng/i});
+            if(!(await toggle.count())) failures.push('desktop/sidebar: expand control missing');
+            else await toggle.click();
+            await page.waitForTimeout(250);
+            const expanded=await readLayout();
+            await page.screenshot({path:`${out}/desktop-sidebar-expanded.png`,fullPage:true});
+            await page.reload({waitUntil:'networkidle'});
+            await page.locator('h1').first().waitFor({state:'visible'});
+            await page.waitForTimeout(250);
+            const persisted=await readLayout();
+            const collapse=page.getByRole('button',{name:/thu gọn thanh điều hướng/i});
+            if(!(await collapse.count())) failures.push('desktop/sidebar: collapse control missing after reload');
+            else await collapse.click();
+            await page.waitForTimeout(250);
+            const collapsedAgain=await readLayout();
+
+            if(collapsed.navWidth!==80) failures.push(`desktop/sidebar: initial width ${collapsed.navWidth}, expected 80`);
+            if(expanded.navWidth!==280) failures.push(`desktop/sidebar: expanded width ${expanded.navWidth}, expected 280`);
+            if(expanded.framePadding!==280||expanded.headerLeft!==280) failures.push(`desktop/sidebar: content not shifted with expanded nav ${JSON.stringify(expanded)}`);
+            if(!expanded.labelVisible) failures.push('desktop/sidebar: labels hidden after expand');
+            if(persisted.navWidth!==280||persisted.stored!=='true') failures.push(`desktop/sidebar: expanded state not persisted ${JSON.stringify(persisted)}`);
+            if(collapsedAgain.navWidth!==80) failures.push(`desktop/sidebar: collapse did not restore 80px ${JSON.stringify(collapsedAgain)}`);
+            report.push({interaction:'sidebar',collapsed,expanded,persisted,collapsedAgain});
+            await context.close();
+          }
+
+          // Mobile nav + bottom nav interaction
+          {
+            const context=await browser.newContext({viewport:{width:390,height:844}});
+            const page=await context.newPage();
+            await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
+            await page.locator('h1').first().waitFor({state:'visible'});
+            const bottomItems=page.locator('.student-bottom-nav__item');
+            if(await bottomItems.count()!==4) failures.push(`mobile/nav: expected 4 core items, got ${await bottomItems.count()}`);
+            await bottomItems.nth(1).click();
+            await page.locator('h1').first().waitFor({state:'visible'});
+            if(!page.url().includes('/hoc-bai')) failures.push(`mobile/nav: Map item did not navigate, url=${page.url()}`);
+            await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
+            const menu=page.getByRole('button',{name:/mở menu/i}).first();
+            await menu.click();
+            await page.waitForTimeout(150);
+            const drawer=await page.evaluate(()=>{
+              const overlay=[...document.querySelectorAll('div[aria-hidden="true"]')].find(el=>el.classList.contains('z-40'));
+              const nav=document.querySelector('#main-navigation');
+              return {
+                expanded:document.querySelector('button[aria-controls="main-navigation"]')?.getAttribute('aria-expanded'),
+                overlay:overlay?getComputedStyle(overlay).backgroundColor:null,
+                width:nav?Math.round(nav.getBoundingClientRect().width):0,
+              };
+            });
+            if(drawer.expanded!=='true'||!drawer.overlay||drawer.overlay==='rgba(0, 0, 0, 0)') failures.push(`mobile/drawer: invalid ${JSON.stringify(drawer)}`);
+            report.push({interaction:'mobile-navigation',drawer,bottomCount:await bottomItems.count()});
+            await context.close();
+          }
+
+          fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));
+          console.log(JSON.stringify(report,null,2));
+          await browser.close();
+
+          if(failures.length){
+            console.error('\nSTUDENT V2 FAILURES\n'+failures.join('\n'));
+            process.exit(1);
+          }
+          JS
+          node student-v2-audit.mjs
+      - name: Upload audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: student-experience-v2
+          path: /tmp/student-v2-audit
+          retention-days: 3
