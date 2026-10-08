@@ -19,7 +19,7 @@
 - Trạng thái bài hoàn thành, quiz, GP và skill evidence của pilot do Postgres lưu. Nháp Focus Studio được đồng bộ giữa thiết bị nhưng tự chấm lời giải bằng bộ kiểm tra ở client **không phải chứng nhận năng lực**.
 - Trước khi thử nghiệm có học sinh thật: phải chạy kiểm tra RLS bằng các tài khoản có vai trò riêng, xác minh đồng ý tham gia, đánh giá học thuật từng bài và kiểm tra quy định bảo vệ dữ liệu trẻ em.
 - 100 bài Toán 9 tại `src/data/draft/math9-question-bank.json` là **bản nháp sinh tự động**; không có bài nào được tự động xuất bản. Dùng `node scripts/generate-tutor-math9-bank.mjs` để tái tạo, `npm test` để kiểm tra tính nhất quán; cần người có chuyên môn duyệt.
-- Hướng dẫn vận hành: [Tutor Pilot Runbook](docs/tutor-pilot-runbook.md), kế hoạch thương mại: [Productization](docs/productization-plan.md) (nếu nhánh kế hoạch tương ứng được hợp nhất sau).
+- Hướng dẫn vận hành: [Tutor Pilot Runbook](docs/tutor-pilot-runbook.md).
 
 ### Các không gian trong ứng dụng
 
