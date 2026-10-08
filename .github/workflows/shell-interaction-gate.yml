@@ -93,7 +93,7 @@ jobs:
             const persisted=await read();
 
             // Unpin but keep the panel temporarily open.
-            const unpin=page.getByRole('button',{name:/giữ sidebar mở/i});
+            const unpin=page.getByRole('button',{name:/bỏ ghim sidebar/i});
             await unpin.click();
             await page.waitForTimeout(150);
             const unpinnedOpen=await read();
