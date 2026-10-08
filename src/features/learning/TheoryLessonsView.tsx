@@ -9,11 +9,11 @@ import { StudentPageHeader, StudentSignalStrip } from "../../components/student/
 import { appConfig } from "../../config/app";
 import { routePath } from "../../config/routes";
 import React, { useEffect, useState } from "react";
-import { RichMathText } from "../../components/MathLatex";
+import { AdaptiveText } from "../../components/AdaptiveText";
+import { LessonContentRenderer } from "../../components/LessonContentRenderer";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
   GRADES,
-  SUBJECTS,
   studentProfile,
   canStudy,
   lessonHref,
@@ -59,7 +59,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
   onNavigate,
   onEarnGp,
 }) => {
-  const { topics, lessons, completedLessonIds, completeLesson, storageError } =
+  const { subjects, topics, lessons, completedLessonIds, completeLesson, contentSource, contentLoading, contentError, storageError } =
     useCurriculum();
   const [location, setLocation] = useState(readLocation);
   const [answers, setAnswers] = useState<
@@ -85,7 +85,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
   const gradeId = GRADES.some((item) => item.id === location.gradeId)
     ? location.gradeId
     : studentProfile.gradeId;
-  const subject = SUBJECTS.find((item) => item.id === location.subjectId);
+  const subject = subjects.find((item) => item.id === location.subjectId);
   const owned = Boolean(subject && canStudy(gradeId, subject.id));
   const validPublished = (item: Lesson) =>
     isPublishedInCurriculum(item, topics);
@@ -223,7 +223,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="min-w-0">
-              <RichMathText text={item.title} />
+              <AdaptiveText text={item.title} />
             </span>
           </a>
         ))}
@@ -298,6 +298,16 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
         {...lessonLink(item)}
         className="group flex h-full flex-col ui-learning-card p-5 text-left transition-colors hover:border-secondary/45 hover:bg-surface-container-low/25 sm:p-6"
       >
+        {item.thumbnailUrl && (
+          <div className="-mx-5 -mt-5 mb-5 overflow-hidden border-b border-ink-100 bg-surface-page sm:-mx-6 sm:-mt-6">
+            <img
+              src={item.thumbnailUrl}
+              alt=""
+              className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              loading="lazy"
+            />
+          </div>
+        )}
         <div className="mb-4 flex items-center justify-between gap-3">
           <span
             className={`flex h-11 w-11 items-center justify-center rounded-2xl ${completed ? "bg-secondary/10 text-secondary" : "bg-surface-container-low text-primary"}`}
@@ -319,13 +329,13 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
           </span>
         </div>
         <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
-          <RichMathText text={itemTopic?.title || ""} />
+          <AdaptiveText text={itemTopic?.title || ""} />
         </p>
         <h3 className="text-lg font-bold leading-snug text-primary">
-          <RichMathText text={item.title} />
+          <AdaptiveText text={item.title} />
         </h3>
         <p className="mt-3 flex-1 text-sm leading-relaxed text-on-surface-variant">
-          <RichMathText text={item.summary} />
+          <AdaptiveText text={item.summary} />
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-outline-variant/70 pt-4 text-xs text-on-surface-variant">
           <span>{item.kind === "problem-type" ? "Dạng bài" : "Bài học"}</span>
@@ -454,14 +464,14 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   onClick={() => go({ topicId: lessonTopic!.id })}
                   className="rounded-md py-1 text-left hover:text-primary"
                 >
-                  <RichMathText text={lessonTopic!.title} />
+                  <AdaptiveText text={lessonTopic!.title} />
                 </Button>
               ) : (
                 <span
                   aria-current="page"
                   className="font-semibold text-primary"
                 >
-                  <RichMathText text={topic!.title} />
+                  <AdaptiveText text={topic!.title} />
                 </span>
               )}
             </>
@@ -587,7 +597,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                       : "Bài học tiếp theo"}
                   </p>
                   <p className="text-sm font-semibold leading-relaxed text-primary">
-                    <RichMathText text={resumeLesson.title} />
+                    <AdaptiveText text={resumeLesson.title} />
                   </p>
                   <p className="mt-2 text-xs text-on-surface-variant">
                     {resumeLesson.durationMinutes} phút · Lý thuyết, ví dụ và
@@ -632,7 +642,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               ))}
             </div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {SUBJECTS.map((item) => {
+              {subjects.map((item) => {
                 const enrolled = canStudy(gradeId, item.id);
                 const count = enrolled
                   ? lessons.filter(
@@ -846,7 +856,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   onClick={() => go({ topicId: item.id })}
                   className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-xs font-semibold ${topic?.id === item.id ? "border-secondary/30 bg-secondary/10 text-secondary" : "border-outline-variant bg-white text-on-surface-variant hover:border-primary/40"}`}
                 >
-                  <RichMathText text={item.title} />
+                  <AdaptiveText text={item.title} />
                 </Button>
               ))}
             </div>
@@ -862,11 +872,11 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                     id="course-lessons-title"
                     className="text-xl font-bold text-primary"
                   >
-                    <RichMathText text={topic?.title || "Bài học & dạng bài"} />
+                    <AdaptiveText text={topic?.title || "Bài học & dạng bài"} />
                   </h2>
                   {topic && (
                     <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
-                      <RichMathText text={topic.description} />
+                      <AdaptiveText text={topic.description} />
                     </p>
                   )}
                 </div>
@@ -948,7 +958,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   </p>
                   <a {...lessonLink(resumeLesson)} className="group block">
                     <h2 className="text-base font-bold leading-relaxed text-primary">
-                      <RichMathText text={resumeLesson.title} />
+                      <AdaptiveText text={resumeLesson.title} />
                     </h2>
                     <p className="mt-2 text-xs text-on-surface-variant">
                       {resumeLesson.durationMinutes} phút ·{" "}
@@ -985,10 +995,10 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               )}
             </div>
             <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl">
-              <RichMathText text={lesson.title} />
+              <AdaptiveText text={lesson.title} />
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
-              <RichMathText text={lesson.summary} />
+              <AdaptiveText text={lesson.summary} />
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-on-surface-variant">
               <span className="inline-flex items-center gap-1">
@@ -1081,31 +1091,35 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                             <span className="font-semibold text-secondary">
                               {String(index + 1).padStart(2, "0")}.
                             </span>
-                            <RichMathText text={block.heading} />
+                            <AdaptiveText text={block.heading} />
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <div className="space-y-8">
-                      {lesson.theory.map((block, index) => (
-                        <section
-                          key={`${lesson.id}-theory-${index}`}
-                          id={readingSections[index]?.id}
-                          tabIndex={-1}
-                          className="scroll-mt-48 border-b border-outline-variant/70 pb-7 last:border-b-0 last:pb-0"
-                        >
-                          <h3 className="mb-3 flex items-start gap-2 text-base font-bold text-on-surface">
-                            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-xs text-secondary">
-                              {index + 1}
-                            </span>
-                            <RichMathText text={block.heading} />
-                          </h3>
-                          <div className="overflow-x-auto whitespace-pre-wrap text-base leading-[1.9] text-on-surface-variant">
-                            <RichMathText text={block.text} />
-                          </div>
-                        </section>
-                      ))}
-                    </div>
+                    {lesson.contentBlocks?.length ? (
+                      <LessonContentRenderer blocks={lesson.contentBlocks} />
+                    ) : (
+                      <div className="space-y-8">
+                        {lesson.theory.map((block, index) => (
+                          <section
+                            key={`${lesson.id}-theory-${index}`}
+                            id={readingSections[index]?.id}
+                            tabIndex={-1}
+                            className="scroll-mt-48 border-b border-outline-variant/70 pb-7 last:border-b-0 last:pb-0"
+                          >
+                            <h3 className="mb-3 flex items-start gap-2 text-base font-bold text-on-surface">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-xs text-secondary">
+                                {index + 1}
+                              </span>
+                              <AdaptiveText text={block.heading} />
+                            </h3>
+                            <div className="overflow-x-auto whitespace-pre-wrap text-base leading-[1.9] text-on-surface-variant">
+                              <AdaptiveText text={block.text} />
+                            </div>
+                          </section>
+                        ))}
+                      </div>
+                    )}
                     <div className="mt-6 flex items-start gap-3 rounded-xl bg-secondary/8 p-4">
                       <Icon
                         name="tips_and_updates"
@@ -1149,10 +1163,10 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                               Ví dụ {index + 1}
                             </p>
                             <h3 className="text-base font-bold text-primary">
-                              <RichMathText text={example.title} />
+                              <AdaptiveText text={example.title} />
                             </h3>
                             <div className="mt-3 overflow-x-auto whitespace-pre-wrap text-base leading-relaxed text-on-surface">
-                              <RichMathText text={example.prompt} />
+                              <AdaptiveText text={example.prompt} />
                             </div>
                           </div>
                           <details open={index === 0}>
@@ -1169,7 +1183,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                                     {stepIndex + 1}
                                   </span>
                                   <div className="min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap text-base leading-[1.8] text-on-surface-variant">
-                                    <RichMathText text={step} />
+                                    <AdaptiveText text={step} />
                                   </div>
                                 </div>
                               ))}
@@ -1178,7 +1192,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                                   Kết luận
                                 </p>
                                 <div className="overflow-x-auto text-base font-semibold leading-relaxed text-on-surface">
-                                  <RichMathText text={example.answer} />
+                                  <AdaptiveText text={example.answer} />
                                 </div>
                               </div>
                             </div>
@@ -1235,7 +1249,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                               Câu {index + 1}
                             </legend>
                             <div className="mb-4 overflow-x-auto whitespace-pre-wrap text-base font-semibold leading-[1.8] text-on-surface">
-                              <RichMathText text={exercise.prompt} />
+                              <AdaptiveText text={exercise.prompt} />
                             </div>
                             <div className="space-y-2">
                               {exercise.options.map((option, optionIndex) => (
@@ -1268,7 +1282,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                                     {String.fromCharCode(65 + optionIndex)}.
                                   </span>
                                   <span className="min-w-0 flex-1 overflow-x-auto leading-relaxed text-on-surface">
-                                    <RichMathText text={option} />
+                                    <AdaptiveText text={option} />
                                   </span>
                                 </label>
                               ))}
@@ -1290,7 +1304,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                                     : "Chưa đúng, hãy thử lại nhé."}
                                 </p>
                                 <div className="overflow-x-auto leading-relaxed text-on-surface-variant">
-                                  <RichMathText text={exercise.explanation} />
+                                  <AdaptiveText text={exercise.explanation} />
                                 </div>
                               </div>
                             )}
@@ -1428,7 +1442,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                         />
                         <span className="min-w-0">
                           <span className="block text-sm font-semibold leading-relaxed text-primary group-hover:underline">
-                            <RichMathText text={item.title} />
+                            <AdaptiveText text={item.title} />
                           </span>
                           <span className="mt-1 block text-xs text-on-surface-variant">
                             {item.durationMinutes} phút ·{" "}
