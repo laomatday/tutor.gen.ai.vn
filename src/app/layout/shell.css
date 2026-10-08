@@ -96,7 +96,79 @@
   }
 
   .app-header--student {
-    @apply border-b border-ink-100/80 bg-white/85;
+    @apply border-b border-ink-100/80 bg-white/90;
+  }
+
+  .premium-command-bar {
+    @apply gap-3 px-3 sm:px-4 lg:px-5;
+    box-shadow: 0 10px 28px -26px rgb(13 26 41 / 0.45);
+  }
+
+  .premium-search {
+    @apply relative max-w-2xl items-center;
+  }
+
+  .premium-search__icon {
+    @apply pointer-events-none absolute left-3 z-10 text-lg text-ink-400;
+  }
+
+  .premium-search__input {
+    @apply h-11 rounded-2xl border-ink-200 bg-surface-page pl-10 pr-14 text-sm shadow-none focus:border-brand/40 focus:bg-white;
+  }
+
+  .premium-search__kbd {
+    @apply pointer-events-none absolute right-3 rounded-lg bg-white px-2 py-1 text-[11px] font-bold text-ink-400 shadow-sm;
+  }
+
+  .premium-command-actions {
+    @apply flex shrink-0 items-center gap-2;
+  }
+
+  .premium-command-chip {
+    @apply min-h-11 items-center gap-2 rounded-2xl border border-ink-100 bg-surface-page px-3 text-left;
+  }
+
+  .premium-command-chip > span:not(.premium-command-chip__icon) {
+    @apply min-w-0;
+  }
+
+  .premium-command-chip strong {
+    @apply block whitespace-nowrap text-xs font-bold text-brand;
+  }
+
+  .premium-command-chip small {
+    @apply mt-0.5 block whitespace-nowrap text-[10px] text-ink-500;
+  }
+
+  .premium-command-chip__icon {
+    @apply text-lg;
+  }
+
+  .premium-profile-trigger {
+    @apply flex min-h-11 items-center gap-2 rounded-2xl border border-ink-100 bg-white px-1.5 pr-2 shadow-none;
+  }
+
+  .student-ai-companion {
+    @apply flex items-start gap-3 rounded-3xl border border-brand/10 bg-brand-50/70 p-2;
+  }
+
+  .student-ai-companion__orb {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand text-xl text-white shadow-md;
+    background:
+      radial-gradient(circle at 35% 30%, var(--color-sky) 0 8%, transparent 9%),
+      linear-gradient(145deg, var(--color-brand), var(--color-brand-strong));
+  }
+
+  .app-sidebar--student.is-expanded .student-ai-companion {
+    @apply p-3;
+  }
+
+  .app-sidebar--student.is-expanded .student-ai-companion .student-rail-label strong {
+    @apply text-sm leading-5 text-brand;
+  }
+
+  .app-sidebar--student.is-expanded .student-ai-companion .student-rail-label small {
+    @apply mt-1 text-xs leading-5 text-ink-500;
   }
 
   @variant lg {
