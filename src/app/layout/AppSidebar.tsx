@@ -148,14 +148,20 @@ export function AppSidebar({
         </nav>
 
         <div className="mt-auto space-y-2 p-2">
-          <div
-            className="student-progress-orb"
-            title={`Mastery ${progress}%`}
-            style={{
-              background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-100) 0)`,
-            }}
-          >
-            <span>{progress}</span>
+          <div className="student-mastery-summary">
+            <div
+              className="student-progress-orb"
+              title={`Mastery ${progress}%`}
+              style={{
+                background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-100) 0)`,
+              }}
+            >
+              <span>{progress}</span>
+            </div>
+            <span className="student-rail-label">
+              <strong>Mastery {progress}%</strong>
+              <small>Tiến độ toàn hành trình</small>
+            </span>
           </div>
           <Button
             variant="surface"
