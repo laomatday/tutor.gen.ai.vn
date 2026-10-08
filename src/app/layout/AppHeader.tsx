@@ -42,39 +42,80 @@ export function AppHeader({ role, label, menuOpen, menuRef, onMenu, onNavigate, 
     onNavigate(`/hoc-bai?q=${encodeURIComponent(query)}`);
   };
 
-  if (role === "Học sinh") return (
-    <header className="app-header app-header--student">
-      <div className="app-header__start">
-        <Button ref={menuRef} variant="ghost" size="icon" onClick={onMenu}
-          aria-label={menuOpen ? "Thu gọn menu" : "Mở menu"}
-          aria-expanded={menuOpen} aria-controls="main-navigation" className="app-header__menu">
-          <Icon name="menu" />
-        </Button>
-        <span className="app-header__breadcrumb">
-          <strong>genAi Tutor</strong><Icon name="chevron_right" /><span>{label}</span>
-        </span>
-      </div>
+  if (role === "Học sinh") {
+    return (
+      <header className="app-header app-header--student">
+        <div className="app-header__start">
+          <Button
+            ref={menuRef}
+            variant="ghost"
+            size="icon"
+            onClick={onMenu}
+            aria-label={menuOpen ? "Đóng menu học tập" : "Mở menu học tập"}
+            aria-expanded={menuOpen}
+            aria-controls="main-navigation"
+            className="app-header__menu lg:hidden"
+          >
+            <Icon name="menu" />
+          </Button>
+          <nav className="app-header__breadcrumb" aria-label="Đường dẫn">
+            <span className="app-header__breadcrumb-parent">Không gian học tập</span>
+            <Icon name="chevron_right" className="app-header__breadcrumb-chevron" />
+            <strong aria-current="page">{label}</strong>
+          </nav>
+        </div>
 
-      <form className={`app-header__search ${mobileSearchOpen ? "is-open" : ""}`} role="search" onSubmit={submitSearch}>
-        <Icon name="search" className="app-header__search-icon" />
-        <Input ref={searchRef} type="search" value={search} onChange={(event) => setSearch(event.target.value)}
-          aria-label="Tìm bài học theo tên, chủ đề hoặc từ khóa"
-          placeholder="Tìm bài học, chủ đề…" className="app-header__search-input" />
-        <Button type="submit" size="sm" variant="ghost" aria-label="Tìm kiếm bài học" className="app-header__search-submit">
-          <Icon name="arrow_forward" />
-        </Button>
-      </form>
-      <div className="app-header__end">
-        <Button variant="ghost" size="icon" className="app-header__mobile-search" aria-label="Mở tìm kiếm"
-          aria-expanded={mobileSearchOpen} onClick={() => {setMobileSearchOpen((value) => !value);requestAnimationFrame(() => searchRef.current?.focus());}}>
-          <Icon name="search" />
-        </Button>
-        <Button variant="ghost" onClick={onOpenProfile} className="app-header__profile" aria-label="Mở hồ sơ học tập">
-          <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-9 w-9 rounded-full" />
-        </Button>
-      </div>
-    </header>
-  );
+        <form
+          className={`app-header__search ${mobileSearchOpen ? "is-open" : ""}`}
+          role="search"
+          onSubmit={submitSearch}
+        >
+          <Icon name="search" className="app-header__search-icon" />
+          <Input
+            ref={searchRef}
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            aria-label="Tìm bài học theo tên, chủ đề hoặc từ khóa"
+            placeholder="Tìm bài học, chủ đề…"
+            className="app-header__search-input"
+          />
+          <Button
+            type="submit"
+            size="sm"
+            variant="ghost"
+            aria-label="Tìm kiếm bài học"
+            className="app-header__search-submit"
+          >
+            <Icon name="arrow_forward" />
+          </Button>
+        </form>
+        <div className="app-header__end">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="app-header__mobile-search"
+            aria-label={mobileSearchOpen ? "Đóng tìm kiếm" : "Mở tìm kiếm"}
+            aria-expanded={mobileSearchOpen}
+            onClick={() => {
+              setMobileSearchOpen((value) => !value);
+              if (!mobileSearchOpen) requestAnimationFrame(() => searchRef.current?.focus());
+            }}
+          >
+            <Icon name={mobileSearchOpen ? "close" : "search"} />
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={onOpenProfile}
+            className="app-header__profile"
+            aria-label="Mở hồ sơ học tập"
+          >
+            <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-9 w-9 rounded-full" />
+          </Button>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="app-header">

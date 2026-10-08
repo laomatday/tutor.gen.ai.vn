@@ -61,6 +61,37 @@ test.describe("360px minimum mobile width", () => {
   }
 });
 
+test("Reference shell: desktop sidebar, breadcrumb, and collapsed rail", async ({page}) => {
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto("/");
+  await expect(page.getByRole("navigation", {name:"Đường dẫn"})).toContainText("Không gian học tập");
+  await expect(page.getByRole("navigation", {name:"Đường dẫn"})).toContainText("Hôm nay");
+  const sidebar = page.locator("#main-navigation");
+  const nav = sidebar.getByRole("navigation", {name:"Các trang học tập"});
+  await expect(nav.getByRole("button", {name:"Hôm nay"})).toHaveAttribute("aria-current","page");
+  await expect(nav.getByRole("button", {name:"Môn học"})).toBeVisible();
+  await expect(sidebar).toHaveCSS("background-color","rgb(255, 255, 255)");
+  expect(Math.round((await sidebar.boundingBox()).width)).toBe(288);
+  await sidebar.getByRole("button", {name:"Thu gọn menu"}).click();
+  await expect(sidebar).toHaveClass(/app-sidebar--student/);
+  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
+  await sidebar.getByRole("button", {name:"Mở rộng menu"}).click();
+  await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(288);
+});
+
+test("Reference shell: mobile drawer preserves navigation and focus", async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("/");
+  const toggle = page.getByRole("button",{name:"Mở menu học tập"});
+  await toggle.click();
+  const sidebar = page.locator("#main-navigation");
+  await expect(sidebar).toHaveClass(/is-open/);
+  await expect(sidebar.getByRole("button",{name:"Đóng menu"})).toBeFocused();
+  await sidebar.getByRole("button",{name:"Đóng menu"}).click();
+  await expect(sidebar).not.toHaveClass(/is-open/);
+  await expect(toggle).toBeFocused();
+});
+
 test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
   await page.goto("/");
   await expect(page.getByRole("heading", {name:/Chào/})).toBeVisible();
