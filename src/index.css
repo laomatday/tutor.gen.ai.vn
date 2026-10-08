@@ -280,21 +280,8 @@
     outline-color: var(--color-focus-soft);
   }
 
-  /* No visible scrollbars anywhere. Content still scrolls by wheel,
-     trackpad, touch and keyboard; hiding the bar also removes the layout
-     shift and the stray gutter it drew inside rounded dialogs. */
-  html,
-  body,
-  * {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  *::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-  }
+  /* Keep scrollbars available: essential for long learning materials and data tables. */
+  html { scrollbar-gutter: stable; }
 }
 
 /* ==========================================================================
@@ -362,6 +349,10 @@
   /* Filled search box (header search, list filters). */
   .ui-search {
     @apply block min-h-11 w-full rounded-full border border-transparent bg-chip px-4 py-2 text-base text-ink-900 outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-400 hover:bg-chip-hover focus:border-focus focus:bg-white focus:ring-4 focus:ring-focus/15 sm:text-sm dark:bg-night-chip dark:text-ink-100 dark:hover:bg-night-chip-hover dark:focus:border-focus-soft dark:focus:bg-night-raised;
+  }
+
+  .ui-range {
+    @apply block h-10 w-full cursor-pointer accent-brand;
   }
 
   .ui-check {

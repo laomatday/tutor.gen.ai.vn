@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useMobileNavigation() {
+export function useMobileNavigation(desktopSidebarVisible = true) {
   const [open, setOpen] = useState(false);
   const sidebar = useRef<HTMLElement>(null);
   const content = useRef<HTMLDivElement>(null);
@@ -10,9 +10,7 @@ export function useMobileNavigation() {
   useEffect(() => {
     const update = () => {
       // The layout's CSS owns its breakpoint; JS reads the resulting visibility.
-      const desktop = trigger.current
-        ? getComputedStyle(trigger.current).display === "none"
-        : false;
+      const desktop = window.matchMedia("(min-width: 1024px)").matches;
       if (sidebar.current) sidebar.current.inert = !desktop && !open;
       if (content.current) content.current.inert = !desktop && open;
       document.body.style.overflow = !desktop && open ? "hidden" : "";
@@ -53,6 +51,6 @@ export function useMobileNavigation() {
       document.body.style.overflow = "";
       if (content.current) content.current.inert = false;
     };
-  }, [open]);
+  }, [open, desktopSidebarVisible]);
   return { open, setOpen, sidebar, content, trigger, closeButton };
 }

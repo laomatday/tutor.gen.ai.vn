@@ -8,9 +8,9 @@ import { useCurriculum } from "../context/CurriculumContext";
 import {
   courseHref,
   lessonHref,
-  ownedPublishedLessons,
   primaryEnrollment,
-  summarizeProgress,
+  studentProfile,
+  getCourseProgress,
 } from "../features/curriculum";
 import { StudentProfileModal } from "../features/gamification/StudentProfileModal";
 import type { TeacherSection } from "../features/teacher/TeacherView";
@@ -76,57 +76,34 @@ const AdminView = lazy(() =>
 export default function App() {
   const location = useAppLocation();
   const { role, section, label } = readRoute(location.pathname);
-  const { lessons, topics, completedLessonIds } = useCurriculum();
+  const { lessons, topics, completedLessonIds, contentLoading, contentError } = useCurriculum();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const progress = summarizeProgress(
-    ownedPublishedLessons(lessons, topics),
-    completedLessonIds,
-  );
+  const selectedSubject = new URLSearchParams(location.search).get("subject");
+  const activeEnrollment = studentProfile.enrollments.find(
+    (course) => course.subjectId === selectedSubject,
+  ) ?? primaryEnrollment;
+  const progress = getCourseProgress(lessons, topics, completedLessonIds, activeEnrollment);
   const notice = useNotice();
   const wallet = useRewardWallet(notice.show);
-  const menu = useMobileNavigation();
   const isStudent = role === "Học sinh";
-  const [studentSidebarPinned, setStudentSidebarPinned] = useLocalStorage<boolean>(
-    storageKeys.studentSidebarPinned,
-    false,
+  const [desktopSidebarVisible, setDesktopSidebarVisible] = useLocalStorage<boolean>(
+    storageKeys.studentSidebarVisibleV2,
+    true,
     (value): value is boolean => typeof value === "boolean",
   );
-  const [studentRecentRoutes, setStudentRecentRoutes] = useLocalStorage<string[]>(
-    storageKeys.studentRecentRoutes,
-    ["/replay", "/tu-giai", "/hoc-bai"],
-    (value): value is string[] =>
-      Array.isArray(value) && value.every((item) => typeof item === "string"),
-  );
+  const menu = useMobileNavigation(!isStudent || desktopSidebarVisible);
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
-  const studentSidebarVisible = isStudent && (studentSidebarPinned || menu.open);
+  const studentSidebarVisible = isStudent && desktopSidebarVisible;
 
   const toggleStudentSidebar = () => {
-    const desktop =
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches;
-
-    if (!desktop) {
-      menu.setOpen((value) => !value);
-      return;
-    }
-
-    if (studentSidebarPinned) {
-      setStudentSidebarPinned(false);
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      setDesktopSidebarVisible((visible) => !visible);
       menu.setOpen(false);
-      return;
+    } else {
+      menu.setOpen((visible) => !visible);
     }
-
-    menu.setOpen((value) => !value);
-  };
-
-  const toggleStudentSidebarPinned = () => {
-    setStudentSidebarPinned((value) => {
-      const next = !value;
-      menu.setOpen(!next);
-      return next;
-    });
   };
 
   useEffect(() => {
@@ -140,12 +117,6 @@ export default function App() {
   const navigate = (path: string) => {
     if (navigateTo(path)) {
       notice.clear();
-      if (isStudent) {
-        const basePath = path.split("?")[0] || "/";
-        setStudentRecentRoutes((current) =>
-          [basePath, ...current.filter((item) => item !== basePath)].slice(0, 6),
-        );
-      }
       menu.setOpen(false);
     }
   };
@@ -182,10 +153,8 @@ export default function App() {
         nextLessonPath={nextLessonPath}
         progress={progress.percent}
         balance={wallet.balance}
-        pinned={studentSidebarPinned}
+        pinned={desktopSidebarVisible}
         onToggleSidebar={toggleStudentSidebar}
-        onTogglePinned={toggleStudentSidebarPinned}
-        recentPaths={studentRecentRoutes}
       />
 
       <div
@@ -199,7 +168,7 @@ export default function App() {
         <AppHeader
           role={role}
           label={label}
-          menuOpen={isStudent ? studentSidebarVisible : menu.open}
+          menuOpen={isStudent ? (window.matchMedia("(min-width: 1024px)").matches ? desktopSidebarVisible : menu.open) : menu.open}
           menuRef={menu.trigger}
           onMenu={toggleStudentSidebar}
           onNavigate={navigate}
@@ -220,6 +189,11 @@ export default function App() {
           tabIndex={-1}
           className={isStudent ? "app-main app-main--student" : "app-main"}
         >
+          {contentError && !contentLoading && isStudent && (
+            <Alert tone="warning" className="mb-4">
+              Chưa kết nối được học liệu trực tuyến. Nội dung đang hiển thị là dữ liệu minh họa; tiến độ được lưu trên trình duyệt này.
+            </Alert>
+          )}
           {wallet.error && (
             <Alert tone="warning" className="mb-4">
               {wallet.error}
@@ -237,7 +211,13 @@ export default function App() {
                 </div>
               }
             >
-              {role === "Học sinh" && (
+              {role === "Học sinh" && (contentLoading ? (
+                <div role="status" aria-label="Đang tải học liệu" className="learning-load-skeleton">
+                  <div className="learning-load-skeleton__title" />
+                  <div className="learning-load-skeleton__card" />
+                  <div className="learning-load-skeleton__card" />
+                </div>
+              ) : (
                 <>
                   {section === "hom-nay" && (
                     <TodayView
@@ -287,7 +267,7 @@ export default function App() {
                     />
                   )}
                 </>
-              )}
+              ))}
 
               {role === "Giáo viên" && (
                 <TeacherView

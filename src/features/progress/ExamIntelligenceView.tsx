@@ -1,227 +1,63 @@
-import { RichMathText } from "../../components/MathLatex";
-import { Alert, Badge, Button, Card, Icon } from "../../components/ui";
-import { StudentPageHeader, StudentSignalStrip } from "../../components/student/StudentExperience";
+import { Button, Icon } from "../../components/ui";
+import { useCurriculum } from "../../context/CurriculumContext";
+import { getCourseProgress, lessonHref, studentProfile } from "../curriculum";
 import { assessmentSummary, sampleAssessment } from "./data";
-import {
-  CurriculumAction,
-  ErrorAnalysis,
-  SkillGroup,
-} from "./AssessmentDetails";
 
-interface ExamIntelligenceViewProps {
-  onNavigate: (tab: string) => void;
+interface Props {
+  onNavigate: (path: string) => void;
   onOpenBadges?: () => void;
 }
 
-function AssessmentOverview() {
+/** Completion is real local learning progress; test scores are explicitly sample data. */
+export function ExamIntelligenceView({ onNavigate, onOpenBadges }: Props) {
+  const { lessons, topics, subjects, completedLessonIds } = useCurriculum();
+  const progress = getCourseProgress(lessons, topics, completedLessonIds);
+  const plans = studentProfile.enrollments.map((enrollment) => ({
+    enrollment, subject: subjects.find((item) => item.id === enrollment.subjectId),
+    progress: getCourseProgress(lessons, topics, completedLessonIds, enrollment),
+  })).filter((item) => item.subject && item.progress.total > 0);
   const summary = assessmentSummary(sampleAssessment);
-  return (
-    <div className="grid items-stretch gap-5 lg:grid-cols-5">
-      <Card className="p-5 sm:p-6 lg:col-span-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold">Điểm bài thi mẫu</h2>
-          <Badge>
-            {sampleAssessment.durationMinutes} phút ·{" "}
-            {sampleAssessment.questionCount} câu
-          </Badge>
-        </div>
-        <div className="my-6 flex items-baseline gap-2">
-          <span className="text-5xl font-bold tracking-tight text-primary">
-            {sampleAssessment.score}
-          </span>
-          <span className="text-xl text-on-surface-variant">
-            /{sampleAssessment.maximumScore}
-          </span>
-        </div>
-        <progress
-          className="ui-progress w-full accent-primary"
-          value={sampleAssessment.score}
-          max={sampleAssessment.maximumScore}
-          aria-label="Điểm bài thi mẫu"
-        />
-        <dl className="mt-5 space-y-3 text-sm">
-          <div className="flex justify-between gap-3">
-            <dt>Điểm mất ở các lỗi đã phân tích</dt>
-            <dd className="font-bold text-secondary">
-              {summary.recoverablePoints}
-            </dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt>Nếu sửa được các lỗi này</dt>
-            <dd className="font-bold text-primary">
-              {summary.reviewedScore}/{sampleAssessment.maximumScore}
-            </dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt>Mục tiêu ôn tập</dt>
-            <dd className="font-semibold">
-              {sampleAssessment.targetScore}/{sampleAssessment.maximumScore}
-            </dd>
-          </div>
-        </dl>
-      </Card>
-      <Card className="space-y-5 p-5 sm:p-6 lg:col-span-3">
-        <div>
-          <h2 className="font-semibold">Phân bổ thời gian</h2>
-          <p className="mt-2 text-sm text-on-surface-variant">
-            Quan sát nhịp làm bài để dành đủ thời gian kiểm tra và hoàn thành
-            câu cuối.
-          </p>
-        </div>
-        <div
-          className="flex h-3 gap-1 overflow-hidden rounded-full"
-          aria-hidden="true"
-        >
-          {sampleAssessment.timeline.map((segment) => (
-            <div
-              key={segment.from}
-              className="bg-primary"
-              style={{
-                flex: segment.to - segment.from,
-                opacity:
-                  (segment.to - segment.from) /
-                    sampleAssessment.durationMinutes +
-                  0.45,
-              }}
-            />
-          ))}
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {sampleAssessment.timeline.map((segment) => (
-            <section
-              key={segment.from}
-              className="rounded-xl bg-surface-container-low p-4"
-            >
-              <Badge tone={segment.tone}>
-                {segment.from}–{segment.to} phút
-              </Badge>
-              <h3 className="mt-3 font-semibold">{segment.label}</h3>
-              <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-                {segment.description}
-              </p>
-            </section>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function StudyPlan({ onNavigate }: ExamIntelligenceViewProps) {
-  const summary = assessmentSummary(sampleAssessment);
-  return (
-    <Card id="tutor-action" className="scroll-mt-24 space-y-6 p-5 sm:p-6">
-      <div>
-        <Badge tone="success">Lộ trình tham khảo</Badge>
-        <h2 className="mt-4 text-xl font-bold text-primary">
-          Kế hoạch củng cố trong {summary.planDays} ngày
-        </h2>
-        <p className="mt-2 text-sm text-on-surface-variant">
-          Ôn đúng nội dung còn thiếu, sau đó tự kiểm tra lại kết quả.
-        </p>
+  return <div className="learning-os-page learning-mvp-page">
+    <header className="learning-mvp-page-heading">
+      <p className="learning-mvp-kicker">KẾT QUẢ HỌC TẬP</p>
+      <h1>Tiến bộ của bạn</h1>
+      <p>Hiển thị số bài bạn đã hoàn thành, không suy ra “mastery”, điểm thi dự đoán hoặc năng lực khi chưa có dữ liệu đánh giá phù hợp.</p>
+    </header>
+    <section className="learning-mvp-card">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold text-brand">Tổng tiến độ</h2>
+        <strong className="text-2xl text-brand">{progress.percent}%</strong>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {sampleAssessment.plan.map((step) => (
-          <section
-            key={step.fromDay}
-            className="flex flex-col gap-3 rounded-xl bg-surface-container-low p-4"
-          >
-            <p className="text-sm font-semibold text-secondary">
-              Ngày {step.fromDay}
-              {step.toDay !== step.fromDay ? `–${step.toDay}` : ""}
-            </p>
-            <h3 className="font-semibold">{step.title}</h3>
-            <p className="flex-1 text-sm leading-7 text-on-surface-variant">
-              <RichMathText text={step.description} />
-            </p>
-            <p className="text-xs text-on-surface-variant">
-              {step.minutesPerDay} phút/ngày
-            </p>
-            <CurriculumAction
-              lessonId={step.lessonId}
-              onNavigate={onNavigate}
-            />
-          </section>
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-export function ExamIntelligenceView({
-  onNavigate,
-  onOpenBadges,
-}: ExamIntelligenceViewProps) {
-  const summary = assessmentSummary(sampleAssessment);
-  const showPlan = () => {
-    const section = document.getElementById("tutor-action");
-    section?.scrollIntoView({ behavior: "smooth" });
-    section?.setAttribute("tabindex", "-1");
-    section?.focus({ preventScroll: true });
-  };
-  return (
-    <div className="learning-os-page">
-      <StudentPageHeader
-        eyebrow="Learning radar"
-        icon="insights"
-        title="Biết chính xác điểm nào đang kéo kết quả xuống."
-        description={`${sampleAssessment.title} · Radar gom điểm số, lỗi sai và skill gap thành một tín hiệu hành động thay vì một báo cáo dài.`}
-        meta={
-          <>
-            <Badge tone="primary">{sampleAssessment.course}</Badge>
-            <Badge>Bài thi #{sampleAssessment.id}</Badge>
-          </>
-        }
-        actions={
-          <>
-            {onOpenBadges && (
-              <Button variant="secondary" onClick={onOpenBadges}>
-                <Icon name="workspace_premium" />
-                Mastery profile
-              </Button>
-            )}
-            <Button variant="secondary" onClick={() => window.print()}>
-              <Icon name="print" />
-              Lưu báo cáo
-            </Button>
-            <Button onClick={showPlan}>
-              <Icon name="arrow_downward" />
-              Intervention plan
-            </Button>
-          </>
-        }
-      />
-
-      <StudentSignalStrip
-        items={[
-          { icon: "target", label: "Điểm hiện tại", value: `${sampleAssessment.score}/${sampleAssessment.maximumScore}` },
-          { icon: "trending_up", label: "Có thể phục hồi", value: `+${summary.recoverablePoints} điểm` },
-          { icon: "psychology", label: "Skill gap", value: `${summary.developingSkills.length} chủ đề` },
-          { icon: "calendar_month", label: "Kế hoạch", value: `${summary.planDays} ngày` },
-        ]}
-      />
-      <Alert tone="info" className="rounded-2xl">
-        Báo cáo minh họa từ dữ liệu bài thi mẫu. Các chỉ số bên dưới chưa được
-        tính từ hoạt động học thực tế của bạn.
-      </Alert>
-      <AssessmentOverview />
-      <ErrorAnalysis onNavigate={onNavigate} />
-      <div className="grid items-start gap-5 lg:grid-cols-2">
-        <SkillGroup
-          title="Nội dung đã vững"
-          description="Duy trì độ chính xác khi làm bài."
-          skills={summary.masteredSkills}
-          onNavigate={onNavigate}
-          isMastered
-        />
-        <SkillGroup
-          title="Nội dung cần củng cố"
-          description="Ưu tiên ôn lại kiến thức trước khi luyện thêm đề."
-          skills={summary.developingSkills}
-          onNavigate={onNavigate}
-        />
-      </div>
-      <StudyPlan onNavigate={onNavigate} />
-    </div>
-  );
+      <div className="learning-mvp-progress mt-3"><span style={{width:`${progress.percent}%`}}/></div>
+      <p className="mt-3 text-sm text-ink-600">{progress.completed}/{progress.total} bài học đã hoàn thành trong các môn đã đăng ký.</p>
+      {progress.nextLesson && <Button className="mt-4" onClick={() => onNavigate(lessonHref(progress.nextLesson!))}>Tiếp tục học <Icon name="arrow_forward"/></Button>}
+    </section>
+    <section aria-label="Tiến độ theo môn học" className="grid gap-3 md:grid-cols-2">
+      {plans.map(({ enrollment, subject, progress: item }) => (
+        <div className="learning-mvp-card" key={`${enrollment.gradeId}-${enrollment.subjectId}`}>
+          <h2 className="text-lg font-bold text-brand">{subject!.name} · Lớp {enrollment.gradeId}</h2>
+          <div className="mt-3 flex items-center justify-between"><span className="text-sm">{item.completed}/{item.total} bài hoàn thành</span><strong>{item.percent}%</strong></div>
+          <div className="learning-mvp-progress mt-2"><span style={{width:`${item.percent}%`}}/></div>
+          <Button variant="secondary" size="sm" className="mt-4" onClick={() =>
+            onNavigate(item.nextLesson ? lessonHref(item.nextLesson) : `/hoc-bai?grade=${enrollment.gradeId}&subject=${enrollment.subjectId}`)}>
+            {item.nextLesson ? "Học bài tiếp theo" : "Xem lại"} <Icon name="arrow_forward" />
+          </Button>
+        </div>
+      ))}
+    </section>
+    <section className="learning-mvp-card">
+      <h2 className="text-lg font-bold text-brand">Bài thi mẫu (dữ liệu minh họa)</h2>
+      <p className="mt-2 text-sm leading-6 text-ink-600">Đây là dữ liệu được biên soạn để minh họa phương pháp phản hồi, chưa phải kết quả thi của học sinh.</p>
+      <details className="mt-3 rounded-xl border border-ink-200 p-4">
+        <summary className="cursor-pointer font-semibold">Xem thông tin bài thi mẫu</summary>
+        <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+          <p>Đề: {sampleAssessment.title}</p>
+          <p>Điểm mẫu: {sampleAssessment.score}/{sampleAssessment.maximumScore}</p>
+          <p>Điểm mất trong mẫu: {summary.recoverablePoints}</p>
+          <p>Các nhóm cần hỗ trợ (mẫu): {summary.developingSkills.length}</p>
+        </div>
+      </details>
+      {onOpenBadges && <Button variant="ghost" className="mt-3" onClick={onOpenBadges}>Xem hồ sơ điểm thưởng minh họa</Button>}
+    </section>
+  </div>;
 }

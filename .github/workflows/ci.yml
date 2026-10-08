@@ -28,6 +28,9 @@ jobs:
       - name: Typecheck and architecture
         run: bun run lint
 
+      - name: Validate icon registry
+        run: bun run check:icons
+
       - name: Tests
         run: bun run test
 

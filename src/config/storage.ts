@@ -8,6 +8,8 @@ export const storageKeys = {
   studentGoals: "genai-student-goals-v1",
   studentSchedule: "genai-student-schedule-v1",
   studentSidebarExpanded: "genai-student-sidebar-expanded-v1",
+  studentSidebarVisibleV2: "genai-student-sidebar-visible-v2",
+  practiceSessionV2: "genai-practice-session-v2",
   studentSidebarPinned: "genai-student-sidebar-pinned-v1",
   studentRecentRoutes: "genai-student-recent-routes-v1",
   teacherAssignments: "genai-k12-teacher-assignments-v1",

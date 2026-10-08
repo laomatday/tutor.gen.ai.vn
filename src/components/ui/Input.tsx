@@ -14,7 +14,9 @@ export const Input = forwardRef<
       ? "ui-check"
       : type === "search"
         ? "ui-search"
-        : "ui-field";
+        : type === "range"
+          ? "ui-range"
+          : "ui-field";
   return (
     <input
       ref={ref}

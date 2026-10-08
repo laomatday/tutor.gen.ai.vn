@@ -6,13 +6,22 @@
     "course": "Toán lớp 9",
     "topic": "Hàm số bậc hai",
     "difficulty": "Vận dụng",
-    "point": { "x": -2, "y": 12 },
+    "point": {
+      "x": -2,
+      "y": 12
+    },
     "variable": "a",
     "statement": "Trong mặt phẳng tọa độ $Oxy$, parabol $(P): y = ax^2$ với $a \\ne 0$ đi qua điểm $M(-2; 12)$. Tìm hệ số $a$ và lập bảng giá trị để phác đồ thị.",
     "initialInput": "12 = a \\cdot (-2)^2 \\iff 12 = 4a",
     "setup": "Vì điểm $M(-2;12)$ thuộc đồ thị, thay $x=-2$ và $y=12$ vào phương trình $y=ax^2$.",
     "conclusion": "Hệ số $a=3$ thỏa mãn $a\\ne 0$. Vậy hàm số cần tìm là $y=3x^2$.",
-    "graphXs": [-2, -1, 0, 1, 2],
+    "graphXs": [
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
     "hints": [
       {
         "id": 1,
@@ -22,12 +31,12 @@
       {
         "id": 2,
         "title": "Biến đổi đại số",
-        "text": "Từ $12=4a$, chia cả hai vế cho $4$: $a=\\frac{12}{4}=3$."
+        "text": "Từ $12=4a$, em cần làm gì với hai vế để tìm $a$? Viết phép biến đổi của chính em."
       },
       {
         "id": 3,
         "title": "Kiểm tra điều kiện",
-        "text": "Giá trị $a=3$ khác $0$ nên thỏa mãn điều kiện của đề bài."
+        "text": "Thay hệ số em tìm được vào $y=ax^2$ và kiểm tra xem điểm $M(-2;12)$ có thuộc đồ thị không. Nhớ đối chiếu điều kiện $a\\\\ne 0$."
       }
     ],
     "prompts": [
@@ -39,6 +48,7 @@
         "question": "Parabol hướng lên hay xuống?",
         "answer": "Với hệ số $a>0$, parabol có bề lõm hướng lên trên."
       }
-    ]
+    ],
+    "lessonId": "ham-so-bac-hai"
   }
 ]

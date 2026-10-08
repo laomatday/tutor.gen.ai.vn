@@ -1,3 +1,5 @@
+import { practiceProblem } from "../practice/data";
+import { getCourseProgress } from "../curriculum/selectors";
 import { useReadingPosition } from "./useReadingPosition";
 import { normalizeSearch } from "../../lib/search";
 import {
@@ -116,16 +118,11 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
     ? courseTopics.find((item) => item.id === lesson.topicId)
     : undefined;
   const registeredLessons = lessons
-    .filter(
-      (item) => validPublished(item) && canStudy(item.gradeId, item.subjectId),
-    )
+    .filter(item => validPublished(item) && canStudy(item.gradeId, item.subjectId))
     .sort((a, b) => a.order - b.order);
-  const finishedCount = registeredLessons.filter((item) =>
-    completedLessonIds.includes(item.id),
-  ).length;
-  const progress = registeredLessons.length
-    ? Math.round((finishedCount / registeredLessons.length) * 100)
-    : 0;
+  const completion = getCourseProgress(lessons, topics, completedLessonIds);
+  const progress = completion.percent;
+  const finishedCount = completion.completed;
   const resumeLesson =
     registeredLessons.find((item) => !completedLessonIds.includes(item.id)) ||
     registeredLessons[0];
@@ -364,7 +361,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
             description={
               lesson?.summary ??
               topic?.description ??
-              `Theo dõi mastery, chọn chủ đề và học theo nhịp phù hợp trong ${ownedLabel}.`
+              `Theo dõi tiến độ hoàn thành, chọn chủ đề và học theo nhịp phù hợp trong ${ownedLabel}.`
             }
             meta={
               <>
@@ -401,7 +398,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                 : [
                     { icon: "account_tree", label: "Chủ đề", value: `${courseTopics.length} chủ đề` },
                     { icon: "auto_stories", label: "Learning objects", value: `${courseLessons.length} bài` },
-                    { icon: "progress_activity", label: "Mastery", value: `${progress}%` },
+                    { icon: "progress_activity", label: "Đã hoàn thành", value: `${progress}%` },
                     { icon: "play_arrow", label: "Next", value: resumeLesson?.title ?? "Đã hoàn tất" },
                   ]
             }
@@ -628,7 +625,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               aria-label="Chọn khối lớp"
               className="mb-5 flex flex-wrap gap-2"
             >
-              {GRADES.map((grade) => (
+              {GRADES.filter((grade) => studentProfile.enrollments.some((enrollment) => enrollment.gradeId === grade.id)).map((grade) => (
                 <Button
                   variant="surface"
                   key={grade.id}
@@ -642,7 +639,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               ))}
             </div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {subjects.map((item) => {
+              {subjects.filter((item) => canStudy(gradeId, item.id)).map((item) => {
                 const enrolled = canStudy(gradeId, item.id);
                 const count = enrolled
                   ? lessons.filter(
@@ -709,9 +706,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
           <p className="mt-6 text-xs font-bold uppercase tracking-widest text-secondary">
             {subject.name} · Lớp {gradeId}
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-primary">
+          <h2 className="mt-2 text-2xl font-bold text-primary">
             Khóa học chưa được đăng ký
-          </h1>
+          </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-on-surface-variant">
             {subject.description} Tài khoản mẫu của bạn hiện chỉ có quyền học{" "}
             {ownedLabel}. Nội dung của môn học này sẽ hiển thị khi tài khoản
@@ -752,9 +749,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
                 Chương trình đã đăng ký
               </p>
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-primary sm:text-3xl">
+              <h2 className="text-3xl font-bold leading-tight tracking-tight text-primary sm:text-3xl">
                 {subject!.name} lớp {gradeId}
-              </h1>
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
                 Học theo từng chủ đề. Hiểu lý thuyết, theo dõi ví dụ và tự mình
                 thực hành.
@@ -994,9 +991,9 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                 </span>
               )}
             </div>
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl">
+            <h2 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl">
               <AdaptiveText text={lesson.title} />
-            </h1>
+            </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
               <AdaptiveText text={lesson.summary} />
             </p>
@@ -1464,7 +1461,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   </Button>
                 </section>
               )}
-              {lesson.gradeId === "9" && lesson.subjectId === "toan" && (
+              {lesson.id === practiceProblem.lessonId && (
                 <section className="rounded-3xl bg-secondary/8 p-5">
                   <Icon name="psychology" className="text-3xl text-secondary" />
                   <h2 className="mt-2 text-sm font-bold text-primary">
@@ -1477,7 +1474,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
                   <Button
                     variant="surface"
                     type="button"
-                    onClick={() => onNavigate("tu-giai")}
+                    onClick={() => onNavigate(`/tu-giai?problem=${practiceProblem.id}`)}
                     className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg py-2 text-xs font-bold text-primary hover:underline"
                   >
                     Đến không gian Tự giải

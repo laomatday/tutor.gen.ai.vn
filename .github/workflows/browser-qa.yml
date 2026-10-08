@@ -1,0 +1,36 @@
+name: Browser UX Gate
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install app
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
+      - name: Install ephemeral browser QA dependencies
+        run: npm install --no-save --package-lock=false --ignore-scripts @playwright/test@1.56.1 axe-core@4.11.0
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Test 14 routes and learning journeys
+        env:
+          CI: "true"
+        run: npx playwright test
+      - name: Archive screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutor-ui-evidence
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14

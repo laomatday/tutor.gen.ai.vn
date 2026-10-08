@@ -1,3 +1,4 @@
+import { StudentAvatar } from "../../components/student/StudentAvatar";
 import React, { useState } from "react";
 import { Modal, Button, Icon, Progress } from "../../components/ui";
 import { studentProfile } from "../learning/data/student";
@@ -72,12 +73,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
         <div className="relative overflow-hidden rounded-3xl border border-secondary/20 bg-linear-to-br from-primary/5 via-secondary/10 to-transparent p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <div className="relative">
-              <img
-                src={studentProfile.avatarUrl}
-                alt={studentProfile.name}
-                className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover ring-4 ring-white shadow-md"
-                referrerPolicy="no-referrer"
-              />
+              <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover ring-4 ring-white shadow-md" />
               <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-white shadow-sm ring-2 ring-white">
                 <Icon name="verified" className="text-lg" />
               </span>

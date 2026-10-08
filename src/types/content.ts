@@ -163,6 +163,7 @@ export interface PracticePrompt {
 
 export interface PracticeProblem {
   id: string;
+  lessonId?: string;
   label: string;
   title: string;
   course: string;

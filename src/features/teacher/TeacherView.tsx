@@ -169,8 +169,25 @@ export function TeacherView({ section, onSectionChange, onNotice }: TeacherViewP
           <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-on-surface"><Input type="checkbox" checked={supportOnly} onChange={event => setSupportOnly(event.target.checked)} className="h-4 w-4 accent-primary" />Cần hỗ trợ</label>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[650px] text-left text-sm">
+      <div role="list" aria-label="Tiến độ học sinh" className="space-y-3 p-4 sm:hidden">
+        {filteredStudents.map(student => (
+          <article key={student.id} role="listitem" className="rounded-xl border border-outline-variant/40 bg-white p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div><h3 className="font-bold text-primary">{student.name}</h3><p className="mt-1 text-sm text-on-surface-variant">Lớp {student.classId}</p></div>
+              <Badge tone={needsSupport(student) ? "warning" : "success"}>{needsSupport(student) ? "Cần hỗ trợ" : "Đúng tiến độ"}</Badge>
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <span className="text-sm">Tiến độ: {student.completion}%</span>
+              <span className="text-sm font-bold text-primary">Điểm TB: {student.score.toLocaleString(appConfig.locale, {minimumFractionDigits: 1})}</span>
+            </div>
+            <Progress value={student.completion} label={`Tiến độ của ${student.name}`} tone="accent" className="mt-2" />
+            <Button variant="secondary" size="sm" className="mt-3" onClick={() => setActiveStudent(student)}>Xem chi tiết <Icon name="arrow_forward" /></Button>
+          </article>
+        ))}
+        {!filteredStudents.length && <p className="text-sm text-on-surface-variant">Không tìm thấy học sinh phù hợp.</p>}
+       </div>
+       <div className="hidden overflow-x-auto sm:block">
+         <table className="w-full min-w-[650px] text-left text-sm">
           <thead className="bg-surface-container-low text-xs text-on-surface-variant"><tr>{['Học sinh', 'Lớp', 'Tiến độ', 'Điểm TB', 'Tình trạng', 'Chi tiết'].map(label => <th scope="col" key={label} className="px-5 py-3 font-semibold">{label}</th>)}</tr></thead>
           <tbody className="divide-y divide-outline-variant/25">
             {filteredStudents.map(student => <tr key={student.id} className="hover:bg-surface/80">

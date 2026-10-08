@@ -3,14 +3,13 @@ export type UserRole = (typeof roles)[number];
 export type WorkspaceRole = Exclude<UserRole, "Học sinh">;
 
 export const studentRoutes = [
-  { id: "hom-nay", path: "/", label: "Trang chủ", icon: "home", group: "Core", description: "AI Pulse & nhiệm vụ hôm nay" },
-  { id: "hoc-bai", path: "/hoc-bai", label: "Knowledge Map", icon: "hub", group: "Core", description: "Vũ trụ tri thức" },
-  { id: "tu-giai", path: "/tu-giai", label: "Focus Studio", icon: "edit_square", group: "Core", description: "Giải bài cùng AI" },
-  { id: "replay", path: "/replay", label: "Thinking Replay", icon: "history", group: "Core", description: "Xem lại tư duy" },
-  { id: "thi-thu", path: "/thi-thu", label: "Bài tập & Đề thi", icon: "assignment", group: "Khác", description: "Đánh giá & luyện thi" },
-  { id: "thoi-khoa-bieu", path: "/thoi-khoa-bieu", label: "Lịch học", icon: "calendar_month", group: "Khác", description: "Lịch & buổi Tutor" },
-  { id: "tien-bo", path: "/tien-bo", label: "Thống kê", icon: "bar_chart", group: "Khác", description: "Năng lực & tiến bộ" },
-  { id: "doi-qua", path: "/doi-qua", label: "Thành tựu", icon: "workspace_premium", group: "Khác", description: "Mastery & phần thưởng" },
+  { id: "hom-nay", path: "/", label: "Hôm nay", icon: "home", group: "Core", description: "Việc học tiếp theo" },
+  { id: "hoc-bai", path: "/hoc-bai", label: "Lộ trình", icon: "account_tree", group: "Core", description: "Môn học và bài học" },
+  { id: "tu-giai", path: "/tu-giai", label: "Luyện tập", icon: "edit_square", group: "Core", description: "Tự giải và nhận phản hồi" },
+  { id: "replay", path: "/replay", label: "Xem lại", icon: "history", group: "Core", description: "Lịch sử các bước giải" },
+  { id: "tien-bo", path: "/tien-bo", label: "Tiến bộ", icon: "bar_chart", group: "Other", description: "Bài đã học và đánh giá" },
+  { id: "thoi-khoa-bieu", path: "/thoi-khoa-bieu", label: "Lịch học", icon: "calendar_month", group: "Other", description: "Lịch học cá nhân" },
+  { id: "doi-qua", path: "/doi-qua", label: "Phần thưởng", icon: "workspace_premium", group: "Other", description: "Điểm thưởng và huy hiệu" },
 ] as const;
 export type NavTab = (typeof studentRoutes)[number]["id"];
 
