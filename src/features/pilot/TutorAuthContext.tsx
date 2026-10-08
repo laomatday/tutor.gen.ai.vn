@@ -2,6 +2,7 @@ import {
   createContext, useCallback, useContext, useEffect,
   useRef, useState, type ReactNode,
 } from "react";
+import { storageKeys } from "../../config/storage";
 import {
   pilotGetUser, pilotRead, pilotRefresh, pilotSignIn, pilotSignOut,
   type PilotProfile, type PilotSession,
@@ -12,7 +13,7 @@ import {
  * Tutor profiles/roles/consent are READ from RLS-protected database rows.
  * This provider never provisions accounts or derives privileges from metadata.
  */
-const SESSION_KEY = "genai-tutor-pilot-session-v1";
+const SESSION_KEY = storageKeys.pilotSession;
 type PilotStatus = "checking" | "anonymous" | "ready" | "blocked";
 interface PilotAuthState {
   status: PilotStatus;
