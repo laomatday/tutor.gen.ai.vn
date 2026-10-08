@@ -79,3 +79,24 @@ Khi thêm control, cập nhật nguồn chung, kiểm tra bàn phím + điện t
 - Bộ chuyển vai trò Học sinh / Giáo viên / Quản trị chỉ xuất hiện trong DEV để kiểm thử UI. Production không trình bày role switch demo như một tính năng người dùng.
 - Màu PWA chuẩn: theme `#243C8F`, canvas `#F7FAFC`; artwork chỉ dùng navy → teal → cyan → sky của genAi.
 - `scripts/check-architecture.mjs` chặn màu xanh Tailwind cũ, import icon ngoài Material Symbols SVG dùng chung, chữ dưới 12 px, progress bar tự dựng, semantic alias không được compile bằng `@theme inline`, và regression làm native dialog hiện khi chưa `open`.
+
+
+## Learning OS
+
+Student UX không còn tổ chức quanh một dashboard tính năng. Trục chính là bốn surface liên hoàn:
+
+- **Mission** (`/`): AI chọn một nhiệm vụ ngắn tiếp theo từ tiến độ thật; học sinh không phải tự tìm bài.
+- **Map** (`/hoc-bai`): curriculum được nhìn như mạng prerequisite/mastery. Desktop dùng knowledge graph; mobile dùng knowledge path dọc để tránh co/chồng node.
+- **Studio** (`/tu-giai`): vùng reasoning canvas là trọng tâm; AI Pulse chỉ can thiệp khi cần và mọi gợi ý/check đều trở thành tín hiệu học tập.
+- **Replay** (`/replay`): xem lại reasoning trace + Mistake DNA, sau đó tạo bridge/intervention cho mission kế tiếp.
+
+### Product signature
+
+1. **AI là interaction layer**, không phải một tab chat riêng.
+2. **Reasoning trace > final answer**: sản phẩm ưu tiên ghi nhận cách giải, hint usage, self-correction và misconception.
+3. **Adaptive bridge**: khi prerequisite yếu, Tutor tạo một bước ôn ngắn thay vì buộc học lại cả chương.
+4. **Mastery identity**: ghi nhận hành vi học tốt (tự sửa lỗi, kiên trì, dùng gợi ý hợp lý), không chỉ điểm/GP.
+5. **Rail thay sidebar dashboard**: student desktop dùng rail 80px; Teacher/Admin vẫn giữ shell quản trị đầy đủ.
+6. **Mobile không thu nhỏ desktop graph**: dùng composition riêng cho một tay và viewport hẹp.
+
+Mọi redesign Student mới phải bảo toàn journey `Mission → Map → Studio → Replay → Mission`; thêm feature mới chỉ được vào rail chính nếu nó phục vụ trực tiếp journey này.
