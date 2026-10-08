@@ -30,15 +30,26 @@ Owner: frontend + QA. Phụ thuộc: bài published, `selectDiscovery`, `getCour
 
 ## P1 — Focus Studio + micro-lab chuyên môn
 
-Owner: frontend + Toán 9/Anh 9 academic reviewer + QA.
-Phụ thuộc: đặc tả kỹ năng, `problemId`/lessonId, content approval, nguồn kết quả phép toán.
+**Trạng thái:** đã triển khai bản thử nghiệm trong [Draft PR #21](https://github.com/laomatday/tutor.gen.ai.vn/pull/21), xếp chồng trên P0 PR #20. **Chưa phát hành cho học sinh thật**; còn chờ xác nhận toàn bộ CI/E2E hiện hành, ảnh desktop/mobile, và thẩm định học thuật.
 
-- Toán 9: prototype đồ thị `y=ax²+bx+c` với vùng thao tác và câu hỏi dự đoán trước khi quan sát. Giữ công cụ mô hình `y=ax²` đang có.
-- Tiếng Anh 9: lab hội thoại có mục tiêu giao tiếp, lựa chọn ngữ cảnh và phản hồi theo rubric; không hứa voice nếu chưa có hạ tầng audio.
-- Focus Studio: đề → tự làm → gợi ý theo bậc → xác minh bước → phản hồi → sửa; tránh lộ đáp án.
-- Acceptance: ít nhất 2 micro-labs được học thuật duyệt, dùng nội dung published, mọi thay đổi có kiểm thử logic, học sinh hoàn thành flow mobile không cần hỗ trợ.
-- Risks: giải đúng đa dạng hình thức, model hallucination, năng lực thiết bị yếu, chi phí suy luận; khởi đầu bằng logic tất định và test học thuật.
+Owner: frontend + giáo viên Toán 9, Tiếng Anh 9 + QA.
+Phụ thuộc: `problemId`/`lessonId`/`exerciseId`, dữ liệu published, kết quả toán tất định, xác nhận từ học thuật.
 
+Đã triển khai trong PR #21:
+
+- **Toán 9 / Focus Studio:** tab `Thí nghiệm` chỉ xuất hiện khi bài tập tương ứng thuộc khóa đăng ký, chủ đề/bài học đã published; cần có ít nhất một lần `Kiểm tra bước giải` thực trước khi mở. Đồ thị dùng cùng hệ trục và thang đo cố định; ba thử nghiệm về dấu `a`, dịch chuyển theo `c` và trục đối xứng theo `b` — học sinh chọn dự đoán, thao tác, kiểm tra rồi đọc giải thích.
+- **Lưu ý kiến thức:** dạng `y=ax²+bx+c` với hệ số `b,c` được ghi rõ là *khám phá mở rộng*, không đánh đồng với yêu cầu chuẩn đầu ra lõi `y=ax²` của bài Toán 9.
+- **Tiếng Anh 9:** micro-lab hai tình huống giao tiếp *Joining a school club*, đáp án/giải thích lấy từ hai bài tập đã xuất bản; kiểm tra từng tình huống, sai thì gợi ý để thử lại, đúng mới hiển thị phản hồi của nhân vật. Không giả lập AI hay nhận dạng giọng nói.
+- **Integrity:** selector từ chối cấu hình không khớp nội dung published; cả hai lab không cộng điểm, không tạo mastery hoặc lịch sử Replay giả. Có unit tests và E2E riêng.
+
+Chưa làm và điều kiện trước phát hành:
+
+- Giáo viên bộ môn rà soát và duyệt câu hỏi, sự phù hợp độ tuổi, độ chính xác Toán và giao tiếp tiếng Anh.
+- QA xác nhận accessibility, 360px/390px/1440px, flow học sinh và ảnh trước/sau. Giữ PR Draft cho đến khi chấp thuận.
+- Backend Auth/RBAC và learner-event persistence chưa thuộc P1; không quảng bá đây là AI adaptive tutor hoặc đánh giá mastery.
+- Thử nghiệm với học sinh thật để đo tỷ lệ tự thao tác, tỷ lệ tự sửa và kết quả pre/post, thiết lập baseline trước khi công bố lợi thế.
+
+Risks: mô hình Toán vượt yêu cầu lõi nếu không gắn nhãn rõ; học sinh hiểu nhầm tương tác là điểm số; script hội thoại cần cập nhật khi học liệu đổi; tương tác trên Android cấu hình thấp.
 ## P2 — Knowledge Universe + Thinking Replay
 
 Owner: frontend + learning analytics + QA.
