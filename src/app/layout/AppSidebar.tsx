@@ -311,7 +311,7 @@ export function AppSidebar({
                 className="student-progress-orb"
                 title={`Mastery ${progress}%`}
                 style={{
-                  background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-600) 0)`,
+                  background: `conic-gradient(var(--color-accent) ${progress}%, var(--color-ink-200) 0)`,
                 }}
               >
                 <span>{progress}</span>
@@ -343,7 +343,7 @@ export function AppSidebar({
             <PWAInstallButton
               variant="ghost"
               size="sm"
-              className="w-full justify-center text-white/70"
+              className="student-sidebar-install w-full justify-center"
             />
           </div>
         </div>
