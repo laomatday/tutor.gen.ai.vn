@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" role="img" aria-labelledby="t d">
+<title id="t">Hành trình học tập</title><desc id="d">Phong cảnh núi và bình minh tượng trưng cho hành trình học tập.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#edf6ff"/><stop offset=".5" stop-color="#f7f3ff"/><stop offset="1" stop-color="#e9fbf8"/></linearGradient>
+  <linearGradient id="m1" x1="0" x2="1"><stop stop-color="#adc9ea"/><stop offset="1" stop-color="#dbe7f7"/></linearGradient>
+  <linearGradient id="m2" x1="0" x2="1"><stop stop-color="#5d7fc7"/><stop offset="1" stop-color="#94b8da"/></linearGradient>
+</defs>
+<rect width="1600" height="420" rx="42" fill="url(#sky)"/>
+<circle cx="1265" cy="120" r="62" fill="#fff5c8" opacity=".9"/>
+<path d="M0 300L230 145l150 105 185-165 230 190 170-140 250 205 165-110 240 150v40H0z" fill="url(#m1)" opacity=".75"/>
+<path d="M0 350l220-120 170 90 210-135 240 170 190-90 180 85 160-80 230 120v50H0z" fill="url(#m2)" opacity=".7"/>
+<path d="M0 378c230-20 390 5 560-18s340-50 530-18 330 40 510 10v68H0z" fill="#dce9f2"/>
+<g transform="translate(1220 196)">
+  <circle cx="48" cy="34" r="22" fill="#26324b"/>
+  <path d="M24 72c18-28 54-28 72 0l10 78H14z" fill="#243c8f"/>
+  <path d="M18 86l-48 64M98 86l54 56" stroke="#26324b" stroke-width="14" stroke-linecap="round"/>
+  <rect x="32" y="72" width="52" height="62" rx="14" fill="#19b7a5"/>
+</g>
+<g fill="#243c8f" font-family="Arial,sans-serif">
+  <text x="880" y="78" font-size="28" font-style="italic">Kiến thức mở ra những khả năng mới</text>
+  <path d="M1120 88c38 18 70 35 100 65" fill="none" stroke="#243c8f" stroke-width="4" stroke-linecap="round"/>
+</g>
+</svg>
