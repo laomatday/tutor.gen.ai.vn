@@ -51,11 +51,13 @@ jobs:
           for(const size of sizes){
             const context=await browser.newContext({viewport:{width:size.width,height:size.height}});
             const page=await context.newPage();
-            const errors=[]; page.on('pageerror',e=>errors.push(String(e)));
-            page.on('console',m=>{if(m.type()==='error') errors.push(m.text());});
+            const pageErrors=[]; const badResponses=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('response',res=>{if(res.status()>=400) badResponses.push({url:res.url(),status:res.status()});});
             for(const route of routes){
               const res=await page.goto('http://127.0.0.1:4173'+route,{waitUntil:'networkidle',timeout:45000});
-              await page.waitForTimeout(250);
+              await page.locator('h1').first().waitFor({state:'visible',timeout:10000});
+              await page.waitForTimeout(150);
               const metrics=await page.evaluate(()=>({
                 width:innerWidth,
                 scrollWidth:document.documentElement.scrollWidth,
@@ -70,7 +72,8 @@ jobs:
               if(!metrics.h1.length) failures.push(`${size.name}${route}: missing h1`);
               await page.screenshot({path:`${out}/${size.name}-${route==='/'?'mission':route.slice(1)}.png`,fullPage:true});
             }
-            if(errors.length) failures.push(`${size.name}: console ${JSON.stringify(errors)}`);
+            if(pageErrors.length) failures.push(`${size.name}: page errors ${JSON.stringify(pageErrors)}`);
+            if(badResponses.length) failures.push(`${size.name}: bad responses ${JSON.stringify(badResponses)}`);
             await context.close();
           }
           await browser.close();
