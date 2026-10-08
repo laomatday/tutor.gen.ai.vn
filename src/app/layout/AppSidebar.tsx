@@ -28,6 +28,7 @@ interface Props {
   pinned?: boolean;
   onToggleSidebar?: () => void;
   onTogglePinned?: () => void;
+  recentPaths?: string[];
 }
 
 export function AppSidebar({
@@ -45,11 +46,29 @@ export function AppSidebar({
   pinned = false,
   onToggleSidebar,
   onTogglePinned,
+  recentPaths = [],
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
     const secondary = studentRoutes.filter((item) => item.group !== "Core");
     const visible = open || pinned;
+    const routeForPath = (path: string) =>
+      studentRoutes.find((item) => item.path === path) ??
+      studentRoutes.find((item) => path.startsWith(item.path) && item.path !== "/");
+    const recentItems = recentPaths
+      .map((path) => ({ path, route: routeForPath(path) }))
+      .filter(
+        (item): item is {
+          path: string;
+          route: (typeof studentRoutes)[number];
+        } => Boolean(item.route),
+      )
+      .slice(0, 5);
+    const pinnedItems = [
+      { label: "Nhiệm vụ tiếp theo", path: nextLessonPath, icon: "target" },
+      { label: "Knowledge Universe", path: "/hoc-bai", icon: "account_tree" },
+      { label: "Focus Studio", path: "/tu-giai", icon: "edit_square" },
+    ];
 
     return (
       <aside
@@ -163,7 +182,7 @@ export function AppSidebar({
               <Icon name="arrow_forward" />
             </Button>
 
-            <div className="student-sidebar-pin-row">
+            <div className="student-sidebar-pin-row hidden lg:flex">
               <div>
                 <strong>Giữ sidebar mở</strong>
                 <span>Không tự thu khi chuyển trang</span>
@@ -182,6 +201,58 @@ export function AppSidebar({
                 <span>{pinned ? "Bật" : "Tắt"}</span>
               </Button>
             </div>
+
+            <section className="student-sidebar-section" aria-labelledby="student-pinned-nav">
+              <p id="student-pinned-nav" className="student-sidebar-section__label">
+                Đã ghim
+              </p>
+              <div className="student-sidebar-list">
+                {pinnedItems.map((item) => (
+                  <Button
+                    key={item.label}
+                    variant="ghost"
+                    onClick={() => onNavigate(item.path)}
+                    className="student-sidebar-row student-sidebar-row--compact"
+                  >
+                    <span className="student-sidebar-row__icon">
+                      <Icon name={item.icon} />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-left text-sm">
+                      {item.label}
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            </section>
+
+            <section className="student-sidebar-section" aria-labelledby="student-recent-nav">
+              <p id="student-recent-nav" className="student-sidebar-section__label">
+                Gần đây
+              </p>
+              <div className="student-sidebar-list">
+                {recentItems.length ? (
+                  recentItems.map(({ path, route }) => (
+                    <Button
+                      key={path}
+                      variant="ghost"
+                      onClick={() => onNavigate(path)}
+                      className="student-sidebar-row student-sidebar-row--compact"
+                    >
+                      <span className="student-sidebar-row__icon">
+                        <Icon name={route.icon} />
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-left text-sm">
+                        {route.label}
+                      </span>
+                    </Button>
+                  ))
+                ) : (
+                  <p className="px-2 py-2 text-xs text-ink-400">
+                    Các trang vừa mở sẽ xuất hiện ở đây.
+                  </p>
+                )}
+              </div>
+            </section>
 
             <section className="student-sidebar-section" aria-labelledby="student-core-nav">
               <p id="student-core-nav" className="student-sidebar-section__label">
