@@ -5,6 +5,7 @@ import {
   ordinaryLinkClick as ordinaryClick,
 } from "../../app/navigation";
 import { Button, Input, Select, Icon, buttonStyles, Progress } from "../../components/ui";
+import { StudentPageHeader, StudentSignalStrip } from "../../components/student/StudentExperience";
 import { appConfig } from "../../config/app";
 import { routePath } from "../../config/routes";
 import React, { useEffect, useState } from "react";
@@ -343,7 +344,61 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
   }
 
   return (
-    <div className="w-full space-y-6 pb-10">
+    <div className="learning-os-page">
+      {subject && (
+        <>
+          <StudentPageHeader
+            eyebrow={lesson ? "Learning session" : topic ? "Topic path" : "Course path"}
+            icon={lesson ? "auto_stories" : "route"}
+            title={lesson?.title ?? topic?.title ?? `${subject.name} lớp ${gradeId}`}
+            description={
+              lesson?.summary ??
+              topic?.description ??
+              `Theo dõi mastery, chọn chủ đề và học theo nhịp phù hợp trong ${ownedLabel}.`
+            }
+            meta={
+              <>
+                <span className="rounded-full bg-surface-page px-3 py-1.5 text-xs font-semibold text-brand">
+                  {subject.name} · Lớp {gradeId}
+                </span>
+                {lesson && (
+                  <span className="rounded-full bg-accent/8 px-3 py-1.5 text-xs font-semibold text-accent-strong">
+                    {stages[stageIndex]?.label ?? "Lý thuyết"}
+                  </span>
+                )}
+              </>
+            }
+            actions={
+              <Button
+                variant="secondary"
+                onClick={() => go({ subjectId: subject.id, topicId: "", lessonId: "" })}
+              >
+                <Icon name="route" />
+                Về course path
+              </Button>
+            }
+          />
+
+          <StudentSignalStrip
+            items={
+              lesson
+                ? [
+                    { icon: "timer", label: "Thời lượng", value: `${lesson.durationMinutes} phút` },
+                    { icon: "edit_note", label: "Bài tập", value: `${lesson.exercises.length} câu` },
+                    { icon: "progress_activity", label: "Stage", value: stages[stageIndex]?.label ?? "Lý thuyết" },
+                    { icon: done ? "verified" : "target", label: "Trạng thái", value: done ? "Đã hoàn thành" : "Đang học" },
+                  ]
+                : [
+                    { icon: "account_tree", label: "Chủ đề", value: `${courseTopics.length} chủ đề` },
+                    { icon: "auto_stories", label: "Learning objects", value: `${courseLessons.length} bài` },
+                    { icon: "progress_activity", label: "Mastery", value: `${progress}%` },
+                    { icon: "play_arrow", label: "Next", value: resumeLesson?.title ?? "Đã hoàn tất" },
+                  ]
+            }
+          />
+        </>
+      )}
+
       {storageError && (
         <p
           role="alert"
