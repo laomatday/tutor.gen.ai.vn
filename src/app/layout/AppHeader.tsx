@@ -89,7 +89,7 @@ export function AppHeader({
               onClick={() => onNavigate(routePath("hoc-bai"))}
               title="Knowledge Map"
             >
-              <Icon name="hub" />
+              <Icon name="account_tree" />
             </Button>
             <Button
               variant="ghost"
