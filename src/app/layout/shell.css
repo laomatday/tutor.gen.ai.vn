@@ -271,6 +271,18 @@
     color: var(--color-ink-500);
   }
 
+  .student-sidebar-install {
+    color: var(--color-ink-500);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .student-sidebar-install:hover {
+    color: var(--color-ink-900);
+    background: rgb(15 23 42 / 0.05);
+  }
+
   /* Gemini-inspired header — light by default. */
   .app-header--student.gemini-header {
     height: 3.75rem;
@@ -444,7 +456,8 @@
   .dark .student-sidebar-brand,
   .dark .student-sidebar-profile,
   .dark .student-sidebar-row,
-  .dark .student-sidebar-mastery strong {
+  .dark .student-sidebar-mastery strong,
+  .dark .student-sidebar-install {
     color: rgb(243 244 246 / 0.88);
   }
 
