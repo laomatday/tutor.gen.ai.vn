@@ -24,6 +24,7 @@ import { cn } from "./utils";
  * local Material Symbols Rounded SVG language as gen.ai.vn.
  */
 export const ICONS: Record<string, IconComponent> = {
+  functions: Calculate,
   pause: Pause,
   add_task: CheckCircle,
   alarm: AlarmClock,
