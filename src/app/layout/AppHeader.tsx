@@ -118,7 +118,7 @@ export function AppHeader({
               <strong className="block truncate text-xs text-brand">
                 {studentProfile.name}
               </strong>
-              <small className="block truncate text-[11px] text-ink-500">
+              <small className="block truncate text-xs text-ink-500">
                 Tuyển sinh 10 · {studentProfile.levelLabel}
               </small>
             </span>
