@@ -38,9 +38,9 @@ Mỗi đích xuất hiện tối đa một lần trong mỗi vùng điều hư�
 
 ## 4. Shell
 
-**Desktop (từ 1024px).** Sidebar nền trắng rộng 288px với logo genAi Tutor, phụ đề “Học tập cùng genAi”, CTA “Tiếp tục học” màu navy và mục điều hướng có nhãn; có thể thu gọn thành rail 72px bằng nút riêng trong sidebar (lưu lựa chọn người dùng). Mục đang chọn có nền navy và chữ trắng. Không có panel thứ hai, “Đã ghim” hoặc “Gần đây”. Header nền sáng cao 72px với breadcrumb “Không gian học tập › Tên trang” ở bên trái, tìm kiếm bài học thật ở giữa, hồ sơ ở bên phải. Không có streak, chỉ số giả, shortcut trùng sidebar hay thông báo khi chưa có nguồn dữ liệu.
+**Desktop (từ 1024px).** Sidebar trắng rộng 288px khi mở, thu gọn thành rail 72px; giữ trạng thái trong lưu trữ thiết bị. Nút đóng/mở dạng chevron tròn 44×44px bám **mép phải sidebar** (thay đổi hướng theo trạng thái), luôn nhìn thấy để mở lại; không có hamburger trong header hoặc sidebar. Mỗi icon có title và nhãn cho trình đọc màn hình khi thu gọn. Không có rail thứ hai hoặc mục ghim/gần đây. Header 72px chỉ có nhận diện, tìm kiếm bài học thật và hồ sơ; breadcrumb ở vùng nội dung phía trên tiêu đề, không nằm trong header. Không hiển thị streak hoặc thông báo giả.
 
-**Mobile (dưới 1024px).** Bottom nav gồm 4 mục Chính, mỗi nhãn nằm trên một dòng. Drawer chứa nhóm Phụ và hồ sơ. Nội dung trang chừa khoảng an toàn cho bottom nav.
+**Mobile (dưới 1024px).** Bottom nav giữ bốn mục chính. Header có nút chevron phải (44×44px), không dùng hamburger, để mở drawer chứa các mục phụ và hồ sơ. Trong drawer có chevron trái để đóng; Escape, backdrop và click điều hướng cũng đóng được. Sau khi đóng, focus trở lại nút mở. Không hiển thị tay nắm desktop ở mobile.
 
 **Giáo viên và Quản trị.** Giữ shell hiện tại (sidebar có nhãn và breadcrumb). H1 là tên trang, không dùng khẩu hiệu.
 

@@ -63,18 +63,6 @@ export function AppSidebar({
             </span>
           </Button>
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleSidebar}
-            aria-label={pinned ? "Thu gọn menu" : "Mở rộng menu"}
-            aria-expanded={pinned}
-            aria-controls="main-navigation"
-            className="student-sidebar-toggle hidden lg:inline-flex"
-            title={pinned ? "Thu gọn menu" : "Mở rộng menu"}
-          >
-            <Icon name={pinned ? "chevron_left" : "menu"} />
-          </Button>
-          <Button
             ref={closeRef}
             variant="ghost"
             size="icon"
@@ -82,9 +70,22 @@ export function AppSidebar({
             onClick={onClose}
             className="student-sidebar-close lg:hidden"
           >
-            <Icon name="close" />
+            <Icon name="chevron_left" />
           </Button>
         </div>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleSidebar}
+          aria-label={pinned ? "Thu gọn thanh bên" : "Mở rộng thanh bên"}
+          aria-expanded={pinned}
+          aria-controls="main-navigation"
+          className="student-sidebar-edge-toggle"
+          title={pinned ? "Thu gọn thanh bên" : "Mở rộng thanh bên"}
+        >
+          <Icon name={pinned ? "chevron_left" : "chevron_right"} />
+        </Button>
 
         <div className="student-sidebar-scroll">
           <Button
@@ -152,7 +153,7 @@ export function AppSidebar({
             <Progress value={progress} label="Tiến độ hoàn thành" tone="accent" className="student-sidebar-progress__track" />
             <small>{balance} GP · Dữ liệu minh họa</small>
           </div>
-          <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile">
+          <Button variant="ghost" onClick={onOpenProfile} className="student-sidebar-profile" title="Mở hồ sơ học tập" aria-label="Mở hồ sơ học tập">
             <StudentAvatar name={studentProfile.name} src={studentProfile.avatarUrl} className="h-10 w-10 shrink-0 rounded-full" />
             <span className="student-sidebar-profile__copy">
               <strong>{studentProfile.name}</strong>
@@ -193,7 +194,7 @@ export function AppSidebar({
           onClick={onClose}
           className="lg:hidden"
         >
-          <Icon name="close" />
+          <Icon name="chevron_left" />
         </Button>
       </div>
 

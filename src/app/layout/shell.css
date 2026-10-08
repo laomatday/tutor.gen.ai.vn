@@ -120,26 +120,52 @@
     font-weight: 500;
   }
 
-  .student-sidebar-toggle,
-  .student-sidebar-close {
-    color: var(--color-ink-500);
-    border-radius: 10px;
+  /* Gemini-inspired chevron handle at the rail edge. */
+  .app-sidebar--student .student-sidebar-edge-toggle {
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: -22px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-  }
-
-  .student-sidebar-toggle:hover,
-  .student-sidebar-close:hover {
-    background: #eff2f7;
+    padding: 0;
+    border: 1px solid var(--color-ink-200);
+    border-radius: 9999px;
+    background: white;
     color: var(--color-brand);
+    box-shadow: 0 2px 12px rgb(15 23 42 / 0.12);
+    opacity: .90;
+    transition: background-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
   }
 
-  .student-sidebar-toggle {
-    opacity: 0.68;
-  }
-
-  .student-sidebar-toggle:hover,
-  .student-sidebar-toggle:focus-visible {
+  .app-sidebar--student .student-sidebar-edge-toggle:hover,
+  .app-sidebar--student .student-sidebar-edge-toggle:focus-visible {
+    background: var(--color-surface-soft);
+    box-shadow: 0 3px 16px rgb(15 23 42 / 0.17);
     opacity: 1;
+  }
+
+  .app-sidebar--student .student-sidebar-edge-toggle:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .student-sidebar-edge-toggle > .ui-icon { width: 20px; height: 20px; }
+
+  .student-sidebar-close {
+    flex-shrink: 0;
+    border-radius: 12px;
+    color: var(--color-ink-600);
+  }
+
+  .student-sidebar-close:hover {
+    background: var(--color-surface-soft);
+    color: var(--color-brand);
   }
 
   .student-sidebar-scroll {
@@ -377,7 +403,22 @@
   }
 
   .app-header__end { justify-content: flex-end; }
-  .app-header__menu { width: 44px; height: 44px; flex-shrink: 0; border-radius: 11px; }
+  /* Mobile chevron control, no hamburger. */
+  .app-header__menu {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid var(--color-ink-200);
+    border-radius: 12px;
+    background: white;
+    color: var(--color-brand);
+  }
+  .app-header__menu:hover {
+    border-color: var(--color-brand);
+    background: var(--color-surface-soft);
+  }
   .app-header__context {
     color: var(--color-brand);
     font-size: 14px;
@@ -510,6 +551,9 @@
     .app-sidebar--student.is-pinned {
       width: var(--student-sidebar-expanded);
     }
+    /* Handle stays discoverable at both 288px and 72px. */
+    .app-sidebar--student .student-sidebar-edge-toggle { display: flex; }
+    .app-sidebar--student:not(.is-pinned) .student-sidebar-edge-toggle { opacity: 1; }
 
     .app-frame--student {
       padding-left: var(--student-sidebar-collapsed);
@@ -550,10 +594,9 @@
     }
 
     .app-sidebar--student:not(.is-pinned) .student-sidebar-panel__header {
-      flex-direction: column;
       justify-content: center;
-      gap: 7px;
-      padding: 12px 7px 9px;
+      gap: 0;
+      padding: 14px 7px 12px;
     }
 
     .app-sidebar--student:not(.is-pinned) .student-sidebar-brand {
@@ -562,12 +605,6 @@
       min-height: 44px;
       justify-content: center;
       padding: 0;
-    }
-
-    .app-sidebar--student:not(.is-pinned) .student-sidebar-toggle {
-      width: 42px;
-      height: 40px;
-      min-height: 40px;
     }
 
     .app-sidebar--student:not(.is-pinned) .student-sidebar-scroll {
@@ -610,6 +647,12 @@
     border-color: #394150;
   }
 
+  .dark .app-sidebar--student .student-sidebar-edge-toggle {
+    background: var(--color-night-raised);
+    border-color: var(--color-ink-700);
+    color: var(--color-brand-soft);
+  }
+  .dark .app-sidebar--student .student-sidebar-edge-toggle:hover { background: var(--color-night-chip); }
   .dark .student-sidebar-row { color: #cbd5e1; }
 
   .dark .student-sidebar-row:hover,
@@ -630,7 +673,8 @@
   @media (prefers-reduced-motion: reduce) {
     .app-sidebar,
     .app-frame--student,
-    .app-frame--student .app-header {
+    .app-frame--student .app-header,
+    .app-sidebar--student .student-sidebar-edge-toggle {
       transition: none;
     }
     .learning-load-skeleton { animation: none; }
