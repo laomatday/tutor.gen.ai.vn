@@ -32,12 +32,12 @@ test('Wallet policy caps awards and rejects invalid or unaffordable spending', (
 });
 test('Course selectors hide unpurchased and unpublished content and ignore orphan lessons', () => {
   const course = ownedPublishedLessons(INITIAL_LESSONS, INITIAL_TOPICS);
-  assert.equal(course.length, 6);
-  assert.ok(course.every(lesson => lesson.gradeId === '9' && lesson.subjectId === 'toan'));
+  assert.equal(course.length, 8);
+  assert.ok(course.every(lesson => lesson.gradeId === '9' && ['toan', 'tieng-anh'].includes(lesson.subjectId)));
   assert.equal(ownedPublishedLessons(INITIAL_LESSONS, []).length, 0);
   const progress = summarizeProgress(course, ['can-bac-hai', 'unknown', 'can-bac-hai']);
   assert.equal(progress.completed, 1);
-  assert.equal(progress.percent, 17);
+  assert.equal(progress.percent, 13);
   assert.equal(progress.nextLesson?.id, 'rut-gon-can-thuc');
 });
 test('Published schema and shared editor limits reject incomplete/ambiguous exercise content', () => {
