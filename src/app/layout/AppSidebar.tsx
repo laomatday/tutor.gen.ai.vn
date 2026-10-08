@@ -25,6 +25,8 @@ interface Props {
   nextLessonPath: string;
   progress: number;
   balance: number;
+  expanded?: boolean;
+  onToggleExpanded?: () => void;
 }
 
 export function AppSidebar({
@@ -39,6 +41,8 @@ export function AppSidebar({
   nextLessonPath,
   progress,
   balance,
+  expanded = false,
+  onToggleExpanded,
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
@@ -48,7 +52,7 @@ export function AppSidebar({
         ref={sidebarRef}
         id="main-navigation"
         aria-label="Learning OS"
-        className={`app-sidebar app-sidebar--student ${open ? "is-open" : ""}`}
+        className={`app-sidebar app-sidebar--student ${open ? "is-open" : ""} ${expanded ? "is-expanded" : ""}`}
       >
         <div className="student-rail-brand">
           <Button
@@ -75,6 +79,17 @@ export function AppSidebar({
             className="lg:hidden"
           >
             <Icon name="close" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={expanded ? "Thu gọn thanh điều hướng" : "Mở rộng thanh điều hướng"}
+            aria-expanded={expanded}
+            onClick={onToggleExpanded}
+            className="student-rail-toggle hidden lg:inline-flex"
+            title={expanded ? "Thu gọn" : "Mở rộng"}
+          >
+            <Icon name={expanded ? "chevron_left" : "chevron_right"} />
           </Button>
         </div>
 
