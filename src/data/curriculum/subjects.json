@@ -3,7 +3,16 @@
     "id": "toan",
     "name": "Toán",
     "icon": "calculate",
-    "description": "Hiểu bản chất, rèn tư duy và giải quyết vấn đề."
+    "description": "Hiểu bản chất, rèn tư duy và giải quyết vấn đề.",
+    "cardImageUrl": "/learning-media/math-course.svg",
+    "heroImageUrl": "/learning-media/math-parabola.svg",
+    "capabilities": {
+      "math": true,
+      "images": true,
+      "audio": false,
+      "vocabulary": false,
+      "dialogue": false
+    }
   },
   {
     "id": "ngu-van",
@@ -15,7 +24,16 @@
     "id": "tieng-anh",
     "name": "Tiếng Anh",
     "icon": "language",
-    "description": "Phát triển ngôn ngữ qua tình huống gần gũi."
+    "description": "Phát triển ngôn ngữ qua tình huống gần gũi.",
+    "cardImageUrl": "/learning-media/english-course.svg",
+    "heroImageUrl": "/learning-media/english-rainy-day.svg",
+    "capabilities": {
+      "math": false,
+      "images": true,
+      "audio": true,
+      "vocabulary": true,
+      "dialogue": true
+    }
   },
   {
     "id": "tin-hoc",
