@@ -18,7 +18,14 @@ test("Math 9 draft bank has 100 distinct questions with reviewed metadata not fa
     assert.ok(question.explanation.length>30);
     assert.ok(question.errorCodes.length>0);
     bySkill.set(question.skillId,(bySkill.get(question.skillId)??0)+1);
-    const v=question.check;
+    // JSON imports widen discriminants. Narrow the validated check payload
+    // by its documented kind before performing the arithmetic invariants.
+    const v=question.check as
+      | {kind:"radical-domain";a:number}
+      | {kind:"radical-simplify";n:number;k:number;m:number}
+      | {kind:"parabola";a:number;x:number;y:number}
+      | {kind:"system";x:number;y:number;sum:number;difference:number}
+      | {kind:"inscribed-angle";central:number;angle:number};
     if(v.kind==="radical-domain"){
       assert.equal(question.options[question.correctIndex],`$x\\ge ${v.a}$`);
     }else if(v.kind==="radical-simplify"){
