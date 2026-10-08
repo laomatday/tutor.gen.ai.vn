@@ -94,6 +94,44 @@ test("Reference shell: mobile drawer preserves navigation and focus", async ({pa
   await expect(toggle).toBeFocused();
 });
 
+test("Advanced Tutor: learning mission, graph and workspace identity are present", async ({page}) => {
+  await page.goto("/");
+  await expect(page.locator(".advanced-mission")).toBeVisible();
+  await expect(page.getByRole("heading", {name:"Các bài cần học tiếp"})).toBeVisible();
+  await page.goto("/hoc-bai");
+  await expect(page.getByRole("heading", {name:/Knowledge Universe/})).toBeVisible();
+  const nodes = page.locator(".ai-v3-map-node");
+  expect(await nodes.count()).toBeGreaterThan(1);
+  await nodes.last().click();
+  await expect(nodes.last()).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("complementary",{name:"Thông tin chủ đề"}).getByRole("heading",{level:2})).toBeVisible();
+  await page.goto("/tu-giai?problem=parabola-coefficient-03");
+  await expect(page.getByRole("heading", {name:/Focus Studio/})).toBeVisible();
+  await expect(page.getByRole("heading", {name:/Reasoning Canvas/})).toBeVisible();
+  await expect(page.getByRole("heading", {name:"Các bước đã kiểm tra"})).toBeVisible();
+  await expect(page.getByRole("heading", {name:"Tự đặt câu hỏi"})).toBeVisible();
+  await page.goto("/replay?problem=parabola-coefficient-03");
+  await expect(page.getByRole("heading", {name:/Xem lại bài làm/})).toBeVisible();
+  await expect(page.getByText("Chưa có bài nộp để xem lại")).toBeVisible();
+});
+
+test("Focus Studio: log only real attempts and reveal mathematical model after valid solution", async ({page}) => {
+  await page.goto("/tu-giai?problem=parabola-coefficient-03");
+  const answer = page.getByLabel("Trình bày từng phép biến đổi");
+  await expect(answer).toHaveValue("");
+  await expect(page.getByText("Mô hình mở sau khi em kiểm tra đúng")).toBeVisible();
+  await answer.fill("a=9");
+  await page.getByRole("button",{name:"Kiểm tra bước giải"}).click();
+  await expect(page.getByRole("heading",{name:"Các bước đã kiểm tra"})).toBeVisible();
+  await expect(page.getByText("a=9",{exact:true}).first()).toBeVisible();
+  await answer.fill("12 = a * (-2)^2 ⇔ a = 3");
+  await page.getByRole("button",{name:"Kiểm tra bước giải"}).click();
+  await expect(page.getByText("Sau khi giải: y = 3x²")).toBeVisible();
+  await page.getByRole("button", {name:"Xem lại bài làm"}).click();
+  await expect(page.getByRole("heading",{name:"Các bước đã ghi nhận"})).toBeVisible();
+  await expect(page.getByText("a=9",{exact:true}).first()).toBeVisible();
+});
+
 test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
   await page.goto("/");
   await expect(page.getByRole("heading", {name:/Chào/})).toBeVisible();
