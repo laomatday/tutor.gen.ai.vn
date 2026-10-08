@@ -59,7 +59,7 @@ export function AppHeader({ role, menuOpen, menuRef, onMenu, onNavigate, onOpenP
           >
             <Icon name={menuOpen ? "chevron_left" : "chevron_right"} />
           </Button>
-          <span className="app-header__context">{appConfig.brand.name}</span>
+          <span className="app-header__context lg:hidden">{appConfig.brand.name}</span>
         </div>
 
         <form
