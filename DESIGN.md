@@ -185,3 +185,73 @@ Student có thể đăng ký nhiều môn. Map phải cho chuyển môn mà khô
 - Toán có thể dùng `math=true`.
 - Tiếng Anh test hiện dùng `math=false`, `images=true`, `vocabulary=true`, `dialogue=true`.
 - Thêm môn mới bằng subject + topics + lessons trong DB, không hard-code một renderer riêng cho từng môn.
+
+
+## AI Pulse V3
+
+Student product language is now **AI Pulse V3** on top of the existing Learning OS architecture.
+
+### Global shell
+
+- genAi Tutor remains the product brand; AI Pulse is the cognitive/adaptive layer.
+- Student desktop header is a command bar with search (`Cmd/Ctrl+K`), streak, Deep Focus, Replay Mode, notification and learner profile.
+- Desktop sidebar remains 80px collapsed / 280px expanded with persistence.
+- Mobile keeps the 4-point bottom journey navigation.
+- Student UI text has a computed minimum of 12px; `<small>` cannot bypass this floor.
+
+### Home
+
+Home is a cognitive dashboard, not a generic module grid:
+
+- Learning journey hero.
+- AI Cognitive Pulse.
+- Today Mission + visual problem preview.
+- Exam journey progress.
+- Cognitive Profile radar.
+- Learner profile signals.
+- Adaptive learning queue.
+- AI Coach bridge recommendation.
+
+### Knowledge Universe
+
+Knowledge Map must show:
+
+- Subject/course context.
+- Node-state legend.
+- AI Diagnostic / Adaptive Bridge.
+- Central knowledge graph with explicit mastery, gap and prerequisite states.
+- Right-side Node Intelligence: mastery, prerequisites, support assets, Mistake DNA and exam importance.
+- Score/mastery projection summaries.
+
+### Focus Studio
+
+Focus Studio is a reasoning workspace:
+
+- Session status / Socratic Guard.
+- Tool ribbon.
+- Reasoning Canvas with visible stages: attempt → consistency check → retry → completion.
+- AI Pulse & Cognitive Guide.
+- Socratic questions and live reasoning trace.
+- Visual manipulatives such as Algebra Tiles.
+- AI never replaces the learner's reasoning with a direct solution by default.
+
+### Thinking Replay
+
+Replay is a cognition timeline, not a result report:
+
+- Playback and speed controls.
+- Timestamped thought events.
+- Misconception detection.
+- Socratic intervention.
+- Self-correction moment.
+- Mistake DNA + Dynamic Bridge.
+- Recognized cognitive signals.
+- Stroke Replay / working-memory snapshot.
+
+### Visual principles
+
+- White / cool-gray base, genAi navy primary, teal accent, warning orange and sparse danger red.
+- Rounded 2xl–3xl surfaces, refined shadows and clear information hierarchy.
+- Dense information is grouped into narrative panels rather than dashboard grids.
+- Illustration is self-hosted where possible; current journey hero is `/learning-media/learning-horizon.svg`.
+- Do not add a new color family outside the genAi token system.
