@@ -1,22 +1,16 @@
-import { Button, Input, Select, Icon, buttonStyles, Progress } from "../../components/ui";
-import { appConfig } from "../../config/app";
-import { routePath } from "../../config/routes";
 import React from "react";
+import { Button, Icon, Progress } from "../../components/ui";
+import { routePath } from "../../config/routes";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
-  canStudy,
   lessonHref,
   studentProfile,
-  SUBJECTS,
   primaryEnrollment,
-  courseLabel,
   courseHref,
   subjectFor,
-  lessonStages,
   ownedPublishedLessons,
-  summarizeProgress,
 } from "../curriculum";
-import { GoalsSection } from "../goals/GoalsSection";
+import { sampleAssessment, assessmentSummary } from "../progress/data";
 import { initialBadges } from "../gamification/badges";
 
 interface TodayViewProps {
@@ -32,406 +26,256 @@ export const TodayView: React.FC<TodayViewProps> = ({
   onOpenBadges,
   gpBalance,
   dailyGp,
-  onEarnGp,
 }) => {
   const { lessons, topics, completedLessonIds, storageError } = useCurriculum();
   const enrollment = primaryEnrollment;
-  const enrolledSubject = subjectFor(enrollment.subjectId)!;
-  const ownedLabel = courseLabel(enrollment.gradeId, enrollment.subjectId);
-  const courseLessons = ownedPublishedLessons(lessons, topics).filter(
-    (lesson) =>
-      lesson.gradeId === enrollment.gradeId &&
-      lesson.subjectId === enrollment.subjectId,
-  );
+  const subject = subjectFor(enrollment.subjectId)!;
+  const courseLessons = ownedPublishedLessons(lessons, topics)
+    .filter(
+      (lesson) =>
+        lesson.gradeId === enrollment.gradeId &&
+        lesson.subjectId === enrollment.subjectId,
+    )
+    .sort((a, b) => a.order - b.order);
   const completed = courseLessons.filter((lesson) =>
     completedLessonIds.includes(lesson.id),
-  ).length;
-  const percent = courseLessons.length
-    ? Math.round((completed / courseLessons.length) * 100)
+  );
+  const nextLesson =
+    courseLessons.find((lesson) => !completedLessonIds.includes(lesson.id)) ??
+    courseLessons[0];
+  const progress = courseLessons.length
+    ? Math.round((completed.length / courseLessons.length) * 100)
     : 0;
-  const remaining = courseLessons.filter(
-    (lesson) => !completedLessonIds.includes(lesson.id),
-  );
-  const nextLesson = remaining[0] ?? courseLessons[0];
-  const courseTopics = topics.filter(
-    (topic) =>
-      canStudy(topic.gradeId, topic.subjectId) &&
-      courseLessons.some((lesson) => lesson.topicId === topic.id),
-  );
-  const continueLearning = () =>
-    onNavigate(
-      nextLesson
-        ? lessonHref(nextLesson)
-        : courseHref(enrollment.gradeId, enrollment.subjectId),
-    );
+  const nextTopic = topics.find((topic) => topic.id === nextLesson?.topicId);
+  const assessment = assessmentSummary(sampleAssessment);
+  const unlocked = initialBadges.filter((badge) => badge.unlocked).length;
+  const firstName = studentProfile.name.split(" ").at(-1);
 
-  const unlockedBadges = initialBadges.filter((b) => b.unlocked);
-  const nextMilestoneBadge = initialBadges.find((b) => !b.unlocked);
+  const missionPath = nextLesson
+    ? lessonHref(nextLesson)
+    : courseHref(enrollment.gradeId, enrollment.subjectId);
+
+  const mapPath = routePath("hoc-bai");
+  const replayPath = routePath("replay");
 
   return (
-    <div className="w-full space-y-6 pb-10">
-      <div className="ui-page-header">
-        <div>
-          <p className="ui-page-kicker">
-            KHÔNG GIAN HỌC TẬP CỦA BẠN
-          </p>
-          <h1 className="ui-page-title">
-            Chào {studentProfile.name.split(" ").at(-1)}, cùng học tiếp nhé!
-          </h1>
-          <p className="ui-page-description">
-            Hiểu từng bài. Vững từng bước. Tiến bộ mỗi ngày.
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-outline-variant bg-white px-4 py-2 text-xs font-semibold text-primary">
-          <Icon name="school" className="text-base" />
-          {studentProfile.className} <span className="text-outline">·</span>{" "}
-          {studentProfile.enrollments.length} môn đã đăng ký
-        </span>
-      </div>
-
+    <div className="learning-os-page">
       {storageError && (
-        <p
+        <div
           role="alert"
-          className="rounded-xl bg-error-container p-4 text-sm text-on-error-container"
+          className="rounded-2xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-800"
         >
           {storageError}
-        </p>
+        </div>
       )}
 
-      <div className="grid gap-5 xl:grid-cols-[1.65fr_1fr]">
-        <section className="overflow-hidden ui-learning-card">
-          <div className="bg-secondary-container/45 p-5 sm:p-7">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-secondary">
-                <span className="h-1.5 w-1.5 rounded-full bg-secondary" /> MÔN
-                HỌC CỦA TÔI
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondary">
-                <Icon name="verified" className="text-base" />
-                Đã đăng ký
-              </span>
-            </div>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
-                  {enrolledSubject.name}{" "}
-                  <span className="text-secondary">
-                    lớp {enrollment.gradeId}
-                  </span>
-                </h2>
-                <p className="mt-3 max-w-md text-sm leading-6 text-on-surface-variant">
-                  Từ hiểu kiến thức đến tự tin vận dụng.
-                  <br className="hidden sm:block" /> Học theo chủ đề, luyện tập
-                  theo từng dạng bài.
-                </p>
+      <section className="mission-hero" aria-labelledby="mission-title">
+        <div className="mission-layout">
+          <div>
+            <span className="mission-kicker">
+              <Icon name="auto_awesome" />
+              Mission 01 · AI chọn cho bạn
+            </span>
+            <h1 id="mission-title" className="mission-title">
+              {firstName}, hôm nay chỉ cần thắng một nhiệm vụ.
+            </h1>
+            <p className="mission-copy">
+              Tutor đã nhìn vào tiến độ hiện tại và chọn một bước vừa đủ khó để
+              bạn tiến lên mà không phải tự tìm bài giữa hàng chục màn hình.
+            </p>
+
+            <div className="mt-6 max-w-2xl rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-accent-pale">
+                    Nhiệm vụ tiếp theo
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-white">
+                    {nextLesson?.title ?? "Khám phá chương trình học"}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-white/70">
+                    {nextTopic?.title ?? subject.name} · {nextLesson?.durationMinutes ?? 15} phút
+                  </p>
+                </div>
+                <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/80">
+                  {progress}% mastery
+                </span>
               </div>
-              <span className="hidden h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/80 text-primary sm:flex">
-                <Icon name={enrolledSubject.icon} className="text-5xl" />
-              </span>
+              <Progress
+                value={progress}
+                label="Tiến độ chương trình"
+                tone="accent"
+                className="mt-5 h-2 bg-white/10"
+              />
             </div>
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-on-surface-variant">
-              <span className="inline-flex items-center gap-1.5">
-                <Icon name="folder_open" className="text-base text-secondary" />
-                {courseTopics.length} chủ đề
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Icon name="menu_book" className="text-base text-secondary" />
-                {courseLessons.length} bài học
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Icon name="school" className="text-base text-secondary" />
-                Ôn tập & củng cố nền tảng
-              </span>
+
+            <div className="mission-actions">
+              <Button
+                variant="surface"
+                className="mission-primary-action"
+                onClick={() => onNavigate(missionPath)}
+              >
+                Bắt đầu {nextLesson?.durationMinutes ?? 15} phút
+                <Icon name="arrow_forward" />
+              </Button>
+              <Button
+                variant="surface"
+                className="mission-secondary-action"
+                onClick={() => onNavigate(mapPath)}
+              >
+                <Icon name="route" />
+                Xem Knowledge Map
+              </Button>
             </div>
           </div>
-          <div className="p-5 sm:p-7">
-            <div className="mb-2 flex items-center justify-between gap-3 text-xs">
-              <span className="text-on-surface-variant">
-                Đã hoàn thành{" "}
-                <strong className="text-primary">
-                  {completed}/{courseLessons.length} bài
-                </strong>
+
+          <div className="mission-orbit" aria-label="Tín hiệu học tập hôm nay">
+            <div className="mission-orbit-core">
+              <span className="text-4xl font-extrabold">{progress}%</span>
+              <span className="mt-1 text-xs font-bold uppercase tracking-wider text-accent-strong">
+                mastery
               </span>
-              <strong className="text-secondary">{percent}%</strong>
             </div>
-            <Progress value={percent} label={`Tiến độ ${ownedLabel}`} tone="accent" className="h-2" />
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-xs text-outline">
-                  {remaining.length ? "Bài học tiếp theo" : "Ôn lại kiến thức"}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-on-surface">
-                  {nextLesson?.title ?? "Khám phá nội dung môn học"}
-                </p>
-              </div>
-              <Button onClick={continueLearning}>
-                {remaining.length ? "Tiếp tục học" : "Vào môn học"}
-                <Icon name="arrow_forward" className="text-lg" />
-              </Button>
+            <span className="mission-orbit-node mission-orbit-node--a" title="Tập trung">
+              <Icon name="target" />
+            </span>
+            <span className="mission-orbit-node mission-orbit-node--b" title="AI Pulse">
+              <Icon name="auto_awesome" />
+            </span>
+            <span className="mission-orbit-node mission-orbit-node--c" title="Replay">
+              <Icon name="replay" />
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
+        <section className="signal-card signal-card--accent">
+          <div className="signal-label">
+            <Icon name="psychology" />
+            AI Pulse
+          </div>
+          <h2 className="mt-4 text-2xl font-bold tracking-tight text-brand">
+            Không chỉ biết bạn sai. Tutor cần biết bạn đang nghĩ lệch ở đâu.
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-600">
+            Tín hiệu gần nhất cho thấy bạn còn mất khoảng{" "}
+            <strong className="text-brand">{assessment.recoverablePoints} điểm</strong>{" "}
+            ở các lỗi có thể sửa bằng ôn đúng prerequisite. Mission hôm nay ưu tiên
+            phần liên quan trước khi tăng độ khó.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl bg-white p-4">
+              <p className="text-xs font-semibold text-ink-500">Bài đã vững</p>
+              <p className="mt-1 text-2xl font-bold text-brand">
+                {completed.length}/{courseLessons.length}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white p-4">
+              <p className="text-xs font-semibold text-ink-500">Huy hiệu mở khóa</p>
+              <p className="mt-1 text-2xl font-bold text-brand">{unlocked}</p>
+            </div>
+            <div className="rounded-2xl bg-white p-4">
+              <p className="text-xs font-semibold text-ink-500">GP hôm nay</p>
+              <p className="mt-1 text-2xl font-bold text-brand">{dailyGp}</p>
             </div>
           </div>
         </section>
 
-        <section className="flex flex-col ui-learning-card p-5 sm:p-7">
-          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-container-low text-primary">
-            <Icon name="route" />
-          </span>
-          <h2 className="text-lg font-bold text-primary">
-            Một bài học, ba bước nắm vững
+        <section className="signal-card">
+          <div className="signal-label">
+            <Icon name="replay" />
+            Thinking Replay
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-brand">
+            Xem lại đường suy nghĩ, không chỉ xem điểm.
           </h2>
-          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-            Học theo nhịp của bạn, từ hiểu đến làm được.
+          <p className="mt-2 text-sm leading-6 text-ink-600">
+            Replay cho thấy lúc nào bạn mở gợi ý, bước nào bị lệch và Tutor đã
+            can thiệp ở đâu. Đây là hồ sơ học tập có thể dùng để học lại thông minh hơn.
           </p>
-          <ol className="mt-6 space-y-5">
-            {lessonStages.map((step, index) => (
-              <li key={step.title} className="flex gap-3">
-                <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${index === 0 ? "bg-primary text-white" : "bg-secondary-container/60 text-secondary"}`}
-                >
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-on-surface">
-                    {step.title}
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-on-surface-variant">
-                    {step.description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <Button
+            variant="secondary"
+            className="mt-5"
+            onClick={() => onNavigate(replayPath)}
+          >
+            Mở Replay
+            <Icon name="arrow_forward" />
+          </Button>
         </section>
       </div>
 
-      <section
-        aria-label="Tóm tắt học tập"
-        className="grid grid-cols-2 gap-4 ui-learning-card p-4 lg:grid-cols-4"
-      >
-        {[
-          {
-            icon: "menu_book",
-            value: `${studentProfile.enrollments.length} môn`,
-            label: `Đã đăng ký · ${ownedLabel}`,
-          },
-          {
-            icon: "task_alt",
-            value: `${completed} bài`,
-            label: "Đã hoàn thành",
-          },
-          {
-            icon: "savings",
-            value: `${gpBalance} GP`,
-            label: "Điểm tích lũy của bạn",
-          },
-          {
-            icon: "bolt",
-            value: `${dailyGp}/${appConfig.rewards.dailyLimit} GP`,
-            label: "Tích lũy hôm nay",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="flex flex-col items-start gap-3 rounded-2xl bg-background p-3 sm:flex-row sm:p-4"
-          >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary-container/60 text-secondary">
-              <Icon name={stat.icon} className="text-xl" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-base font-bold text-primary">{stat.value}</p>
-              <p className="mt-1 text-xs leading-5 text-on-surface-variant">
-                {stat.label}
-              </p>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* Goals Section */}
-      <GoalsSection
-        onNavigate={onNavigate}
-        onOpenBadges={onOpenBadges}
-        onEarnGp={onEarnGp}
-      />
-
-      {/* Badges Milestone Banner */}
-      <section className="rounded-3xl border border-secondary/20 bg-linear-to-r from-secondary/10 via-primary/5 to-white p-5 sm:p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary text-white shadow-xs">
-              <Icon name="military_tech" className="text-2xl" />
-            </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-secondary">
-                  HUY HIỆU & MỐC THÀNH TÍCH
-                </span>
-                <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-bold text-secondary">
-                  Đã đạt {unlockedBadges.length}/{initialBadges.length}
-                </span>
-              </div>
-              <h3 className="text-base font-bold text-primary mt-0.5">
-                {nextMilestoneBadge
-                  ? `Mục tiêu kế tiếp: ${nextMilestoneBadge.title}`
-                  : "Bạn đã chinh phục trọn bộ huy hiệu!"}
-              </h3>
-              <p className="text-xs text-on-surface-variant">
-                {nextMilestoneBadge
-                  ? `${nextMilestoneBadge.description} (Thưởng +${nextMilestoneBadge.rewardGp} GP)`
-                  : "Tiếp tục duy trì phong độ xuất sắc trong các bài học tiếp theo!"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {onOpenBadges && (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={onOpenBadges}
-                className="rounded-full font-bold text-xs"
-              >
-                <Icon name="workspace_premium" className="text-base" />
-                Xem tất cả huy hiệu
-              </Button>
-            )}
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => onNavigate("/thoi-khoa-bieu")}
-              className="rounded-full font-bold text-xs"
-            >
-              <Icon name="calendar_month" className="text-base" />
-              Thời khóa biểu
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">
-              HỌC THEO CHỦ ĐỀ
+      <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
+        <section className="knowledge-preview" aria-labelledby="map-preview-title">
+          <div className="relative z-20">
+            <p className="signal-label">
+              <Icon name="route" />
+              Knowledge Universe
             </p>
-            <h2 className="text-xl font-bold text-primary sm:text-2xl">
-              Từng phần kiến thức, từng bước tiến
+            <h2 id="map-preview-title" className="mt-3 text-xl font-bold text-brand">
+              Học theo mối liên hệ, không theo danh sách bài.
             </h2>
           </div>
+          <svg
+            className="absolute inset-0 h-full w-full"
+            viewBox="0 0 700 300"
+            aria-hidden="true"
+          >
+            <line className="knowledge-preview-line" x1="130" y1="200" x2="320" y2="100" />
+            <line className="knowledge-preview-line" x1="320" y1="100" x2="540" y2="170" />
+            <line className="knowledge-preview-line" x1="320" y1="100" x2="390" y2="245" />
+          </svg>
+          <span className="knowledge-preview-node" style={{ left: "13%", top: "68%" }}>
+            Căn thức
+          </span>
+          <span className="knowledge-preview-node" data-active="true" style={{ left: "45%", top: "36%" }}>
+            Hàm số
+          </span>
+          <span className="knowledge-preview-node" style={{ left: "74%", top: "58%" }}>
+            Phương trình
+          </span>
+          <span className="knowledge-preview-node" style={{ left: "56%", top: "82%" }}>
+            Hình học
+          </span>
           <Button
             variant="surface"
-            type="button"
-            onClick={() =>
-              onNavigate(courseHref(enrollment.gradeId, enrollment.subjectId))
-            }
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-primary hover:bg-surface-container-low"
+            onClick={() => onNavigate(mapPath)}
+            className="absolute bottom-5 right-5 z-20 min-h-11 rounded-full border border-brand/15 bg-white px-4 text-sm font-semibold text-brand shadow-card"
           >
-            Xem môn {enrolledSubject.name}
-            <Icon name="arrow_forward" className="text-lg" />
+            Mở toàn bản đồ
+            <Icon name="arrow_forward" />
           </Button>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {courseTopics.map((topic, index) => {
-            const topicLessons = courseLessons.filter(
-              (lesson) => lesson.topicId === topic.id,
-            );
-            const done = topicLessons.filter((lesson) =>
-              completedLessonIds.includes(lesson.id),
-            ).length;
-            return (
-              <Button
-                variant="surface"
-                type="button"
-                key={topic.id}
-                onClick={() =>
-                  onNavigate(
-                    courseHref(topic.gradeId, topic.subjectId, topic.id),
-                  )
-                }
-                className="group flex flex-col ui-learning-card p-5 text-left transition-colors hover:border-secondary/40 hover:bg-secondary-container/10"
-              >
-                <div className="mb-5 flex w-full items-center justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-container-low text-primary">
-                    <Icon name={enrolledSubject.icon} />
-                  </span>
-                  <span className="text-xs font-medium text-outline">
-                    0{index + 1}
-                  </span>
-                </div>
-                <h3 className="text-base font-bold leading-6 text-primary">
-                  {topic.title}
-                </h3>
-                <p className="mt-2 flex-1 text-xs leading-5 text-on-surface-variant">
-                  {topic.description}
-                </p>
-                <div className="mt-5 flex w-full items-center justify-between border-t border-outline-variant pt-4 text-xs">
-                  <span className="font-medium text-secondary">
-                    {done}/{topicLessons.length} bài hoàn thành
-                  </span>
-                  <Icon
-                    name="arrow_forward"
-                    className="text-lg text-primary transition-transform group-hover:translate-x-1"
-                  />
-                </div>
-              </Button>
-            );
-          })}
-          {!courseTopics.length && (
-            <p className="col-span-full rounded-2xl border border-dashed border-outline-variant p-6 text-sm text-on-surface-variant">
-              Chưa có chủ đề được công bố cho môn học này.
-            </p>
+        </section>
+
+        <section className="signal-card">
+          <p className="signal-label">
+            <Icon name="workspace_premium" />
+            Mastery identity
+          </p>
+          <h2 className="mt-3 text-xl font-bold text-brand">Problem Solver</h2>
+          <p className="mt-2 text-sm leading-6 text-ink-600">
+            Thành tích không chỉ đến từ điểm. Tutor ghi nhận việc tự sửa lỗi,
+            kiên trì và sử dụng gợi ý đúng lúc.
+          </p>
+          <div className="mt-5 space-y-3 text-sm">
+            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
+              <span>Tự sửa lỗi</span><strong className="text-accent-strong">× 17</strong>
+            </div>
+            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
+              <span>Không bỏ cuộc</span><strong className="text-accent-strong">× 8</strong>
+            </div>
+            <div className="flex items-center justify-between rounded-2xl bg-surface-page px-4 py-3">
+              <span>GP hiện có</span><strong className="text-brand">{gpBalance}</strong>
+            </div>
+          </div>
+          {onOpenBadges && (
+            <Button variant="ghost" className="mt-4" onClick={onOpenBadges}>
+              Xem hồ sơ mastery
+              <Icon name="arrow_forward" />
+            </Button>
           )}
-        </div>
-      </section>
-
-      <section className="ui-learning-card p-5 sm:p-7">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-secondary">
-              MỞ RỘNG HÀNH TRÌNH HỌC
-            </p>
-            <h2 className="text-xl font-bold text-primary">
-              Còn nhiều điều để khám phá
-            </h2>
-            <p className="mt-2 text-sm text-on-surface-variant">
-              Bạn hiện đã đăng ký {ownedLabel}. Các môn khác chưa có trong gói
-              học của bạn.
-            </p>
-          </div>
-          <Button
-            variant="surface"
-            type="button"
-            onClick={() => onNavigate(routePath("hoc-bai"))}
-            className="rounded-full border border-outline-variant px-4 py-2.5 text-sm font-semibold text-primary hover:bg-surface-container-low"
-          >
-            Xem các môn học
-          </Button>
-        </div>
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          {SUBJECTS.filter(
-            (subject) => !canStudy(enrollment.gradeId, subject.id),
-          ).map((subject) => (
-            <Button
-              variant="surface"
-              type="button"
-              key={subject.id}
-              onClick={() =>
-                onNavigate(courseHref(enrollment.gradeId, subject.id))
-              }
-              className="flex items-center gap-3 rounded-2xl bg-background p-4 text-left hover:bg-surface-container-low"
-            >
-              <Icon name={subject.icon} className="text-2xl text-outline" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-primary">
-                  {subject.name} · Lớp {enrollment.gradeId}
-                </p>
-                <p className="mt-1 text-xs text-outline">Chưa đăng ký</p>
-              </div>
-              <Icon name="lock" className="text-base text-outline" />
-            </Button>
-          ))}
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 };
