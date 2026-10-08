@@ -1055,7 +1055,7 @@ export const TheoryLessonsView: React.FC<TheoryLessonsViewProps> = ({
               {renderContents("Mục lục trên điện thoại")}
             </div>
           </details>
-          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
+          <div className="lesson-reading-layout grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
             <div className="min-w-0 ui-learning-card">
               <div ref={readingSurfaceRef} className="p-5 sm:p-7 lg:p-8">
                 {location.stage === "theory" && (

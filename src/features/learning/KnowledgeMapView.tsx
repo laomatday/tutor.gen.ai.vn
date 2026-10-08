@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   Badge,
   Button,
@@ -157,10 +157,32 @@ function KnowledgeMapOverview({
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<TopicFilter>("all");
   const [view, setView] = useState<"path" | "map" | "list">("path");
+  const [mapExpanded, setMapExpanded] = useState(false);
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const details = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const previousOverflow = document.body.style.overflow;
+    const viewport = window.matchMedia("(min-width: 768px)");
+    const onViewport = () => {
+      if (viewport.matches) setMapExpanded(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMapExpanded(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    viewport.addEventListener("change", onViewport);
+    onViewport();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+      viewport.removeEventListener("change", onViewport);
+    };
+  }, [mapExpanded]);
   const drag = useRef<{
     x: number;
     y: number;
@@ -402,7 +424,10 @@ function KnowledgeMapOverview({
                 ] as const
               }
               value={view}
-              onChange={setView}
+              onChange={(next) => {
+                setView(next);
+                setMapExpanded(false);
+              }}
               label="Cách xem môn học"
               variant="pill"
             />
@@ -599,12 +624,24 @@ function KnowledgeMapOverview({
               </section>
               <div className="knowledge-layout">
                 <div className="knowledge-map-column">
-                  <Card className="knowledge-map">
+                  <Card className="knowledge-map" data-map-expanded={mapExpanded}>
                     <div className="knowledge-map-heading">
                       <div>
                         <h2>Bản đồ khám phá</h2>
                         <p>Mỗi chủ đề là một điểm đến mới.</p>
                       </div>
+                      {view === "map" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="knowledge-map-fullscreen-toggle"
+                          aria-pressed={mapExpanded}
+                          onClick={() => setMapExpanded((value) => !value)}
+                        >
+                          <Icon name={mapExpanded ? "close" : "hub"} />
+                          {mapExpanded ? "Thu nhỏ" : "Toàn màn hình"}
+                        </Button>
+                      )}
                     </div>
                     <div className="knowledge-map__toolbar">
                       <span>
@@ -927,14 +964,17 @@ function KnowledgeMapOverview({
                           size="sm"
                           className="knowledge-details-jump"
                           onClick={() => {
-                            details.current?.focus({ preventScroll: true });
-                            details.current?.scrollIntoView({
-                              block: "start",
-                              behavior: window.matchMedia(
-                                "(prefers-reduced-motion: reduce)",
-                              ).matches
-                                ? "auto"
-                                : "smooth",
+                            if (mapExpanded) setMapExpanded(false);
+                            requestAnimationFrame(() => {
+                              details.current?.focus({ preventScroll: true });
+                              details.current?.scrollIntoView({
+                                block: "start",
+                                behavior: window.matchMedia(
+                                  "(prefers-reduced-motion: reduce)",
+                                ).matches
+                                  ? "auto"
+                                  : "smooth",
+                              });
                             });
                           }}
                         >
