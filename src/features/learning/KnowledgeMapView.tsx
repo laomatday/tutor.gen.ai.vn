@@ -339,9 +339,9 @@ export function KnowledgeMapView({
               <strong>Hỗ trợ học tập</strong>
             </div>
             <div className="learning-support-grid">
-              <button onClick={openFirstTopic}><Icon name="play_circle" /><span>Video / bài học<small>12 phút</small></span></button>
-              <button onClick={() => onNavigate(routePath("tu-giai"))}><Icon name="extension" /><span>Bài tập tương tác<small>8 bài</small></span></button>
-              <button onClick={openFirstTopic}><Icon name="description" /><span>Mindmap tóm tắt<small>PDF / notes</small></span></button>
+              <Button variant="surface" onClick={openFirstTopic}><Icon name="play_circle" /><span>Video / bài học<small>12 phút</small></span></Button>
+              <Button variant="surface" onClick={() => onNavigate(routePath("tu-giai"))}><Icon name="extension" /><span>Bài tập tương tác<small>8 bài</small></span></Button>
+              <Button variant="surface" onClick={openFirstTopic}><Icon name="description" /><span>Mindmap tóm tắt<small>PDF / notes</small></span></Button>
             </div>
           </div>
 
