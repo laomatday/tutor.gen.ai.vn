@@ -24,7 +24,7 @@ test.describe("14 routes × 2 viewport visual, semantic and accessibility gates"
         document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, "horizontal overflow").toBeLessThanOrEqual(1);
       const file = path.join("test-results", "visual", `${slug}-${viewport.width}.png`);
-      await page.screenshot({path:file,fullPage:true});
+      await page.screenshot({path:file,fullPage:true,animations:"disabled"});
       await page.addScriptTag({path:require.resolve("axe-core/axe.min.js")});
       const violations = await page.evaluate(async () => {
         const result = await window.axe.run(document,{runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa"]}});
@@ -82,12 +82,14 @@ test("Reference shell: desktop sidebar, breadcrumb, and collapsed rail", async (
   expect(toggleBox.x + toggleBox.width / 2).toBeGreaterThan(sideBox.width - 5);
   await handle.click();
   await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
+  await page.screenshot({path:"test-results/visual/sidebar-collapsed-1440.png",animations:"disabled"});
   await expect(sidebar.getByRole("button", {name:"Phần thưởng"})).toBeVisible();
   await expect(sidebar.getByRole("button", {name:"Mở rộng thanh bên"})).toHaveAttribute("aria-expanded","false");
   await page.reload();
   await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(72);
   await sidebar.getByRole("button", {name:"Mở rộng thanh bên"}).click();
   await expect.poll(async () => Math.round((await sidebar.boundingBox()).width)).toBe(288);
+  await page.screenshot({path:"test-results/visual/sidebar-expanded-1440.png",animations:"disabled"});
 });
 
 test("Reference shell: mobile drawer preserves navigation and focus", async ({page}) => {
@@ -98,6 +100,7 @@ test("Reference shell: mobile drawer preserves navigation and focus", async ({pa
   const sidebar = page.locator("#main-navigation");
   await expect(sidebar).toHaveClass(/is-open/);
   await expect(sidebar.getByRole("button",{name:"Đóng menu"})).toBeFocused();
+  await page.screenshot({path:"test-results/visual/sidebar-drawer-390.png",animations:"disabled"});
   await page.keyboard.press("Escape");
   await expect(sidebar).not.toHaveClass(/is-open/);
   await expect(toggle).toBeFocused();
