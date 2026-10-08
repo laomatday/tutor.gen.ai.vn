@@ -25,7 +25,7 @@ export function BrandLogo({
       />
       <span className="flex min-w-0 flex-col justify-center">
         <span className={cn("font-bold leading-none tracking-tight text-primary", compact ? "text-xl" : "text-2xl")}>
-          gen<span className="text-accent">Ai</span>
+          gen<span className="text-accent-strong">Ai</span>
         </span>
         {showProduct && (
           <span className="mt-0.5 text-xs font-semibold uppercase tracking-wider text-primary/80">

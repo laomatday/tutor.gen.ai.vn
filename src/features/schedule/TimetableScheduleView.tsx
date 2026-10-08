@@ -134,8 +134,8 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
       label: "Lớp chính khóa",
       className: "bg-primary/10 text-primary",
     },
-    tutor: { label: "Buổi Tutor", className: "bg-secondary/20 text-secondary" },
-    "tu-hoc": { label: "Tự học", className: "bg-secondary/15 text-secondary" },
+    tutor: { label: "Buổi Tutor", className: "bg-secondary/20 text-primary" },
+    "tu-hoc": { label: "Tự học", className: "bg-secondary/15 text-primary" },
     "thi-thu": {
       label: "Thi thử",
       className: "bg-surface-container text-on-surface-variant",
@@ -297,7 +297,7 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                     Hôm nay
                   </span>
                 )}
-                <span className="text-xs font-semibold opacity-85">
+                <span className="text-xs font-semibold">
                   {d.short}
                 </span>
                 <span className="mt-1 text-sm sm:text-base font-bold">
@@ -427,7 +427,7 @@ export const TimetableScheduleView: React.FC<TimetableScheduleViewProps> = ({
                         {badgeMeta.label}
                       </span>
                       {session.status === "completed" && (
-                        <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-secondary">
+                        <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                           Đã hoàn thành
                         </span>
                       )}

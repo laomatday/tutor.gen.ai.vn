@@ -169,7 +169,7 @@ export function AppSidebar({
               <Icon name={item.icon} className="shrink-0 text-xl" />
               <span className="min-w-0 flex-1 text-left">
                 <span className="block text-sm font-semibold">{item.label}</span>
-                <span className="mt-0.5 block text-xs text-outline">
+                <span className={`mt-0.5 block text-xs ${section === item.id ? "text-white" : "text-outline"}`}>
                   {item.description}
                 </span>
               </span>
