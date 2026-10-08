@@ -120,7 +120,33 @@ export function KnowledgeMapView({
       </header>
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_21rem]">
-        <section className="knowledge-canvas" aria-label="Bản đồ kiến thức">
+        <section className="knowledge-path sm:hidden" aria-label="Lộ trình kiến thức">
+          {nodes.map((node, index) => (
+            <Button
+              key={node.id}
+              variant="surface"
+              className="knowledge-path-node"
+              data-state={node.state}
+              onClick={() => openTopic(node.id)}
+            >
+              <span className="knowledge-path-index">{String(index + 1).padStart(2, "0")}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-xs font-bold uppercase tracking-wider opacity-70">
+                  {node.state === "mastered"
+                    ? "Mastered"
+                    : node.state === "current"
+                      ? "Current"
+                      : "Bridge needed"}
+                </span>
+                <strong className="mt-1 block text-base leading-snug">{node.title}</strong>
+                <span className="mt-1 block text-xs opacity-70">{node.lessonCount} learning objects</span>
+              </span>
+              <strong className="text-lg">{node.mastery}%</strong>
+            </Button>
+          ))}
+        </section>
+
+        <section className="knowledge-canvas hidden sm:block" aria-label="Bản đồ kiến thức">
           <svg className="absolute inset-0 z-[1] h-full w-full" viewBox="0 0 1000 650" aria-hidden="true">
             <line className="knowledge-edge" x1="180" y1="220" x2="480" y2="130" />
             <line className="knowledge-edge" x1="480" y1="130" x2="770" y2="285" />
