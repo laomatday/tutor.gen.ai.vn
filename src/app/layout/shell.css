@@ -82,8 +82,9 @@
     @apply text-white/70;
   }
 
+  .student-mastery-summary { @apply flex items-center justify-center gap-3 rounded-2xl p-1.5; }
   .student-progress-orb {
-    @apply mx-auto flex h-11 w-11 items-center justify-center rounded-full p-1 text-xs font-bold text-brand;
+    @apply mx-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full p-1 text-xs font-bold text-brand;
   }
 
   .student-progress-orb > span {
@@ -168,6 +169,14 @@
 
     .app-sidebar--student.is-expanded .student-profile-orb {
       @apply justify-start px-1.5;
+    }
+
+    .app-sidebar--student.is-expanded .student-mastery-summary {
+      @apply justify-start bg-surface-page px-2;
+    }
+
+    .app-sidebar--student.is-expanded .student-progress-orb {
+      @apply mx-0;
     }
 
     .app-frame--student {
