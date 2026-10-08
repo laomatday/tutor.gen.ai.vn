@@ -18,6 +18,7 @@ function walk(dir) {
       /<Icon(?:\s+[^>]*)?>([\w_]+)<\/Icon>/g,
       /\bicon\s*:\s*["']([\w_]+)["']/g,
       /"icon"\s*:\s*"([\w_]+)"/g,
+      /\bsubjectIcon\s*:\s*["\x27]([\w_]+)["\x27]/g,
       /\bicon\s*=\s*"([\w_]+)"/g,
     ];
     for (const pattern of patterns) for (const match of source.matchAll(pattern)) {

@@ -16,6 +16,7 @@ import {
   Focus, Headphones, Headset, House, LayoutGrid, Link2, ListVideo, Medal,
   MessageCircleQuestion, Network, PenTool, PlayCircle, ShieldCheck, Trash2,
   Video, MapPin, AlertCircle, Filter, Music2, GraduationCap, Workflow, Pause,
+  Languages, FlaskConical, Dna, LockOpen,
 } from "../icons/extended";
 import { cn } from "./utils";
 
@@ -24,6 +25,10 @@ import { cn } from "./utils";
  * local Material Symbols Rounded SVG language as gen.ai.vn.
  */
 export const ICONS: Record<string, IconComponent> = {
+  translate: Languages,
+  science: FlaskConical,
+  biotech: Dna,
+  lock_open: LockOpen,
   functions: Calculate,
   pause: Pause,
   add_task: CheckCircle,

@@ -4,4 +4,5 @@ export {
   Focus, Headphones, Headset, House, LayoutGrid, Link2, ListVideo, Medal,
   MessageCircleQuestion, Network, PenTool, PlayCircle, ShieldCheck, Trash2,
   Video, MapPin, AlertCircle, Filter, Music2, GraduationCap, Workflow, Pause,
+  Languages, FlaskConical, Dna, LockOpen,
 } from "lucide-react";

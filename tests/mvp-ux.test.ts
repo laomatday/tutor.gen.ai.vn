@@ -6,6 +6,8 @@ import { studentRoutes } from "../src/config/routes";
 import { readRoute } from "../src/app/navigation";
 import { createPracticeSession, appendPracticeEvent, isPracticeSession, verifySampleAnswer } from "../src/features/practice/domain";
 import { getPracticeProblem } from "../src/data/practice";
+import { initialScheduleSessions } from "../src/features/schedule/types";
+import { ICONS } from "../src/components/ui/Icon";
 
 test("completion progress is shared across the student journey", () => {
   const all = getCourseProgress(INITIAL_LESSONS, INITIAL_TOPICS, ["can-bac-hai"]);
@@ -62,4 +64,9 @@ test("practice link is eligible only for the matching published lesson", () => {
   const published = getCourseProgress(INITIAL_LESSONS, INITIAL_TOPICS, []).lessons;
   assert.equal(published.filter((lesson) => lesson.id === problem.lessonId).length, 1);
   assert.notEqual(problem.lessonId, "rut-gon-can-thuc");
+});
+
+test("dynamic student schedule and admin icons are registered", () => {
+  for(const session of initialScheduleSessions) assert.ok(ICONS[session.subjectIcon], session.subjectIcon);
+  for(const name of ["translate","science","biotech","lock_open"]) assert.ok(ICONS[name], name);
 });
