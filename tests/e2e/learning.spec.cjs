@@ -139,7 +139,7 @@ test("Home → Luyện tập → Nộp bài → Xem lại", async ({page}) => {
   await expect(page).toHaveURL(/\/tu-giai\?problem=parabola-coefficient-03/);
   await page.getByLabel("Trình bày từng phép biến đổi").fill("12 = a * (-2)^2 ⇔ a = 3");
   await page.getByRole("button", {name:"Nộp bài"}).click();
-  await expect(page.getByText(/Các phép tính khớp với bài mẫu/)).toBeVisible();
+  await expect(page.locator(".ui-alert.ui-tone-success").getByText(/Các phép tính khớp với bài mẫu/)).toBeVisible();
   await page.locator("#main-content").getByRole("button", {name:"Xem lại bài làm"}).click();
   await expect(page.getByRole("heading",{name:"Các bước đã ghi nhận"})).toBeVisible();
   await expect(page.getByText("Nộp bài", {exact:true}).first()).toBeVisible();
