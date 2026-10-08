@@ -133,6 +133,19 @@ export function AppHeader({
 
           <Button
             variant="ghost"
+            onClick={() => onNavigate(routePath("tu-giai"))}
+            className="gemini-status-pill hidden 2xl:flex"
+            title="Vào Deep Focus"
+          >
+            <Icon name="graphic_eq" className="text-accent-strong" />
+            <span>
+              <strong>Deep Focus</strong>
+              <small>25 phút</small>
+            </span>
+          </Button>
+
+          <Button
+            variant="ghost"
             size="icon"
             onClick={() => onNavigate(routePath("replay"))}
             aria-label="Mở Thinking Replay"
