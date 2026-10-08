@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { Alert, Badge, Button, Card, Field, Icon, Input } from "../../components/ui";
+import { Alert, Badge, Button, Card, Field, Icon, Input, Select } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
 import { useTutorAuth } from "./TutorAuthContext";
 import {
@@ -171,11 +171,11 @@ export function PilotTeacherView() {
                 <Input value={title} maxLength={180} onChange={e=>setTitle(e.target.value)} placeholder="Ôn tập phương trình bậc hai" required/>
               </Field>
               <Field label="Bài học">
-                <select className="ui-field w-full" value={lesson?.id??""} onChange={e=>{setLessonId(e.target.value);setSelected([]);}}>
+                <Select className="ui-field w-full" value={lesson?.id??""} onChange={e=>{setLessonId(e.target.value);setSelected([]);}}>
                   {published.map(l=><option key={l.id} value={l.id}>
                     {subjects.find(s=>s.id===l.subjectId)?.name} {l.gradeId} · {l.title}
                   </option>)}
-                </select>
+                </Select>
               </Field>
               <Field label="Hạn hoàn thành (tùy chọn)">
                 <Input type="date" value={due} onChange={e=>setDue(e.target.value)}/>
