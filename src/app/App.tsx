@@ -86,14 +86,42 @@ export default function App() {
   const wallet = useRewardWallet(notice.show);
   const menu = useMobileNavigation();
   const isStudent = role === "Học sinh";
-  const [studentSidebarExpanded, setStudentSidebarExpanded] = useLocalStorage<boolean>(
-    storageKeys.studentSidebarExpanded,
+  const [studentSidebarPinned, setStudentSidebarPinned] = useLocalStorage<boolean>(
+    storageKeys.studentSidebarPinned,
     false,
     (value): value is boolean => typeof value === "boolean",
   );
   const nextLessonPath = progress.nextLesson
     ? lessonHref(progress.nextLesson)
     : courseHref(primaryEnrollment.gradeId, primaryEnrollment.subjectId);
+  const studentSidebarVisible = isStudent && (studentSidebarPinned || menu.open);
+
+  const toggleStudentSidebar = () => {
+    const desktop =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 1024px)").matches;
+
+    if (!desktop) {
+      menu.setOpen((value) => !value);
+      return;
+    }
+
+    if (studentSidebarPinned) {
+      setStudentSidebarPinned(false);
+      menu.setOpen(false);
+      return;
+    }
+
+    menu.setOpen((value) => !value);
+  };
+
+  const toggleStudentSidebarPinned = () => {
+    setStudentSidebarPinned((value) => {
+      const next = !value;
+      menu.setOpen(!next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     document.title = `${label} | ${appConfig.brand.name}`;
@@ -142,15 +170,16 @@ export default function App() {
         nextLessonPath={nextLessonPath}
         progress={progress.percent}
         balance={wallet.balance}
-        expanded={studentSidebarExpanded}
-        onToggleExpanded={() => setStudentSidebarExpanded((value) => !value)}
+        pinned={studentSidebarPinned}
+        onToggleSidebar={toggleStudentSidebar}
+        onTogglePinned={toggleStudentSidebarPinned}
       />
 
       <div
         ref={menu.content}
         className={
           isStudent
-            ? `app-frame app-frame--student ${studentSidebarExpanded ? "app-frame--student-expanded" : ""}`
+            ? `app-frame app-frame--student ${studentSidebarVisible ? "app-frame--student-sidebar-open" : ""}`
             : "app-frame"
         }
       >
@@ -159,7 +188,7 @@ export default function App() {
           label={label}
           menuOpen={menu.open}
           menuRef={menu.trigger}
-          onMenu={() => menu.setOpen(true)}
+          onMenu={toggleStudentSidebar}
           onNavigate={navigate}
           onOpenProfile={() => setIsProfileOpen(true)}
         />
