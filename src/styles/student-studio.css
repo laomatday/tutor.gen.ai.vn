@@ -2299,3 +2299,15 @@
   }
   .replay-aside { display: flex; flex-direction: column; }
 }
+
+
+/* Keep coach copy readable on white/light surfaces in every workspace. */
+.studio-coach-title {
+  background: var(--color-brand-50);
+  color: var(--color-brand);
+}
+.studio-coach-title h2 { color: var(--color-brand); }
+.studio-coach-title p {
+  color: var(--color-ink-700);
+  opacity: 1;
+}

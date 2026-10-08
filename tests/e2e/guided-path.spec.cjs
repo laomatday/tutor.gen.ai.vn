@@ -53,8 +53,8 @@ for (const width of [360, 1440]) {
     );
     expect(await storedCompletion(page)).toEqual([]);
     await page
-      .locator(".app-header")
-      .getByRole("link", { name: "Quay lại Toán 9" })
+      .getByRole("navigation", { name: "Vị trí trong chương trình học" })
+      .getByRole("button", { name: "Toán", exact: true })
       .click();
     await expect(step(page, mathLessons[0])).toHaveAttribute(
       "aria-current",
@@ -97,8 +97,8 @@ test("Guided path: completing a lesson advances the next step, preserves review 
     .click();
   await expect(page.getByText("Bạn đã hoàn thành bài học!")).toBeVisible();
   await page
-    .locator(".app-header")
-    .getByRole("link", { name: "Quay lại Toán 9" })
+    .getByRole("navigation", { name: "Vị trí trong chương trình học" })
+    .getByRole("button", { name: "Toán", exact: true })
     .click();
   await expect(step(page, first)).toHaveAttribute("data-state", "complete");
   await expect(step(page, next)).toHaveAttribute("aria-current", "step");
@@ -113,8 +113,8 @@ test("Guided path: completing a lesson advances the next step, preserves review 
       url.searchParams.get("stage") === "examples",
   );
   await page
-    .locator(".app-header")
-    .getByRole("link", { name: "Quay lại Toán 9" })
+    .getByRole("navigation", { name: "Vị trí trong chương trình học" })
+    .getByRole("button", { name: "Toán", exact: true })
     .click();
   await page
     .getByRole("navigation", { name: "Chọn môn học" })
