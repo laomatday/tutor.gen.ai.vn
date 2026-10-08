@@ -2215,3 +2215,87 @@
     justify-content: center;
   }
 }
+
+
+/* Content-sized learning studios: a 1024px viewport can be only 688px wide
+   after sidebar and gutters; never force two panels into that space. */
+.studio-page { container: studio / inline-size; }
+.replay-page { container: replay / inline-size; }
+.studio-layout,
+.replay-layout { grid-template-columns: minmax(0, 1fr); }
+.studio-help-jump,
+.studio-tool-dock-toggle { display: none; }
+.studio-coach {
+  scroll-margin-top: calc(var(--student-header-height, 72px) + 1rem);
+}
+@container studio (min-width: 68rem) {
+  .studio-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 320px);
+    gap: 24px;
+  }
+  .studio-coach {
+    position: sticky;
+    top: calc(var(--student-header-height, 72px) + 16px);
+    max-height: calc(100dvh - var(--student-header-height, 72px) - 32px);
+    overflow: auto;
+  }
+}
+@container studio (max-width: 67.99rem) {
+  .studio-help-jump {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .studio-coach {
+    position: static;
+    max-height: none;
+  }
+}
+@container studio (max-width: 44rem) {
+  .studio-tool-dock-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+  }
+  .studio-toolbar:not(.is-expanded) { display: none; }
+  .studio-toolbar.is-expanded { display: flex; }
+  .studio-main { gap: 14px; }
+  .studio-problem { margin-bottom: 0; }
+  .studio-editor-actions { flex-wrap: wrap; gap: 10px; }
+  .studio-toolbar .ui-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+  .studio-coach { margin-top: 8px; }
+}
+@container replay (min-width: 70rem) {
+  .replay-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 350px);
+  }
+}
+@container replay (min-width: 45rem) and (max-width: 69.99rem) {
+  .replay-aside {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .replay-aside > section:last-child { grid-column: 1 / -1; }
+}
+@container replay (max-width: 36rem) {
+  .replay-control-row { flex-wrap: wrap; }
+  .replay-speeds {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .replay-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .replay-aside { display: flex; flex-direction: column; }
+}
