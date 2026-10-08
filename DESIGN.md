@@ -2,6 +2,8 @@
 
 Phiên bản 4.0. File này thay thế toàn bộ các mục Learning OS, Student Experience V2, AI Pulse V3, ChatGPT-style sidebar và Gemini command bar trong `DESIGN.md` cũ. Khi thay đổi shell, kiến trúc thông tin hoặc nguyên tắc, sửa đúng mục tương ứng trong file này và xóa nội dung cũ. Không thêm mục "phiên bản tiếp theo" vào cuối file.
 
+Quy tắc bảo vệ: không được bỏ bốn trụ cột Nhiệm vụ học tập, Knowledge Universe, Focus Studio và Thinking Replay chỉ vì một số số liệu chưa có nguồn. Cần thay dữ liệu giả bằng dữ liệu thật hoặc empty state, giữ trải nghiệm người học. Xem docs/product-differentiators.md.
+
 Tài liệu liên quan: `docs/ui-components.md` (API component, tương tác bàn phím, token) và `docs/content-model.md` (DB-first, content block, đa môn).
 
 ## 1. Người dùng và việc chính

@@ -3,12 +3,12 @@ import { Button, Icon, Input } from "../../components/ui";
 import { PWAInstallButton } from "../../components/pwa/PWAInstallButton";
 import { BrandLogo } from "../../components/BrandLogo";
 import { roles, roleHome, type UserRole } from "../../config/routes";
+import { appConfig } from "../../config/app";
 import { studentProfile } from "../../features/learning/data/student";
 import { StudentAvatar } from "../../components/student/StudentAvatar";
 
 interface Props {
   role: UserRole;
-  label: string;
   menuOpen: boolean;
   menuRef: RefObject<HTMLButtonElement | null>;
   onMenu: () => void;
@@ -16,7 +16,7 @@ interface Props {
   onOpenProfile?: () => void;
 }
 
-export function AppHeader({ role, label, menuOpen, menuRef, onMenu, onNavigate, onOpenProfile }: Props) {
+export function AppHeader({ role, menuOpen, menuRef, onMenu, onNavigate, onOpenProfile }: Props) {
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -58,11 +58,7 @@ export function AppHeader({ role, label, menuOpen, menuRef, onMenu, onNavigate, 
           >
             <Icon name="menu" />
           </Button>
-          <nav className="app-header__breadcrumb" aria-label="Đường dẫn">
-            <span className="app-header__breadcrumb-parent">Không gian học tập</span>
-            <Icon name="chevron_right" className="app-header__breadcrumb-chevron" />
-            <strong aria-current="page">{label}</strong>
-          </nav>
+          <span className="app-header__context">{appConfig.brand.name}</span>
         </div>
 
         <form
@@ -125,9 +121,7 @@ export function AppHeader({ role, label, menuOpen, menuRef, onMenu, onNavigate, 
           <Icon name="menu" />
         </Button>
         <BrandLogo compact showProduct={false} className="hidden sm:inline-flex md:hidden" />
-        <nav aria-label="Trang hiện tại" className="hidden min-w-0 items-center gap-2 text-sm text-on-surface-variant md:flex">
-          <span>Quản lý</span><Icon name="chevron_right" /><span className="truncate font-semibold text-primary">{label}</span>
-        </nav>
+        <span className="app-header__context hidden md:inline">{role === "Giáo viên" ? "Không gian giáo viên" : "Không gian quản trị"}</span>
       </div>
       <div className="flex items-center gap-3">
         <PWAInstallButton variant="surface" size="sm" className="hidden sm:inline-flex" />

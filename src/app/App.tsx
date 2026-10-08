@@ -16,6 +16,7 @@ import { StudentProfileModal } from "../features/gamification/StudentProfileModa
 import type { TeacherSection } from "../features/teacher/TeacherView";
 import type { AdminSection } from "../features/admin/AdminView";
 import { AppHeader } from "./layout/AppHeader";
+import { PageBreadcrumbs } from "./layout/PageBreadcrumbs";
 import { AppSidebar } from "./layout/AppSidebar";
 import { useMobileNavigation } from "./layout/useMobileNavigation";
 import { navigateTo, readRoute } from "./navigation";
@@ -76,7 +77,7 @@ const AdminView = lazy(() =>
 export default function App() {
   const location = useAppLocation();
   const { role, section, label } = readRoute(location.pathname);
-  const { lessons, topics, completedLessonIds, contentLoading, contentError } = useCurriculum();
+  const { subjects, lessons, topics, completedLessonIds, contentLoading, contentError } = useCurriculum();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const selectedSubject = new URLSearchParams(location.search).get("subject");
   const activeEnrollment = studentProfile.enrollments.find(
@@ -167,7 +168,6 @@ export default function App() {
       >
         <AppHeader
           role={role}
-          label={label}
           menuOpen={isStudent ? (window.matchMedia("(min-width: 1024px)").matches ? desktopSidebarVisible : menu.open) : menu.open}
           menuRef={menu.trigger}
           onMenu={toggleStudentSidebar}
@@ -189,6 +189,7 @@ export default function App() {
           tabIndex={-1}
           className={isStudent ? "app-main app-main--student" : "app-main"}
         >
+          <PageBreadcrumbs role={role} section={section} label={label} search={location.search} subjects={subjects} onNavigate={navigate} />
           {contentError && !contentLoading && isStudent && (
             <Alert tone="warning" className="mb-4">
               Chưa kết nối được học liệu trực tuyến. Nội dung đang hiển thị là dữ liệu minh họa; tiến độ được lưu trên trình duyệt này.

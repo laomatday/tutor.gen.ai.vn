@@ -1,0 +1,99 @@
+@reference "../index.css";
+
+/* Visual language restored from the original learning workspaces.
+   Only composition lives here; color, typography, buttons and cards use genAi tokens. */
+@layer components {
+  .advanced-workspace { min-width: 0; }
+  .advanced-workspace .ai-v3-card { min-width: 0; }
+  .advanced-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-right: 1.75rem;
+    background: var(--color-white);
+  }
+  .advanced-hero .ai-v3-hero__copy { max-width: min(68%, 55rem); }
+  .advanced-hero .ai-v3-hero__copy h1 { font-size: clamp(1.8rem,3vw,2.6rem); }
+  .advanced-hero__signal { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+  .advanced-hero__signal strong, .advanced-hero__signal small { display: block; }
+  .advanced-hero__signal strong { @apply text-sm font-bold text-brand; }
+  .advanced-hero__signal small { @apply mt-1 text-xs text-ink-600; }
+  .advanced-progress-ring {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 5.5rem;
+    height: 5.5rem;
+    padding: .42rem;
+    border-radius: 9999px;
+    background: conic-gradient(var(--color-accent-strong) var(--progress, 0%), var(--color-ink-100) 0);
+  }
+  .advanced-progress-ring > span {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%; border-radius: 9999px;
+    @apply bg-white text-xl font-extrabold text-brand;
+  }
+  .advanced-mission__stages { @apply grid gap-2; }
+  .advanced-stage {
+    display: flex; align-items: center; gap: .85rem;
+    width: 100%; min-width: 0; min-height: 4.75rem;
+    padding: .8rem 1rem; border-radius: .9rem;
+    @apply border border-ink-100 bg-surface-page text-ink-700;
+  }
+  .advanced-stage:hover, .advanced-stage:focus-visible { @apply border-brand/40 bg-brand-50/50; }
+  .advanced-stage__number {
+    display:flex;align-items:center;justify-content:center;
+    width:2rem;height:2rem;flex-shrink:0;border-radius:9999px;
+    @apply bg-brand text-xs font-extrabold text-white;
+  }
+  .advanced-stage strong, .advanced-stage small { display:block; }
+  .advanced-stage strong { @apply text-sm font-bold text-brand; }
+  .advanced-stage small { @apply mt-1 text-xs text-ink-600; }
+  .advanced-mission__actions { @apply mt-5 flex flex-wrap items-center gap-3; }
+  .advanced-preview { @apply mt-5 rounded-2xl border border-ink-200 bg-surface-page p-4; }
+  .advanced-map-banner { min-height: 9rem; }
+  .advanced-map-banner > div { max-width: 100%; }
+  .advanced-map-banner h1 { font-size: clamp(1.75rem,3.5vw,2.5rem); }
+  .advanced-graph-viewport { width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
+  .advanced-graph { min-width:38rem; min-height:32rem; }
+  .advanced-graph .ai-v3-map-node { max-width:8.5rem; }
+  .advanced-graph .ai-v3-map-node[aria-pressed="true"] .ai-v3-map-node__orb { @apply outline-2 outline-offset-2 outline-brand; }
+  .advanced-focus-banner { min-height: auto; }
+  .advanced-focus-banner h1 { font-size: clamp(1.8rem,3.5vw,2.5rem); }
+  .advanced-focus-banner > p { max-width: 55rem; }
+  .advanced-focus-banner > p:last-child { @apply mt-3 text-sm leading-6 text-ink-600; }
+  .advanced-socratic-answer { @apply rounded-xl border border-accent/20 bg-accent-50 p-4 text-ink-700; }
+  .advanced-replay-banner { min-height: 10rem; }
+  .advanced-replay-banner > div { max-width: 100%; }
+  .advanced-replay-banner h1 { font-size: clamp(1.7rem,3vw,2.5rem); }
+  .advanced-replay-markers { display:flex;gap:.75rem;overflow-x:auto;margin-top:1rem;padding:.4rem 0 .6rem; }
+  .advanced-replay-markers > li { flex:1 0 4rem; }
+  .advanced-replay-marker {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;gap:.4rem;
+    width:100%;min-height:3rem;border-radius:.75rem;
+    @apply bg-surface-page text-ink-600;
+  }
+  .advanced-replay-marker__dot { display:block;width:.75rem;height:.75rem;border-radius:9999px;@apply bg-brand; }
+  .advanced-replay-marker[data-state="danger"] .advanced-replay-marker__dot { @apply bg-danger-500; }
+  .advanced-replay-marker[data-state="success"] .advanced-replay-marker__dot { @apply bg-success-600; }
+  .advanced-replay-marker[aria-current="step"] { @apply bg-brand-50 text-brand outline-2 outline-offset-[-2px] outline-brand; }
+  .advanced-replay-marker small { @apply text-xs font-mono; }
+  .advanced-workspace pre { max-width:100%; overflow-x:auto; white-space:pre-wrap;overflow-wrap:anywhere; }
+  @media(max-width: 1023px){
+    .advanced-hero { flex-direction:column;align-items:flex-start;padding-right:0; }
+    .advanced-hero .ai-v3-hero__copy { max-width:100%; }
+    .advanced-hero__signal { width:100%;padding:0 1.25rem 1.5rem; }
+  }
+  @media(max-width:639px){
+    .advanced-graph { min-width:36rem; }
+    .advanced-mission__actions > button { width:100%; }
+    .advanced-workspace .ai-v3-card { padding:1rem; }
+    .advanced-workspace .ai-v3-replay-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .advanced-workspace .ai-v3-thought-event { grid-template-columns:3rem minmax(0,1fr); }
+  }
+  @media(prefers-reduced-motion:reduce){
+    .advanced-stage,.advanced-replay-marker { transition:none; }
+  }
+}
