@@ -229,7 +229,7 @@
   .ai-v3-course-progress div { @apply col-span-2 h-1.5 overflow-hidden rounded-full bg-ink-100; }
   .ai-v3-course-progress i { @apply block h-full rounded-full bg-accent; }
   .ai-v3-coach-panel { @apply border-accent/20 bg-accent/5; }
-  .ai-v3-coach-panel > p:not(.ai-v3-eyebrow) { @apply my-4 text-sm leading-6 text-ink-650; }
+  .ai-v3-coach-panel > p:not(.ai-v3-eyebrow) { @apply my-4 text-sm leading-6 text-ink-600; }
   .ai-v3-mini-achievement { @apply rounded-2xl bg-surface-page p-4 text-center; }
   .ai-v3-mini-achievement strong { @apply block text-xl font-extrabold text-brand; }
   .ai-v3-mini-achievement span { @apply mt-1 block text-xs text-ink-500; }
@@ -398,7 +398,7 @@
   .ai-v3-thought-event[data-state="ai"] .ai-v3-thought-event__card { @apply bg-violet-50; }
   .ai-v3-thought-event[data-state="success"] .ai-v3-thought-event__card { @apply bg-success-50; }
   .ai-v3-thought-event__card strong { @apply flex items-center gap-2 text-sm text-brand; }
-  .ai-v3-thought-event__card > p { @apply mt-2 text-sm leading-6 text-ink-650; }
+  .ai-v3-thought-event__card > p { @apply mt-2 text-sm leading-6 text-ink-600; }
   .ai-v3-thought-event__card blockquote { @apply mt-3 rounded-xl bg-white p-3 text-sm italic leading-6 text-brand; }
   .ai-v3-thought-code { @apply mt-3 rounded-xl bg-white px-3 py-2 font-mono text-xs text-danger-700; }
   .ai-v3-thought-code.is-success { @apply text-success-700; }
