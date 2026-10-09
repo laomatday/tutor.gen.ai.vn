@@ -229,7 +229,7 @@ export function KnowledgeUniversePage({ onNavigate, search }: Props) {
                     aria-label="Thu nhỏ bản đồ"
                     onClick={() => setZoom((value) => Math.max(.6, Number((value - .2).toFixed(1))))}
                   ><Icon name="zoom_out" /></Button>
-                  <Button variant="ghost" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
+                  <Button variant="ghost" aria-label="Căn giữa bản đồ" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
                     Căn giữa <Icon name="center_focus_strong" />
                   </Button>
                 </div>
