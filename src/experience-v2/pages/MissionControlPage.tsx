@@ -45,7 +45,7 @@ export function MissionControlPage({
   const nextLesson = primary?.nextLesson ?? overall.nextLesson;
   const nextSubject = subjects.find((subject) => subject.id === nextLesson?.subjectId);
   const previewQuestion = nextLesson?.exercises[0]?.prompt;
-  const firstName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
+  const displayName = studentProfile.name.trim() || "bạn";
   const path = buildCoursePath(
     topics,
     lessons,
@@ -85,7 +85,7 @@ export function MissionControlPage({
         <img className="v2-home-hero-scene" src={heroScene} alt="" decoding="async" fetchPriority="high" />
         <div className="v2-home-hero-copy">
           <span className="v2-home-eyebrow"><Icon name="auto_awesome" /> HỌC MỖI NGÀY · KHÁM PHÁ VŨ TRỤ TRI THỨC</span>
-          <h1>{greeting()}, <em>{firstName}!</em> <span aria-hidden="true">👋</span></h1>
+          <h1>{greeting()}, <em>{displayName}!</em> <span aria-hidden="true">👋</span></h1>
           <p>Hôm nay là một cơ hội tuyệt vời để học điều mới.<br />
             Kiến thức hôm nay sẽ mở ra những cánh cửa lớn hơn cho ngày mai. ✨
           </p>
