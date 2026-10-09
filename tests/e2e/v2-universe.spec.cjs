@@ -29,6 +29,8 @@ test.describe("V2 Knowledge Universe — published topic graph", () => {
     await expect(page.locator('.v2-universe-list[data-view="list"]')).toBeVisible();
     fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
     await page.goto("/hoc-bai");
+    await expect(page.locator(".v2-universe-page")).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: path.join("test-results", "visual", "v2-universe-1440.png"), fullPage: true });
   });
 
@@ -45,6 +47,8 @@ test.describe("V2 Knowledge Universe — published topic graph", () => {
     await expect(page).toHaveURL(/\/hoc-bai\?.*lesson=/);
     await expect(page.locator(".v2-legacy-surface")).toBeVisible();
     await page.goto("/hoc-bai");
+    await expect(page.locator(".v2-universe-page")).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: path.join("test-results", "visual", "v2-universe-390.png"), fullPage: true });
     await page.setViewportSize({ width: 360, height: 800 });
     expect(await page.evaluate(
