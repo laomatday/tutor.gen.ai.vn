@@ -270,11 +270,12 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
             </div>
           )}
           {mood === "learn" && squareLesson && nextLesson && nextDiscovery && (
-            <div className="home-micro-lab" aria-label="Kiểm tra ý tưởng của bài học tiếp theo">
-              <div className="home-next-discovery-head">
-                <p className="home-next-eyebrow">Thử tiếp một ý tưởng</p>
-                <span>{nextLesson.title}</span>
-              </div>
+            <details className="home-micro-lab" aria-label="Kiểm tra ý tưởng của bài học tiếp theo">
+              <summary className="home-next-discovery-head">
+                <span><Icon name="lightbulb" /> Thử tiếp một ý tưởng</span>
+                <strong>{nextLesson.title}</strong>
+                <Icon name="expand_more" />
+              </summary>
               <LessonDiscovery
                 lesson={nextLesson}
                 compact
@@ -283,7 +284,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
               <p className="home-next-preview-note">
                 Đây là bản khám phá thử, không cộng điểm hoặc hoàn thành bài.
               </p>
-            </div>
+            </details>
           )}
         </section>
 
