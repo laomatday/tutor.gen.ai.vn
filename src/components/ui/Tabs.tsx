@@ -7,6 +7,8 @@ interface Tab<T extends string> {
   id: T;
   label: string;
   icon?: string;
+  description?: string;
+  actionLabel?: string;
   disabled?: boolean;
 }
 
@@ -60,6 +62,7 @@ export function Tabs<T extends string>({
           }}
           variant="ghost"
           role="tab"
+          aria-label={tab.description || tab.actionLabel ? tab.label : undefined}
           aria-selected={value === tab.id}
           tabIndex={value === tab.id ? 0 : -1}
           disabled={tab.disabled}
@@ -67,7 +70,19 @@ export function Tabs<T extends string>({
           onClick={() => onChange(tab.id)}
         >
           {tab.icon && <Icon name={tab.icon} />}
-          {tab.label}
+          {tab.description ? (
+            <span className="ui-tab-copy">
+              <strong>{tab.label}</strong>
+              <small>{tab.description}</small>
+            </span>
+          ) : (
+            tab.label
+          )}
+          {tab.actionLabel && (
+            <span className="ui-tab-action" aria-hidden="true">
+              {tab.actionLabel}
+            </span>
+          )}
         </Button>
       ))}
     </div>
