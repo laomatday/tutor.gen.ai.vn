@@ -30,6 +30,27 @@ import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
 import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
+const ProgressPageV2 = lazy(() =>
+  import("../experience-v2/support/ProgressPage").then((module) => ({
+    default: module.ProgressPage,
+  })),
+);
+const SchedulePageV2 = lazy(() =>
+  import("../experience-v2/support/SchedulePage").then((module) => ({
+    default: module.SchedulePage,
+  })),
+);
+const RewardsPageV2 = lazy(() =>
+  import("../experience-v2/support/RewardsPage").then((module) => ({
+    default: module.RewardsPage,
+  })),
+);
+const V2ProfileModal = lazy(() =>
+  import("../experience-v2/support/V2ProfileModal").then((module) => ({
+    default: module.V2ProfileModal,
+  })),
+);
+
 const ThinkingReplayPageV2 = lazy(() =>
   import("../experience-v2/replay/ThinkingReplayPage").then((module) => ({
     default: module.ThinkingReplayPage,
@@ -214,6 +235,20 @@ export default function App() {
                   onNavigate={navigateStudent}
                   search={location.search}
                 />
+              ) : section === "tien-bo" ? (
+                <ProgressPageV2
+                  onNavigate={navigateStudent}
+                  onOpenProfile={() => setIsProfileOpen(true)}
+                />
+              ) : section === "thoi-khoa-bieu" ? (
+                <SchedulePageV2 onNavigate={navigateStudent} />
+              ) : section === "doi-qua" ? (
+                <RewardsPageV2
+                  gpBalance={wallet.balance}
+                  dailyGp={wallet.dailyGp}
+                  onNavigate={navigateStudent}
+                  onSpendGp={wallet.spend}
+                />
               ) : (
                 <div className="v2-legacy-surface">
                   <p className="v2-bridge-note">
@@ -228,21 +263,10 @@ export default function App() {
                   {section === "replay" && (
                     <ThinkingReplayView onNavigate={navigateStudent} />
                   )}
-                  {section === "thoi-khoa-bieu" && (
-                    <TimetableScheduleView onNavigate={navigateStudent} />
-                  )}
-                  {(section === "thi-thu" || section === "tien-bo") && (
+                  {section === "thi-thu" && (
                     <ExamIntelligenceView
                       onNavigate={navigateStudent}
                       onOpenBadges={() => setIsProfileOpen(true)}
-                    />
-                  )}
-                  {section === "doi-qua" && (
-                    <RewardsStoreView
-                      gpBalance={wallet.balance}
-                      dailyGp={wallet.dailyGp}
-                      onNavigate={navigateStudent}
-                      onSpendGp={wallet.spend}
                     />
                   )}
                 </div>
@@ -250,12 +274,15 @@ export default function App() {
             </Suspense>
           </ScreenErrorBoundary>
         </LearningShell>
-        <StudentProfileModal
-          open={isProfileOpen}
-          onClose={() => setIsProfileOpen(false)}
-          gpBalance={wallet.balance}
-          completedLessonsCount={completedLessonIds.length}
-        />
+        <Suspense fallback={null}>
+          {isProfileOpen && (
+            <V2ProfileModal
+              open={isProfileOpen}
+              onClose={() => setIsProfileOpen(false)}
+              gpBalance={wallet.balance}
+            />
+          )}
+        </Suspense>
         <OfflineIndicator />
       </>
     );
