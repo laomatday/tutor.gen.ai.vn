@@ -28,7 +28,7 @@ test.describe("Focus Studio V2 — math, agency and persistence", () => {
     expect(await page.evaluate(() => localStorage.getItem("genai-student-gp-v1"))).toBe(gpAfterFirst);
     await page.getByRole("button", { name: "Xem Thinking Replay" }).click();
     await expect(page).toHaveURL(/\/replay\?problem=quadratic-factor-01/);
-    await expect(page.locator(".v2-legacy-surface")).toBeVisible();
+    await expect(page.locator(".v2-replay-page")).toBeVisible();
   });
 
   test("separate problem drafts, tool keyboard, 390 and 1440 screenshots", async ({ page }) => {
