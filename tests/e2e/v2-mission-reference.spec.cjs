@@ -34,9 +34,12 @@ test.describe("Mission Control — fidelity to supplied code.html and screenshot
     await expect(page.locator(".v2-mini-lab-controls input[type=range]")).toHaveCount(3);
     const graphRect = await page.locator(".v2-mini-graph").boundingBox();
     const controlsRect = await page.locator(".v2-mini-lab-controls").boundingBox();
-    expect(controlsRect.bottom, "all sliders must remain inside graph panel").toBeLessThanOrEqual(
-      graphRect.bottom + 2,
-    );
+    expect(controlsRect, "coefficient controls must render").not.toBeNull();
+    expect(graphRect, "graph panel must render").not.toBeNull();
+    expect(
+      controlsRect.y + controlsRect.height,
+      "all sliders must remain inside graph panel",
+    ).toBeLessThanOrEqual(graphRect.y + graphRect.height + 2);
 
     fs.mkdirSync(path.join("test-results","visual"), {recursive:true});
     await page.evaluate(() => window.scrollTo(0, 0));
