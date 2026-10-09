@@ -1,6 +1,6 @@
 # genAi Tutor — Quy định sản phẩm và giao diện
 
-Phiên bản 6.0. Quy định giao diện học sinh hướng tới cuối Gen Z và Gen Alpha: một góc học để khám phá, dễ bắt đầu và thấy tiến bộ từ việc học thật. Khi thay đổi shell, kiến trúc thông tin hoặc nguyên tắc, sửa đúng mục tương ứng trong file này và xóa nội dung cũ. Không thêm mục "phiên bản tiếp theo" vào cuối file.
+Phiên bản 6.1. Quy định giao diện học sinh hướng tới cuối Gen Z và Gen Alpha: một góc học để khám phá, dễ bắt đầu và thấy tiến bộ từ việc học thật. Khi thay đổi shell, kiến trúc thông tin hoặc nguyên tắc, sửa đúng mục tương ứng trong file này và xóa nội dung cũ. Không thêm mục "phiên bản tiếp theo" vào cuối file.
 
 Quy tắc bảo vệ: không được bỏ bốn trụ cột Nhiệm vụ học tập, Knowledge Universe, Focus Studio và Thinking Replay chỉ vì một số số liệu chưa có nguồn. Cần thay dữ liệu giả bằng dữ liệu thật hoặc empty state, giữ trải nghiệm người học. Xem docs/product-differentiators.md.
 
@@ -56,7 +56,7 @@ Mỗi trang có đúng một H1, mô tả ngắn và một hành động chính 
 
 Bốn màn chính dùng component và màu của gen.ai.vn. Hướng khám phá lấy cảm hứng từ [Brilliant: học Toán qua thao tác](https://brilliant.org/mathematics/), hướng chặng học tham khảo [lộ trình của Duolingo](https://blog.duolingo.com/new-duolingo-home-screen-design/): học sinh có một bước tiếp theo rõ ràng và được thử ý tưởng trước khi đọc giải thích. Không sao chép thương hiệu hoặc suy ra hiệu quả học tập từ việc đổi giao diện.
 
-- **Hôm nay:** bàn khám phá sáng, nội dung từ bài tiếp theo và nút bắt đầu navy. Ba lựa chọn Học mới / Luyện một bài / Xem lại thực sự đổi nội dung và đích mở. Học mới có một câu hỏi tương tác, chọn/kiểm tra/thử lại và mô hình thao tác nếu bài có cấu hình đã duyệt. Bản xem trước chặng học hiển thị bài hiện tại cùng các bước liền kề; nhịp học tuần và số lần tự sửa dùng dữ liệu đã lưu. Nút bắt đầu đứng trước mô hình và nội dung phụ trên điện thoại.
+- **Hôm nay:** Mission Control có một vùng học tập chính chiếm trọn hàng đầu, với CTA navy rõ ràng trước nội dung phụ; chặng tiếp theo và nhịp học chỉ là các vùng hỗ trợ phía dưới. Bản xem trước tương tác dùng trực tiếp `LessonDiscovery` với bài published và câu hỏi kiểm tra hợp lệ, không tạo tiến độ/GP, chỉ hiện trong lựa chọn Học mới. Nút bắt đầu luôn đứng trước hoạt động khám phá trên điện thoại. Ba lựa chọn Học mới / Luyện một bài / Xem lại thực sự đổi nội dung và đích mở. Học mới có một câu hỏi tương tác, chọn/kiểm tra/thử lại và mô hình thao tác nếu bài có cấu hình đã duyệt. Bản xem trước chặng học hiển thị bài hiện tại cùng các bước liền kề; nhịp học tuần và số lần tự sửa dùng dữ liệu đã lưu. Nút bắt đầu đứng trước mô hình và nội dung phụ trên điện thoại.
 - **Môn học / Knowledge Universe:** mở mặc định bằng Lộ trình, nhóm bài đã xuất bản theo chủ đề và thứ tự chương trình. Mỗi chặng có các mốc Đã hoàn thành / Bài tiếp theo / Có thể khám phá, thời lượng thật và nút vào bài. Bài hoàn thành mở lại ví dụ; bài sau vẫn mở được, không tạo khóa tiên quyết giả. Buổi tự giải được đặt vào chặng khi có đề thuộc đúng chủ đề/môn. Có thể chuyển sang Bản đồ hoặc Danh sách; giữ tìm kiếm, bộ lọc, phóng to/thu nhỏ/căn vừa, panel chủ đề và thao tác mở bài. Đường nối chỉ biểu thị cấu trúc chương trình.
 - **Focus Studio:** đề bài; ba bước Đọc đề / Thử cách giải / Hiểu ra; công cụ công thức, phác thảo, đồ thị và ghép hình đại số; khu vực nhập/kiểm tra đứng trước nhật ký các lần thử. Gợi ý theo bậc là người bạn đồng hành; phản hồi chỉ rõ bước cần sửa và ghi nhận khi tự sửa đúng. Bài được lưu riêng theo ID để chuyển bài không mất lịch sử hoặc cộng thưởng lại. Xóa nháp để thử lại giữ nguyên các lần kiểm tra và lỗi đã lưu.
 - **Thinking Replay:** phát/tạm dừng, thanh thời gian, tốc độ; timeline các thao tác thật; điểm cần xem lại, gợi ý ôn lại và bản phác thảo đã lưu. Khoảng thời gian phiên là thời gian trôi qua, không suy ra thời gian tập trung. Chưa làm bài thì có hành động bắt đầu ngay, không tạo sẵn lịch sử giả.
@@ -98,7 +98,7 @@ Nội dung tải từ DB theo quy tắc sau:
 
 1. Token, `src/index.css` và `src/components/ui` là nguồn duy nhất cho hình thức. Feature chỉ dùng utility cho bố cục.
 2. Icon chỉ dùng tên có trong registry. Tên không tồn tại làm CI fail; không có fallback im lặng. Nghĩa của icon phải khớp hành động.
-3. Mọi phần tử tương tác có `:focus-visible` nhìn thấy được. Không ẩn scrollbar toàn cục; vùng cuộn ngang phải có tín hiệu cho thấy cuộn được.
+3. Mọi phần tử tương tác có `:focus-visible` nhìn thấy được. Không ẩn scrollbar toàn cục (kể cả WebKit và Firefox); giữ dấu hiệu cuộn mặc định. Chỉ vùng cuộn được thiết kế riêng mới được opt-in ẩn scrollbar khi còn chỉ báo cuộn và điều khiển bàn phím.
 4. Vùng chạm tối thiểu 44px. Chữ tối thiểu 12px. Ô nhập 16px trên điện thoại.
 5. Dưới 640px, bảng rộng chuyển thành danh sách thẻ.
 6. Logo, avatar và ảnh minh họa tự host trong `public/`, có ảnh dự phòng (avatar dùng chữ cái đầu).

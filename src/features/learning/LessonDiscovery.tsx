@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AdaptiveText } from "../../components/AdaptiveText";
 import { Button, Icon, Input } from "../../components/ui";
 import type { Lesson, LessonExercise } from "../../types/content";
@@ -47,11 +47,19 @@ function DiscoveryActivity({
   const firstOptionRef = useRef<HTMLInputElement>(null);
   const [selection, setSelection] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
+  const [restoreFocus, setRestoreFocus] = useState(false);
   const correct = checked && selection === exercise.correctIndex;
+  useEffect(() => {
+    if (!checked && restoreFocus) {
+      firstOptionRef.current?.focus();
+      setRestoreFocus(false);
+    }
+  }, [checked, restoreFocus]);
+
   function retry() {
     setChecked(false);
     setSelection(null);
-    firstOptionRef.current?.focus();
+    setRestoreFocus(true);
   }
   return (
     <section
@@ -96,6 +104,7 @@ function DiscoveryActivity({
                     ref={index === 0 ? firstOptionRef : undefined}
                     type="radio"
                     name={`${id}-answer`}
+                    aria-label={`Đáp án ${String.fromCharCode(65 + index)}: ${option.replaceAll("$", "")}`}
                     value={index}
                     checked={selection === index}
                     onChange={() => setSelection(index)}

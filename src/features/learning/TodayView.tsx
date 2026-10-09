@@ -16,6 +16,8 @@ import { practiceHref } from "./discovery";
 import { getPracticeStats } from "../practice/domain";
 import { useStudyJourney } from "./studyJourney";
 import { CourseLearningPath } from "./CourseLearningPath";
+import { LessonDiscovery } from "./LessonDiscovery";
+import { selectDiscovery } from "./lessonDiscovery";
 import { buildCoursePath } from "./coursePath";
 import "../../styles/student-discovery.css";
 import "../../styles/student-home.css";
@@ -70,6 +72,7 @@ export function TodayView({
     practice?.id === journey.recentSession?.problemId &&
     evidence.attempts.length > 0;
   const nextLesson = primary.nextLesson ?? allProgress.nextLesson;
+  const nextDiscovery = nextLesson ? selectDiscovery(nextLesson) : null;
   const firstName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
   const courses = studentProfile.enrollments
     .map((enrollment) => ({
@@ -195,10 +198,10 @@ export function TodayView({
             <Icon name="wb_sunny" /> Góc học của {firstName}
           </p>
           <h1 className="home-greeting-title">
-            Mỗi ngày, khám phá một điều mới.
+            Hôm nay
           </h1>
           <p className="home-greeting-sub">
-            Thử một ý tưởng · Tự tìm ra · Rồi bước tiếp
+            Một bài học mới, một cách thử mới — bạn chọn điểm bắt đầu.
           </p>
         </div>
         {onOpenBadges && (
@@ -219,19 +222,19 @@ export function TodayView({
         )}
       </header>
 
-      {/* 3 Thẻ: Lối học chủ động · Chặng tiếp theo · Nhịp học tuần này */}
+      {/* Mission Control: hành động chính trước, bằng chứng học tập phía sau. */}
       <div className="home-hero-trio">
         {/* Thẻ 1: Lối học chủ động */}
         <section
-          className="home-mission home-trio-card home-mood-card"
+          className={`home-mission home-trio-card home-mood-card${mood === "learn" && nextDiscovery ? " has-discovery" : ""}`}
           aria-label="Chọn cách học hôm nay"
         >
           <div className="home-trio-head">
             <span className="home-mission-tag">
               <Icon name="auto_awesome" />
-              Góc học tập chủ động
+              Nhiệm vụ học tập
             </span>
-            <h2>Hôm nay bạn muốn học thế nào?</h2>
+            <h2>Chọn cách bạn muốn bắt đầu</h2>
             <Tabs
               tabs={learningMoods}
               value={mood}
@@ -278,6 +281,26 @@ export function TodayView({
                         {nextLesson?.summary ??
                           "Khám phá lý thuyết qua ví dụ thực tế và các câu tự luyện."}
                       </p>
+                    </div>
+                    <div className="home-action-footer">
+                      <Button
+                        className="home-primary-start-btn"
+                        variant="primary"
+                        onClick={() =>
+                          onNavigate(
+                            nextLesson
+                              ? lessonHref(nextLesson)
+                              : routePath("hoc-bai"),
+                          )
+                        }
+                      >
+                        <Icon name="play_arrow" />
+                        <span>
+                          {nextLesson ? "Bắt đầu bài học" : "Chọn chủ đề"}
+                        </span>
+                        <Icon name="arrow_forward" />
+                      </Button>
+                    </div>
                       {nextLesson && (
                         <div className="home-action-steps">
                           {[
@@ -303,26 +326,6 @@ export function TodayView({
                           ))}
                         </div>
                       )}
-                    </div>
-                    <div className="home-action-footer">
-                      <Button
-                        className="home-primary-start-btn"
-                        variant="primary"
-                        onClick={() =>
-                          onNavigate(
-                            nextLesson
-                              ? lessonHref(nextLesson)
-                              : routePath("hoc-bai"),
-                          )
-                        }
-                      >
-                        <Icon name="play_arrow" />
-                        <span>
-                          {nextLesson ? "Bắt đầu bài học" : "Chọn chủ đề"}
-                        </span>
-                        <Icon name="arrow_forward" />
-                      </Button>
-                    </div>
                   </div>
                 )}
 
@@ -384,7 +387,7 @@ export function TodayView({
 
                 {mood === "replay" && (
                   <div className="home-action-focused" data-mood="replay">
-                    <div className="home-action-badge" data-tone="violet">
+                    <div className="home-action-badge" data-tone="sky">
                       <Icon name="history" />
                       <span>Nhìn lại để tự tin hơn</span>
                     </div>
@@ -466,9 +469,21 @@ export function TodayView({
                   </div>
                 )}
           </div>
+          {mood === "learn" && nextLesson && nextDiscovery && (
+            <aside className="home-micro-lab" aria-label="Thử khám phá trước khi vào bài">
+              <LessonDiscovery
+                lesson={nextLesson}
+                compact
+                onContinue={() => onNavigate(lessonHref(nextLesson))}
+              />
+              <p className="home-micro-lab__note">
+                Khám phá nhanh không đánh dấu hoàn thành bài học hoặc cộng điểm.
+              </p>
+            </aside>
+          )}
         </section>
 
-        {/* Thẻ 2: Chặng tiếp theo của bạn */}
+        {/* Bằng chứng học tập: chỉ dùng kết quả đã lưu. */}
         <section
           className="home-milestones home-trio-card home-milestones-card"
           aria-labelledby="home-progress-title"

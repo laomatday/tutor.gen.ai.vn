@@ -1,5 +1,26 @@
 const { test, expect } = require("@playwright/test");
 
+test("Mission Control: a real lesson micro-lab allows a safe preview without earning progress", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const lab = page.locator(".home-micro-lab");
+  await expect(lab.locator('[data-exercise="can-bac-hai-1"]')).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bắt đầu bài học", exact: true })).toBeVisible();
+  const initialProgress = await page.locator(".home-progress-header-info strong").textContent();
+
+  await lab.getByRole("button", { name: "Tăng x" }).click();
+  await expect(lab.locator(".lesson-discovery__slider label")).toContainText("x = 1");
+  await expect(page.locator(".home-progress-header-info strong")).toHaveText(initialProgress);
+  await expect(page.locator(".home-wallet")).toContainText("0 GP");
+
+  await page.getByRole("tab", { name: "Luyện một bài", exact: true }).click();
+  await expect(lab).toHaveCount(0);
+  await page.getByRole("tab", { name: "Học mới", exact: true }).click();
+  await expect(lab).toBeVisible();
+});
+
 test("Home: keyboard learning choices change the mission and keep the mobile start action in view", async ({
   page,
 }) => {

@@ -280,33 +280,11 @@
     outline-color: var(--color-focus-soft);
   }
 
-  /* Bỏ toàn bộ thanh scroll trong toàn bộ ứng dụng, vẫn giữ khả năng cuộn */
-  html,
-  body {
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+  /* Keep visible native scroll affordances for keyboard and touchpad users.
+     Any exceptional scroll surface must opt in explicitly and remain navigable. */
+  html {
+    scrollbar-gutter: stable;
   }
-}
-
-/* Bỏ toàn bộ thanh scroll trong toàn bộ ứng dụng */
-*,
-*::before,
-*::after {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-*::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-*::-webkit-scrollbar-track,
-*::-webkit-scrollbar-thumb,
-*::-webkit-scrollbar-corner {
-  display: none !important;
-  background: transparent !important;
 }
 
 /* ==========================================================================
@@ -1009,7 +987,7 @@
   }
 }
 
-/* Kept for existing call sites; every scrollbar is hidden globally now. */
+/* Optional for explicitly designed horizontal carousels only; never global. */
 .no-scrollbar {
   scrollbar-width: none;
 }
