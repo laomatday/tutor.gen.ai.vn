@@ -5,7 +5,13 @@ import { Button, Icon, Input } from "../../components/ui";
  * Deterministic geometry model for the reviewed Grade 9 square-root lesson.
  * This is an exploration preview, NOT AI feedback or completion evidence.
  */
-export function HomeSquareLab({ onOpenLesson }: { onOpenLesson: () => void }) {
+export function HomeSquareLab({
+  onOpenLesson,
+  onOpenExercises,
+}: {
+  onOpenLesson: () => void;
+  onOpenExercises: () => void;
+}) {
   const [side, setSide] = useState(3);
   const id = useId().replaceAll(":", "");
   const area = Number((side * side).toFixed(2));
@@ -18,7 +24,7 @@ export function HomeSquareLab({ onOpenLesson }: { onOpenLesson: () => void }) {
       <div className="home-next-square-head">
         <span>
           <Icon name="grid_view" />
-          Mô hình biến thiên diện tích
+          Mô hình biến thiên diện tích · S = x²
         </span>
         <strong aria-live="polite">
           x = {side} cm · S = {area} cm²
@@ -89,18 +95,19 @@ export function HomeSquareLab({ onOpenLesson }: { onOpenLesson: () => void }) {
       <div className="home-next-square-insight">
         <Icon name="lightbulb" />
         <p>
-          <strong>Quan sát:</strong> Diện tích bằng bình phương độ dài cạnh.
-          Nếu cạnh tăng gấp đôi, diện tích sẽ tăng gấp bốn.
-          Với x dương, x chính là căn bậc hai số học của S.
+          <strong>Nhận xét từ mô hình:</strong> Diện tích S = x².
+          Khi cạnh tăng gấp đôi, diện tích tăng gấp bốn.
+          Vì x dương, √S = x.
         </p>
       </div>
       <div className="home-next-square-footer">
         <Button variant="secondary" onClick={onOpenLesson}>
           <Icon name="menu_book" />
           Học về căn bậc hai
-          <Icon name="arrow_forward" />
         </Button>
-        <small>Minh họa có thể thao tác, không tính điểm hoặc hoàn thành bài.</small>
+        <Button variant="primary" onClick={onOpenExercises}>
+          Bắt đầu tự luyện <Icon name="arrow_forward" />
+        </Button>
       </div>
     </div>
   );
