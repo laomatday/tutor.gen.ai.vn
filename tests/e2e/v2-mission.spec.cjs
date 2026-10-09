@@ -13,7 +13,7 @@ test.describe("V2 Mission Control — published learning, not a cosmetic clone",
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
     await expect(page.getByRole("heading", { name: "Nhiệm vụ tiếp theo" })).toBeVisible();
     await expect(page.locator(".v2-home-metrics")).toContainText("0");
-    await expect(page.getByRole("heading", { name: "Phòng khám phá" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Phòng thí nghiệm Toán" })).toBeVisible();
     await expect(page.locator(".v2-home-lower-grid > section")).toHaveCount(3);
     await expect(page.locator(".v2-choices-grid .v2-choice")).toHaveCount(3);
     await expect(page.getByText("12 ngày học liên tiếp")).toHaveCount(0);

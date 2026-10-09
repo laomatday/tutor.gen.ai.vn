@@ -13,7 +13,8 @@ import { buildCoursePath } from "../../features/learning/coursePath";
 import { practiceHref } from "../../features/learning/discovery";
 import { useStudyJourney } from "../../features/learning/studyJourney";
 import { selectDiscovery } from "../../features/learning/lessonDiscovery";
-import { V2HeroArtwork } from "../components/V2HeroArtwork";
+import heroScene from "../assets/mission-control-hero.webp";
+import { RichMathText } from "../../components/MathLatex";
 import { V2MiniLab } from "../components/V2MiniLab";
 import "../pages/mission-control.css";
 
@@ -43,7 +44,8 @@ export function MissionControlPage({
   const overall = getCourseProgress(lessons, topics, completedLessonIds);
   const nextLesson = primary?.nextLesson ?? overall.nextLesson;
   const nextSubject = subjects.find((subject) => subject.id === nextLesson?.subjectId);
-  const firstName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
+  const previewQuestion = nextLesson?.exercises[0]?.prompt;
+  const displayName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
   const path = buildCoursePath(
     topics,
     lessons,
@@ -80,22 +82,24 @@ export function MissionControlPage({
   return (
     <div className="v2-mission-page">
       <header className="v2-home-hero">
-        <V2HeroArtwork />
+        <img className="v2-home-hero-scene" src={heroScene} alt="" decoding="async" fetchPriority="high" />
         <div className="v2-home-hero-copy">
-          <span className="v2-home-eyebrow"><Icon name="auto_awesome" /> Mỗi ngày một ý tưởng mới</span>
-          <h1>{greeting()}, <em>{firstName}!</em></h1>
-          <p>Hôm nay mình cùng khám phá, tự thử và hiểu sâu hơn một điều nhé.</p>
+          <span className="v2-home-eyebrow"><Icon name="auto_awesome" /> HỌC MỖI NGÀY · KHÁM PHÁ VŨ TRỤ TRI THỨC</span>
+          <h1>{greeting()}, <em>{displayName}!</em> <span aria-hidden="true">👋</span></h1>
+          <p>Hôm nay là một cơ hội tuyệt vời để học điều mới.<br />
+            Kiến thức hôm nay sẽ mở ra những cánh cửa lớn hơn cho ngày mai. ✨
+          </p>
           <div className="v2-home-metrics" aria-label="Hoạt động học tập có dữ liệu">
             <div>
-              <Icon name="menu_book" />
-              <span><strong>{primary?.completed ?? 0}/{primary?.total ?? 0}</strong><small>Bài học Toán đã hoàn thành</small></span>
+              <span className="v2-metric-icon v2-metric-icon--lessons"><Icon name="menu_book" /></span>
+              <span><strong>{primary?.completed ?? 0}/{primary?.total ?? 0}</strong><small>Bài học đã hoàn thành</small></span>
             </div>
             <div>
-              <Icon name="edit_square" />
+              <span className="v2-metric-icon v2-metric-icon--attempts"><Icon name="bar_chart" /></span>
               <span><strong>{journey.totalAttempts}</strong><small>Lượt tự kiểm tra đã lưu</small></span>
             </div>
             <div>
-              <Icon name="verified_user" />
+              <span className="v2-metric-icon v2-metric-icon--corrections"><Icon name="verified_user" /></span>
               <span><strong>{journey.corrections}</strong><small>Lần tự sửa đúng</small></span>
             </div>
           </div>
@@ -118,7 +122,7 @@ export function MissionControlPage({
                   <span>Lớp {nextLesson?.gradeId ?? studentProfile.gradeId}</span>
                 </div>
                 <h3>{nextLesson?.title ?? "Chọn một chủ đề để học tiếp"}</h3>
-                <p>{nextLesson?.summary ?? "Những bài học hiện có đều đã hoàn thành. Em có thể chọn một chủ đề để ôn lại."}</p>
+                <p className="v2-mission-question">{previewQuestion ? <RichMathText text={previewQuestion} /> : nextLesson?.summary ?? "Những bài học hiện có đều đã hoàn thành. Em có thể chọn một chủ đề để ôn lại."}</p>
                 <div className="v2-mission-footer">
                   {nextLesson && nextLesson.durationMinutes > 0 && (
                     <span className="v2-mission-duration"><Icon name="timer" /> {nextLesson.durationMinutes} phút</span>
@@ -134,19 +138,19 @@ export function MissionControlPage({
           </section>
 
           <section className="v2-choices" aria-labelledby="v2-choices-title">
-            <h2 id="v2-choices-title"><Icon name="psychology" /> Chọn cách học hôm nay</h2>
+            <h2 id="v2-choices-title"><Icon name="auto_awesome" /> Chọn cách học hôm nay</h2>
             <div className="v2-choices-grid">
               <Button
                 className="v2-choice"
                 onClick={() => onNavigate(nextDestination)}
               >
                 <span className="v2-choice-icon v2-choice-icon--idea"><Icon name="lightbulb" /></span>
-                <span><strong>Khám phá ý tưởng</strong><small>Hiểu kiến thức qua ví dụ và tương tác</small></span>
+                <span><strong>Khám phá ý tưởng mới</strong><small>Khám phá kiến thức qua ví dụ trực quan, sinh động</small></span>
                 <Icon name="chevron_right" />
               </Button>
               <Button className="v2-choice" onClick={() => onNavigate(practiceDestination)}>
                 <span className="v2-choice-icon v2-choice-icon--try"><Icon name="edit_square" /></span>
-                <span><strong>Tự giải thử</strong><small>Thử cách làm riêng, nhận gợi ý từng bước</small></span>
+                <span><strong>Tự giải thử</strong><small>Luyện tập bằng cách làm của chính em</small></span>
                 <Icon name="chevron_right" />
               </Button>
               <Button className="v2-choice" onClick={() => onNavigate(replayPath)}>
@@ -172,7 +176,7 @@ export function MissionControlPage({
       <div className="v2-home-lower-grid">
         <section className="v2-panel v2-journey" aria-labelledby="v2-journey-title">
           <header className="v2-panel-head">
-            <h2 id="v2-journey-title"><Icon name="hub" /> Hành trình của em</h2>
+            <h2 id="v2-journey-title"><Icon name="hub" /> Hành trình học tập của em</h2>
             <Button variant="ghost" onClick={() => onNavigate("/hoc-bai")}>Xem chi tiết <Icon name="arrow_forward" /></Button>
           </header>
           {previewSteps.length ? (
@@ -195,7 +199,7 @@ export function MissionControlPage({
           ) : (
             <div className="v2-inline-empty">Chưa có chặng học phù hợp. <Button onClick={() => onNavigate("/hoc-bai")}>Mở môn học</Button></div>
           )}
-          <p className="v2-journey-foot">Lộ trình theo chương trình học đã xuất bản, không khóa bài chưa học.</p>
+          <p className="v2-journey-foot"><Icon name="smart_toy" /> “Kiên trì hôm nay, tự tin ngày mai!”</p>
         </section>
 
         <section className="v2-panel v2-rhythm" aria-labelledby="v2-rhythm-title">
@@ -223,14 +227,14 @@ export function MissionControlPage({
 
         <section className="v2-panel v2-challenge" aria-labelledby="v2-challenge-title">
           <header className="v2-panel-head">
-            <h2 id="v2-challenge-title"><Icon name="bolt" /> Thử thách tiếp theo</h2>
+            <h2 id="v2-challenge-title"><Icon name="bolt" /> Thử thách để bắt đầu</h2>
           </header>
           {practice ? (
             <>
               <div className="v2-challenge-symbol"><Icon name="track_changes" /></div>
               <h3>{practice.title}</h3>
               <p>{practice.course} {practice.durationMinutes ? `· ${practice.durationMinutes} phút` : ""}</p>
-              <p className="v2-challenge-sub">Tự làm, kiểm tra từng bước và xem lại quá trình giải.</p>
+              <p className="v2-challenge-sub">Bài tập hiện có trong chương trình, không yêu cầu streak hay huy hiệu để mở.</p>
               <Button className="v2-challenge-cta" onClick={() => onNavigate(practiceHref(practice.id))}>
                 Bắt đầu thử sức <Icon name="arrow_forward" />
               </Button>

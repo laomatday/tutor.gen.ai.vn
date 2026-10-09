@@ -199,7 +199,7 @@ export default function App() {
           <div role="status" aria-live="polite" aria-atomic="true">
             {notice.notice && <div className="v2-notice">{notice.notice}</div>}
           </div>
-          {contentError && !contentLoading && (
+          {contentError && !contentLoading && section !== "hom-nay" && (
             <div className="v2-notice" role="status">
               Chưa kết nối được học liệu trực tuyến. Đang dùng nội dung dự phòng;
               tiến độ được lưu trên thiết bị này.
@@ -217,7 +217,15 @@ export default function App() {
                   Đang tải học liệu…
                 </div>
               ) : section === "hom-nay" ? (
-                <MissionControlPageV2 onNavigate={navigateStudent} />
+                <>
+                  <MissionControlPageV2 onNavigate={navigateStudent} />
+                  {contentError && (
+                    <div className="v2-notice v2-notice--home-fallback" role="status">
+                      Chưa kết nối được học liệu trực tuyến. Đang dùng nội dung dự phòng;
+                      tiến độ được lưu trên thiết bị này.
+                    </div>
+                  )}
+                </>
               ) : section === "hoc-bai" &&
                 !new URLSearchParams(location.search).has("lesson") ? (
                 <KnowledgeUniversePageV2
