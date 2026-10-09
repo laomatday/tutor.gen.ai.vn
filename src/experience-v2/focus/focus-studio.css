@@ -1,5 +1,5 @@
 @layer components {
-  .learning-os-v2 .v2-focus-page { display: grid; gap: 14px; color: var(--color-white); min-width: 0; }
+  .learning-os-v2 .v2-focus-page { display: grid; grid-template-columns: minmax(0,1fr); gap: 14px; color: var(--color-white); min-width: 0; max-width: 100%; }
   .learning-os-v2 .v2-focus-page h1, .learning-os-v2 .v2-focus-page h2,
   .learning-os-v2 .v2-focus-page h3, .learning-os-v2 .v2-focus-page p { margin: 0; }
   .learning-os-v2 .v2-focus-page .ui-btn { min-height: 44px; }
