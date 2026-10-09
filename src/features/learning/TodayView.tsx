@@ -529,18 +529,18 @@ export function TodayView({
           <div className="home-progress-evidence">
             <div>
               <span className="home-next-evidence-icon"><Icon name="edit_square" /></span>
-              <span>Đã tự kiểm tra</span>
-              <strong>{journey.totalAttempts}</strong><span>lượt tự kiểm tra</span>
+              <span className="home-next-evidence-copy"><strong>Đã tự kiểm tra</strong><small>Các lượt đã lưu</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.totalAttempts}</strong>lượt tự kiểm tra</span>
             </div>
             <div>
               <span className="home-next-evidence-icon"><Icon name="verified_user" /></span>
-              <span>Đã tự sửa</span>
-              <strong>{journey.corrections}</strong><span>lần tự sửa đúng</span>
+              <span className="home-next-evidence-copy"><strong>Đã tự sửa</strong><small>Những bước sửa đúng</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.corrections}</strong>lần tự sửa đúng</span>
             </div>
             <div>
               <span className="home-next-evidence-icon"><Icon name="menu_book" /></span>
-              <span>Lỗi để ôn lại</span>
-              <strong>{journey.savedMistakes}</strong><span>lỗi đã lưu để ôn</span>
+              <span className="home-next-evidence-copy"><strong>Đang ôn lại</strong><small>Lỗi đã ghi chú</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.savedMistakes}</strong>lỗi đã lưu để ôn</span>
             </div>
           </div>
           <Button
