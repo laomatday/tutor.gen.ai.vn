@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 import {
   AccountTree, Add, ArrowBack, ArrowDownward, ArrowForward, ArrowUpward,
   Bolt, Bookmark, Calculate, CalendarMonth, Campaign, Chat, Check, CheckCircle,
-  Close, Code, ContentCopy, Dashboard, Delete, Description, Download, Edit,
+  Close, Code, ContentCopy, Dashboard, DarkMode, Delete, Description, Download, Edit,
   EditNote, Explore, FireDepartment, Group, Info, KeyboardArrowDown, Lightbulb,
   LightMode, ListBulleted, Lock, Logout, Menu, MenuBook, Notes, Payments, Person,
   PlayArrow, ProgressActivity, Psychology, Public, Refresh, RestartAlt, Save,
@@ -138,6 +138,8 @@ export const ICONS: Record<string, IconComponent> = {
   visibility_off: Visibility,
   volunteer_activism: Stars2,
   wb_sunny: LightMode,
+  light_mode: LightMode,
+  dark_mode: DarkMode,
   emoji_events: Trophy,
   workspace_premium: WorkspacePremium,
   target: Target,
