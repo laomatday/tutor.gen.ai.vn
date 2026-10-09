@@ -499,15 +499,28 @@
   }
   .learning-os-v2 .v2-mini-lab-controls label {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 5px;
+    flex-direction: row;
+    align-items: center;
+    min-height: 35px;
+    gap: 8px;
     color: var(--color-white);
     font-size: 12px;
     font-family: var(--font-mono);
   }
-  .learning-os-v2 .v2-mini-lab-controls label span { display: flex; justify-content: space-between; gap: 6px; }
-  .learning-os-v2 .v2-mini-lab-controls input { width: 100%; min-height: 27px; accent-color: var(--color-cyan); }
+  .learning-os-v2 .v2-mini-lab-controls label span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 0 0 43px;
+    gap: 3px;
+  }
+  .learning-os-v2 .v2-mini-lab-controls input {
+    min-width: 0;
+    width: 100%;
+    flex: 1;
+    min-height: 32px;
+    accent-color: var(--color-cyan);
+  }
   .learning-os-v2 .v2-mini-lab-controls label strong { font-weight: 750; color: var(--color-cyan); }
   .learning-os-v2 .v2-lab-reset.ui-btn {
     align-self: flex-start;
@@ -528,8 +541,15 @@
     gap: 10px;
     min-height: 23px;
   }
-  .learning-os-v2 .v2-mini-lab-footer > p { color: var(--color-sky-200); font-size: 12px; line-height: 1.5; }
+  .learning-os-v2 .v2-mini-lab-footer > p {
+    color: var(--color-sky-200);
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    min-width: 160px;
+  }
   .learning-os-v2 .v2-mini-lab-footer strong { color: var(--color-cyan); }
+  .learning-os-v2 .v2-mini-lab-footer-tools { display: inline-flex; align-items: center; gap: 9px; margin-left: auto; }
   .learning-os-v2 .v2-lab-dots { display: flex; justify-content: center; align-items: center; gap: 5px; }
   .learning-os-v2 .v2-lab-dots i { display: block; width: 6px; height: 6px; border-radius: 100%; background: var(--color-sky-500); opacity: .7; }
   .learning-os-v2 .v2-lab-dots i:first-child { width: 17px; border-radius: 10px; background: var(--color-cyan); opacity: 1; }
@@ -790,9 +810,9 @@
     .learning-os-v2 .v2-mini-graph { grid-template-columns: minmax(0,1fr); height: auto; }
     .learning-os-v2 .v2-mini-lab-plot { min-height: 177px; height: 177px; }
     .learning-os-v2 .v2-mini-lab-plot svg { height: 177px; }
-    .learning-os-v2 .v2-mini-lab-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
-    .learning-os-v2 .v2-lab-controls-caption { grid-column: 1 / -1; }
-    .learning-os-v2 .v2-lab-reset.ui-btn { grid-column: 1 / -1; justify-self: end; }
+    .learning-os-v2 .v2-mini-lab-controls { display: flex; flex-direction: column; gap: 7px; }
+    .learning-os-v2 .v2-lab-controls-caption { display: block; }
+    .learning-os-v2 .v2-mini-lab-footer-tools { margin-left: 0; }
     .learning-os-v2 .v2-home-lower-grid { grid-template-columns: minmax(0,1fr); }
     .learning-os-v2 .v2-journey { grid-column: auto; }
     .learning-os-v2 .v2-home-lower-grid > .v2-panel { min-height: 219px; }
