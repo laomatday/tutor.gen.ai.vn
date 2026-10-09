@@ -2,9 +2,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button, Icon, Input, Modal } from "../../components/ui";
 import { StudentAvatar } from "../../components/student/StudentAvatar";
 import { appConfig } from "../../config/app";
-import { studentProfile } from "../../features/curriculum";
+import { lessonHref, ownedPublishedLessons, studentProfile } from "../../features/curriculum";
+import { useCurriculum } from "../../context/CurriculumContext";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { storageKeys } from "../../config/storage";
 import { ordinaryLinkClick } from "../../app/navigation";
 import "../../experience-v2/theme.css";
+import "../tempt-map.css";
 
 const destinations = [
   { section: "hom-nay", path: "/", label: "Nhiệm vụ hôm nay", mobile: "Hôm nay", icon: "home" },
@@ -32,11 +36,27 @@ export function LearningShell({
   onOpenProfile,
   children,
 }: Props) {
+  const { lessons, topics } = useCurriculum();
+  const [visualTheme, setVisualTheme] = useLocalStorage<"dark" | "light">(
+    storageKeys.studentV2VisualTheme,
+    "dark",
+    (value): value is "dark" | "light" => value === "dark" || value === "light",
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const mobileMenuButton = useRef<HTMLButtonElement>(null);
+  const results = query.trim()
+    ? ownedPublishedLessons(lessons, topics)
+      .filter((lesson) =>
+        [lesson.title, lesson.summary, lesson.topicId, lesson.subjectId]
+          .join(" ")
+          .toLocaleLowerCase("vi")
+          .includes(query.trim().toLocaleLowerCase("vi")),
+      )
+      .slice(0, 6)
+    : [];
 
   useEffect(() => {
     setMenuOpen(false);
@@ -86,7 +106,7 @@ export function LearningShell({
   );
 
   return (
-    <div className="learning-os-v2">
+    <div className="learning-os-v2" data-visual-theme={visualTheme} data-design-source="tempt-genai">
       <a className="v2-skip" href="#main-content">Đến nội dung học tập</a>
       {menuOpen && (
         <Button
@@ -102,7 +122,9 @@ export function LearningShell({
 
       <aside id="v2-mobile-menu" className={`v2-sidebar${menuOpen ? " is-open" : ""}`} aria-label="Thanh điều hướng học tập">
         <div className="v2-brand">
-          <img src={appConfig.brand.logoUrl} width={39} height={39} alt="" />
+          <div className="v2-brand-mark">
+            <img src={appConfig.brand.logoUrl} width={39} height={39} alt="" />
+          </div>
           <div className="v2-brand-copy">
             <strong>genAi <span>Tutor</span></strong>
             <small>Không gian học tập của em</small>
@@ -118,14 +140,31 @@ export function LearningShell({
             aria-label="Đóng menu học tập"
           ><Icon name="close" /></Button>
         </div>
+        <p className="v2-nav-group-title">Không gian học tập</p>
         <nav className="v2-nav-primary" aria-label="Điều hướng ở thanh bên">
           {destinations.map(navigationItem)}
         </nav>
+        <p className="v2-nav-group-title v2-nav-group-title--secondary">Tiện ích học tập</p>
         <nav className="v2-nav-secondary" aria-label="Các trang học tập khác">
           {secondary.map(navigationItem)}
         </nav>
         <div className="v2-sidebar-bottom">
-          <span className="v2-planet-orbit" aria-hidden="true" />
+          <div className="v2-sidebar-theme" role="group" aria-label="Chế độ giao diện">
+            <Button
+              variant="ghost"
+              aria-pressed={visualTheme === "light"}
+              onClick={() => setVisualTheme("light")}
+            >
+              <Icon name="light_mode" /> Sáng
+            </Button>
+            <Button
+              variant="ghost"
+              aria-pressed={visualTheme === "dark"}
+              onClick={() => setVisualTheme("dark")}
+            >
+              <Icon name="dark_mode" /> Tối
+            </Button>
+          </div>
           <p>Hôm nay hiểu thêm một điều. Ngày mai tiến xa hơn.</p>
           <small>Mỗi lần thử đều có giá trị.</small>
         </div>
@@ -215,7 +254,27 @@ export function LearningShell({
           />
           <Button type="submit"><Icon name="search" /> Tìm</Button>
         </form>
-        <p className="v2-search-help">Tìm trong nội dung học tập hiện có; chưa có trợ lý AI trực tiếp.</p>
+        {query.trim() && (
+          <div className="v2-search-results" aria-label="Bài học đã xuất bản phù hợp">
+            <p>{results.length ? `${results.length} kết quả từ học liệu đang mở` : "Không tìm thấy bài học phù hợp"}</p>
+            {results.map((lesson) => (
+              <Button
+                key={lesson.id}
+                variant="ghost"
+                onClick={() => {
+                  setSearchOpen(false);
+                  setQuery("");
+                  go(lessonHref(lesson));
+                }}
+              >
+                <Icon name="menu_book" />
+                <span>{lesson.title}<small>Lớp {lesson.gradeId} · {lesson.subjectId}</small></span>
+                <Icon name="arrow_forward" />
+              </Button>
+            ))}
+          </div>
+        )}
+        <p className="v2-search-help">Tìm trong học liệu đã xuất bản và thuộc khóa đăng ký; không phải tìm kiếm AI trực tiếp.</p>
       </Modal>
     </div>
   );

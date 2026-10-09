@@ -18,7 +18,10 @@ test.describe("Mission Control — fidelity to supplied code.html and screenshot
     const mission = await page.locator(".v2-next-mission").boundingBox();
     const lab = await page.locator(".v2-mini-lab").boundingBox();
     const lower = await page.locator(".v2-home-lower-grid").boundingBox();
-    expect(hero.y, "fallback notice must not push cinematic hero down").toBeLessThanOrEqual(75);
+    expect(
+      hero.y,
+      "M3 shell uses a 64px topbar and a 24px canvas gutter",
+    ).toBeLessThanOrEqual(103);
     expect(hero.height, "hero should be cinematic but compact").toBeGreaterThanOrEqual(220);
     expect(hero.height).toBeLessThanOrEqual(290);
     expect(mission.width / lab.width, "main reference ratio 7:5").toBeGreaterThan(1.2);
