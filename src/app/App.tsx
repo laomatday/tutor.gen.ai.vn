@@ -26,6 +26,8 @@ import { useRewardWallet } from "./useRewardWallet";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { storageKeys } from "../config/storage";
 import { ScreenErrorBoundary } from "./ScreenErrorBoundary";
+import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
+import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
 const TodayView = lazy(() =>
@@ -138,6 +140,92 @@ export default function App() {
 
   const navigateStudent = (tab: string) =>
     navigate(tab.startsWith("/") ? tab : routePath(tab as NavTab));
+
+  // A reversible presentation-only migration. All data, permission and
+  // reward logic above is shared unchanged with the existing V1 experience.
+  if (isStudent && studentExperienceV2Enabled) {
+    return (
+      <>
+        <LearningShell
+          section={section}
+          onNavigate={navigateStudent}
+          onOpenProfile={() => setIsProfileOpen(true)}
+        >
+          <div role="status" aria-live="polite" aria-atomic="true">
+            {notice.notice && <div className="v2-notice">{notice.notice}</div>}
+          </div>
+          {contentError && !contentLoading && (
+            <div className="v2-notice" role="status">
+              Chưa kết nối được học liệu trực tuyến. Đang dùng nội dung dự phòng;
+              tiến độ được lưu trên thiết bị này.
+            </div>
+          )}
+          {wallet.error && (
+            <div className="v2-notice" role="alert">{wallet.error}</div>
+          )}
+          <ScreenErrorBoundary key={role} resetKey={section}>
+            <Suspense
+              fallback={<div className="v2-notice" role="status">Đang tải nội dung học tập…</div>}
+            >
+              {contentLoading ? (
+                <div className="v2-notice" role="status" aria-label="Đang tải học liệu">
+                  Đang tải học liệu…
+                </div>
+              ) : (
+                <div className="v2-legacy-surface">
+                  <p className="v2-bridge-note">
+                    Trang này đang chuyển sang giao diện V2; chức năng học tập hiện tại được giữ nguyên.
+                  </p>
+                  {section === "hom-nay" && (
+                    <TodayView
+                      onNavigate={navigateStudent}
+                      onOpenBadges={() => setIsProfileOpen(true)}
+                      gpBalance={wallet.balance}
+                      dailyGp={wallet.dailyGp}
+                      onEarnGp={wallet.earn}
+                    />
+                  )}
+                  {section === "hoc-bai" && (
+                    <KnowledgeMapView onNavigate={navigateStudent} onEarnGp={wallet.earn} />
+                  )}
+                  {section === "tu-giai" && (
+                    <SelfSolveView onEarnGp={wallet.earn} onNavigate={navigateStudent} />
+                  )}
+                  {section === "replay" && (
+                    <ThinkingReplayView onNavigate={navigateStudent} />
+                  )}
+                  {section === "thoi-khoa-bieu" && (
+                    <TimetableScheduleView onNavigate={navigateStudent} />
+                  )}
+                  {(section === "thi-thu" || section === "tien-bo") && (
+                    <ExamIntelligenceView
+                      onNavigate={navigateStudent}
+                      onOpenBadges={() => setIsProfileOpen(true)}
+                    />
+                  )}
+                  {section === "doi-qua" && (
+                    <RewardsStoreView
+                      gpBalance={wallet.balance}
+                      dailyGp={wallet.dailyGp}
+                      onNavigate={navigateStudent}
+                      onSpendGp={wallet.spend}
+                    />
+                  )}
+                </div>
+              )}
+            </Suspense>
+          </ScreenErrorBoundary>
+        </LearningShell>
+        <StudentProfileModal
+          open={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+          gpBalance={wallet.balance}
+          completedLessonsCount={completedLessonIds.length}
+        />
+        <OfflineIndicator />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
