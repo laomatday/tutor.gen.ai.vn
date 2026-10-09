@@ -27,6 +27,10 @@ import {
   type AnswerCheck,
 } from "./domain";
 import { usePracticeSession } from "./usePracticeSession";
+import { useCurriculum } from "../../context/CurriculumContext";
+import { studentProfile } from "../curriculum";
+import { selectMathLab } from "../microLabs/domain";
+import { QuadraticMicroLab } from "../microLabs/QuadraticMicroLab";
 import { AlgebraTiles, GraphStudy, SketchPad } from "./StudyTools";
 import "../../styles/student-studio.css";
 
@@ -38,6 +42,7 @@ const toolTabs = [
   { id: "math", label: "Công thức Toán", icon: "functions" },
   { id: "sketch", label: "Bút phác thảo", icon: "gesture" },
   { id: "graph", label: "Parabol tương tác", icon: "timeline" },
+  { id: "lab", label: "Thí nghiệm", icon: "lightbulb" },
   { id: "tiles", label: "Ghép hình đại số", icon: "grid_view" },
 ] as const;
 type Tool = (typeof toolTabs)[number]["id"];
@@ -57,6 +62,9 @@ function FocusStudio({
   problem,
 }: Props & { problem: PracticeProblem }) {
   const [session, updateSession, storageError] = usePracticeSession(problem.id);
+  const { lessons, topics } = useCurriculum();
+  const mathLab = selectMathLab(problem, lessons, topics, studentProfile.enrollments);
+  const availableToolTabs = toolTabs.filter((tab) => tab.id !== "lab" || mathLab);
   const [check, setCheck] = useState<AnswerCheck | null>(null);
   const [tool, setTool] = useState<Tool>("math");
   const [promptIndex, setPromptIndex] = useState<number | null>(null);
@@ -310,7 +318,7 @@ function FocusStudio({
             aria-label="Công cụ học tập"
           >
             <Tabs
-              tabs={toolTabs}
+              tabs={availableToolTabs}
               value={tool}
               onChange={setTool}
               label="Công cụ Focus Studio"
@@ -357,6 +365,25 @@ function FocusStudio({
                   session.openedHints.includes(problem.hints.at(-1)?.id ?? 0)
                 }
               />
+            </section>
+          )}
+          {tool === "lab" && mathLab && (
+            <section className="studio-card">
+              {stats.checks.length ? (
+                <QuadraticMicroLab lab={mathLab} />
+              ) : (
+                <div className="studio-tool-panel" aria-label="Mở phòng thí nghiệm">
+                  <h3>Hãy thử một bước giải trước nhé</h3>
+                  <p className="studio-copy">
+                    Phòng thí nghiệm giúp em dự đoán và kiểm tra trên một
+                    ví dụ khác. Hãy viết ý tưởng của em và kiểm tra một bước
+                    trước khi khám phá đồ thị, để vẫn giữ quyền tự giải.
+                  </p>
+                  <Button variant="secondary" onClick={focusWriter}>
+                    <Icon name="edit_square" /> Viết ý tưởng đầu tiên
+                  </Button>
+                </div>
+              )}
             </section>
           )}
           {tool === "tiles" && (

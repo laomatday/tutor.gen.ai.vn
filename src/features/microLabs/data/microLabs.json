@@ -1,0 +1,121 @@
+{
+  "math": {
+    "id": "quadratic-transformations",
+    "title": "Phòng thí nghiệm Parabol",
+    "objective": "Dự đoán, thay đổi hệ số rồi giải thích vì sao đồ thị biến đổi.",
+    "description": "Đây là ví dụ riêng, không phải lời giải bài đang làm. Phần b và c là kiến thức khám phá mở rộng.",
+    "stages": [
+      {
+        "id": "opening",
+        "title": "Hướng mở",
+        "focus": "a",
+        "direction": "negative",
+        "baseline": {
+          "a": 1,
+          "b": 0,
+          "c": 0
+        },
+        "prompt": "Giữ b = c = 0. Nếu đổi a từ 1 sang số âm, parabol sẽ thế nào?",
+        "choices": [
+          "Mở lên như cũ",
+          "Mở xuống",
+          "Thành đường thẳng"
+        ],
+        "correctIndex": 1,
+        "hint": "So sánh hai đường đồ thị khi hệ số a đổi dấu. Đỉnh có thay đổi không?",
+        "explanation": "Dấu của a quyết định hướng mở: a > 0 mở lên, a < 0 mở xuống. Khi b = c = 0, đỉnh vẫn ở gốc O."
+      },
+      {
+        "id": "vertical",
+        "title": "Tịnh tiến theo trục tung",
+        "focus": "c",
+        "direction": "positive",
+        "baseline": {
+          "a": 1,
+          "b": 0,
+          "c": 0
+        },
+        "prompt": "Giữ a = 1, b = 0. Tăng c từ 0 lên số dương làm đồ thị thay đổi thế nào?",
+        "choices": [
+          "Dịch lên trên",
+          "Dịch sang phải",
+          "Hướng mở đổi ngược"
+        ],
+        "correctIndex": 0,
+        "hint": "Quan sát điểm đồ thị cắt trục tung tại x = 0 trước và sau khi tăng c.",
+        "explanation": "c làm thay đổi tung độ tại x = 0. Tăng c khi a và b không đổi sẽ tịnh tiến cả parabol lên trên."
+      },
+      {
+        "id": "axis",
+        "title": "Trục đối xứng",
+        "focus": "b",
+        "direction": "positive",
+        "baseline": {
+          "a": 1,
+          "b": 0,
+          "c": 0
+        },
+        "prompt": "Giữ a = 1, c = 0. Tăng b từ 0 lên số dương khiến trục đối xứng dịch về phía nào?",
+        "choices": [
+          "Sang phải",
+          "Sang trái",
+          "Không dịch"
+        ],
+        "correctIndex": 1,
+        "hint": "Trục đối xứng có hoành độ x = −b/(2a). Với a dương, b dương thì x mang dấu gì?",
+        "explanation": "Trục đối xứng có phương trình x = −b/(2a). Khi a = 1 và b > 0, trục nằm bên trái trục tung. Đây là phần mở rộng ngoài dạng y = ax²."
+      }
+    ]
+  },
+  "mathBindings": [
+    {
+      "problemId": "parabola-coefficient-03",
+      "lessonId": "ham-so-bac-hai",
+      "gradeId": "9",
+      "subjectId": "toan",
+      "topicId": "ham-so"
+    },
+    {
+      "problemId": "quadratic-factor-01",
+      "lessonId": "he-thuc-viete",
+      "gradeId": "9",
+      "subjectId": "toan",
+      "topicId": "phuong-trinh"
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "school-club-dialogue",
+      "lessonId": "school-club-invitation",
+      "gradeId": "9",
+      "subjectId": "tieng-anh",
+      "topicId": "school-life",
+      "title": "Phòng hội thoại: School Club",
+      "objective": "Thực hành lời mời và cách từ chối lịch sự trong bối cảnh trường học.",
+      "steps": [
+        {
+          "exerciseId": "club-1",
+          "expectedPrompt": "Which sentence is a polite invitation?",
+          "expectedAnswer": "Would you like to join our club?",
+          "scene": "Tình huống 1 · Rủ bạn cùng lớp",
+          "partner": "Maya",
+          "partnerLine": "I want to try something new after school.",
+          "studentInstruction": "Em hãy mời Maya tham gia câu lạc bộ.",
+          "hint": "Một lời mời lịch sự nên để người nghe tự quyết định, không ra lệnh.",
+          "partnerReply": "That sounds interesting. Tell me more about it!"
+        },
+        {
+          "exerciseId": "club-2",
+          "expectedPrompt": "Which response politely declines an invitation?",
+          "expectedAnswer": "I’d love to, but I have practice.",
+          "scene": "Tình huống 2 · Từ chối lịch sự",
+          "partner": "Alex",
+          "partnerLine": "Would you like to join our club this afternoon?",
+          "studentInstruction": "Em có buổi tập nên chưa thể tham gia. Hãy trả lời lịch sự.",
+          "hint": "Hãy cảm ơn hoặc ghi nhận lời mời, sau đó nêu lý do ngắn gọn.",
+          "partnerReply": "No problem! Maybe another day."
+        }
+      ]
+    }
+  ]
+}
