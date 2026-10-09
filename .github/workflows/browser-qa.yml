@@ -25,6 +25,12 @@ jobs:
         env:
           CI: "true"
         run: npx playwright test
+      - name: Test opt-in V2 shell (isolated port)
+        env:
+          CI: "true"
+          VITE_STUDENT_EXPERIENCE_V2: "true"
+          PLAYWRIGHT_PORT: "3002"
+        run: npx playwright test tests/e2e/v2-foundation.spec.cjs
       - name: Archive screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
