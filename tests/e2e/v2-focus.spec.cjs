@@ -28,7 +28,7 @@ test.describe("Focus Studio V2 — math, agency and persistence", () => {
     expect(await page.evaluate(() => localStorage.getItem("genai-student-gp-v1"))).toBe(gpAfterFirst);
     await page.getByRole("button", { name: "Xem Thinking Replay" }).click();
     await expect(page).toHaveURL(/\/replay\?problem=quadratic-factor-01/);
-    await expect(page.locator(".v2-legacy-surface")).toBeVisible();
+    await expect(page.locator(".v2-replay-page")).toBeVisible();
   });
 
   test("separate problem drafts, tool keyboard, 390 and 1440 screenshots", async ({ page }) => {
@@ -50,7 +50,14 @@ test.describe("Focus Studio V2 — math, agency and persistence", () => {
     await expect(page.getByRole("img", { name: "Vùng vẽ nháp bằng bút hoặc chuột" })).toBeVisible();
     await page.setViewportSize({ width: 360, height: 800 });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(1);
+    const protruding = await page.evaluate(() => Array.from(document.body.querySelectorAll("*"))
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return { tag:element.tagName, className:typeof element.className==="string"?element.className:"", right:Math.round(rect.right), width:Math.round(rect.width) };
+      })
+      .filter((x) => x.right > window.innerWidth + 2 && x.width > 0)
+      .slice(0, 12));
+    expect(overflow, JSON.stringify(protruding)).toBeLessThanOrEqual(1);
     fs.mkdirSync(path.join("test-results","visual"), { recursive: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/tu-giai?problem=quadratic-factor-01");
