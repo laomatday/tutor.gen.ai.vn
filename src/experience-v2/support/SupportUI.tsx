@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Icon } from "../../components/ui";
 
 interface SupportHeaderProps {
@@ -5,7 +6,7 @@ interface SupportHeaderProps {
   title: string;
   description: string;
   icon: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export function SupportHeader({ eyebrow, title, description, icon, children }: SupportHeaderProps) {
@@ -21,7 +22,7 @@ export function SupportHeader({ eyebrow, title, description, icon, children }: S
   );
 }
 
-export function SupportDisclosure({ title, children }: { title: string; children: React.ReactNode }) {
+export function SupportDisclosure({ title, children }: { title: string; children: ReactNode }) {
   return (
     <details className="v2-support-disclosure">
       <summary>{title}<Icon name="expand_more" /></summary>
