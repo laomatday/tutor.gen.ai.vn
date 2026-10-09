@@ -45,7 +45,7 @@ export function MissionControlPage({
   const nextLesson = primary?.nextLesson ?? overall.nextLesson;
   const nextSubject = subjects.find((subject) => subject.id === nextLesson?.subjectId);
   const previewQuestion = nextLesson?.exercises[0]?.prompt;
-  const displayName = studentProfile.name.trim() || "bạn";
+  const displayName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
   const path = buildCoursePath(
     topics,
     lessons,
