@@ -585,13 +585,33 @@
       min-height: 100dvh;
       overflow: visible;
     }
-    .learning-os-v2 .v2-frame { height: auto; overflow: visible; min-height: 100dvh; }
+    /* Match desktop's attribute-selector specificity, otherwise sidebar
+       stays position:relative and occupies 100dvh above the real content. */
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-frame {
+      height: auto;
+      min-height: 100dvh;
+      overflow: visible;
+    }
     .learning-os-v2 .v2-main {
       overflow: visible;
       flex: 1 1 auto;
       padding: 16px 14px calc(96px + env(safe-area-inset-bottom));
     }
-    .learning-os-v2 .v2-sidebar { position: fixed; top: 0; bottom: 0; height: 100dvh; }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-sidebar {
+      position: fixed;
+      z-index: 60;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      height: 100dvh;
+      max-height: 100dvh;
+      visibility: hidden;
+      transform: translateX(-110%);
+    }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-sidebar.is-open {
+      visibility: visible;
+      transform: translateX(0);
+    }
     .learning-os-v2 .v2-topbar {
       padding: 0 11px;
       min-height: 60px;
