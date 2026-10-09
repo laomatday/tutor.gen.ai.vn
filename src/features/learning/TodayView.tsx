@@ -180,7 +180,7 @@ export function TodayView({
     <div className="learning-os-page home-hub home-exploration home-next">
       <header className="home-next-hero">
         <div className="home-next-hero-copy">
-          <h1 className="home-next-hero-label">
+          <h1 className="home-next-hero-label" aria-label="Hôm nay">
             <Icon name="auto_awesome" /> Hôm nay · Góc học của {firstName}
           </h1>
           <p className="home-next-hero-greeting">
