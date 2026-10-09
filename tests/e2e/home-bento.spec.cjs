@@ -10,7 +10,7 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await expect(hero).toBeVisible();
   await expect(page.getByRole("heading", { name: "Hôm nay", exact: true })).toBeVisible();
 
-  const start = page.getByRole("button", { name: "Bắt đầu bài học", exact: true });
+  const start = page.getByRole("button", { name: "Tiếp tục học ngay", exact: true });
   const nav = page.getByRole("navigation", { name: "Điều hướng học tập chính" });
   const startBox = await start.boundingBox();
   const navBox = await nav.boundingBox();
@@ -52,6 +52,13 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(square).toBeVisible();
   await expect(page.locator(".home-next-bento-bottom")).toBeVisible();
+  const heroDesktop = await page.locator(".home-next-hero").boundingBox();
+  const labDesktop = await page.locator(".home-next-lab-card").boundingBox();
+  const modesDesktop = await page.locator(".home-next-modes").boundingBox();
+  expect(heroDesktop.height, "hero must stay compact at desktop").toBeLessThan(310);
+  expect(labDesktop.width / modesDesktop.width, "7:5 bento proportion").toBeGreaterThan(1.2);
+  expect(Math.abs(labDesktop.y - modesDesktop.y), "first row aligns").toBeLessThan(2);
+  await expect(page.locator(".home-next-mode-tabs .ui-tab-copy")).toHaveCount(3);
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-1440.png"),
     fullPage: true,
