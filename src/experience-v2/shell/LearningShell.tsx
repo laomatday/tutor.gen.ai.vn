@@ -4,6 +4,8 @@ import { StudentAvatar } from "../../components/student/StudentAvatar";
 import { appConfig } from "../../config/app";
 import { lessonHref, ownedPublishedLessons, studentProfile } from "../../features/curriculum";
 import { useCurriculum } from "../../context/CurriculumContext";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { storageKeys } from "../../config/storage";
 import { ordinaryLinkClick } from "../../app/navigation";
 import "../../experience-v2/theme.css";
 import "../tempt-map.css";
@@ -35,13 +37,11 @@ export function LearningShell({
   children,
 }: Props) {
   const { lessons, topics } = useCurriculum();
-  const [visualTheme, setVisualTheme] = useState<"dark" | "light">(() => {
-    try {
-      return window.localStorage.getItem("genai-tutor-v2-theme") === "light" ? "light" : "dark";
-    } catch {
-      return "dark";
-    }
-  });
+  const [visualTheme, setVisualTheme] = useLocalStorage<"dark" | "light">(
+    storageKeys.studentV2VisualTheme,
+    "dark",
+    (value): value is "dark" | "light" => value === "dark" || value === "light",
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -57,14 +57,6 @@ export function LearningShell({
       )
       .slice(0, 6)
     : [];
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("genai-tutor-v2-theme", visualTheme);
-    } catch {
-      // Visual preference is optional, never part of learning persistence.
-    }
-  }, [visualTheme]);
 
   useEffect(() => {
     setMenuOpen(false);
