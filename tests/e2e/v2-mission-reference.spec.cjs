@@ -32,6 +32,11 @@ test.describe("Mission Control — fidelity to supplied code.html and screenshot
     await expect(page.locator(".v2-choices-grid .v2-choice")).toHaveCount(3);
     await expect(page.locator(".v2-mini-lab-control")).toHaveCount(0);
     await expect(page.locator(".v2-mini-lab-controls input[type=range]")).toHaveCount(3);
+    const graphRect = await page.locator(".v2-mini-graph").boundingBox();
+    const controlsRect = await page.locator(".v2-mini-lab-controls").boundingBox();
+    expect(controlsRect.bottom, "all sliders must remain inside graph panel").toBeLessThanOrEqual(
+      graphRect.bottom + 2,
+    );
 
     fs.mkdirSync(path.join("test-results","visual"), {recursive:true});
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -62,7 +67,15 @@ test.describe("Mission Control — fidelity to supplied code.html and screenshot
     await expect(page.getByText("12 ngày học liên tiếp")).toHaveCount(0);
     await expect(page.getByText("91%")).toHaveCount(0);
     fs.mkdirSync(path.join("test-results","visual"), {recursive:true});
-    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.goto("/");
+    await expect(page.locator(".v2-mission-page")).toBeVisible();
+    await page.locator(".v2-home-hero-scene").evaluate((img) => img.decode());
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      document.querySelector(".v2-main")?.scrollTo(0, 0);
+    });
+    const heading = await page.getByRole("heading", {level:1}).boundingBox();
+    expect(heading.y, "mobile hero must not hide behind sticky header").toBeGreaterThan(56);
     await page.screenshot({path:path.join("test-results","visual","v2-reference-home-390-viewport.png")});
     await page.screenshot({path:path.join("test-results","visual","v2-reference-home-390-full.png"),fullPage:true});
     await page.setViewportSize({width:360,height:800});
