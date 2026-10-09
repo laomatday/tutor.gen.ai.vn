@@ -38,6 +38,10 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await expect(page.locator(".home-wallet")).toContainText(initialGp.split("\n")[0]);
 
   fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: path.join("test-results", "visual", "home-bento-390-viewport.png"),
+  });
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-390.png"),
     fullPage: true,
@@ -48,6 +52,10 @@ test("Today bento: interactive square uses published Math 9 content and never aw
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBeLessThanOrEqual(1);
+  const tabOverflow = await page.locator(".home-next-mode-tabs").evaluate(
+    (element) => element.scrollWidth - element.clientWidth,
+  );
+  expect(tabOverflow, "mode cards must not clip or scroll horizontally").toBeLessThanOrEqual(1);
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(square).toBeVisible();
@@ -59,6 +67,10 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   expect(labDesktop.width / modesDesktop.width, "7:5 bento proportion").toBeGreaterThan(1.2);
   expect(Math.abs(labDesktop.y - modesDesktop.y), "first row aligns").toBeLessThan(2);
   await expect(page.locator(".home-next-mode-tabs .ui-tab-copy")).toHaveCount(3);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: path.join("test-results", "visual", "home-bento-1440-viewport.png"),
+  });
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-1440.png"),
     fullPage: true,
