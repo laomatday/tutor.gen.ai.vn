@@ -10,13 +10,18 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await expect(hero).toBeVisible();
   await expect(page.getByRole("heading", { name: "Hôm nay", exact: true })).toBeVisible();
 
-  const start = page.getByRole("button", { name: "Bắt đầu bài học", exact: true });
+  const start = page.getByRole("button", { name: "Tiếp tục học ngay", exact: true });
   const nav = page.getByRole("navigation", { name: "Điều hướng học tập chính" });
   const startBox = await start.boundingBox();
   const navBox = await nav.boundingBox();
   expect(startBox.y + startBox.height).toBeLessThan(navBox.y);
   const initialProgress = await page.locator(".home-progress-header-info strong").textContent();
   const initialGp = await page.locator(".home-wallet").innerText();
+  const walletBox = await page.locator(".home-wallet").boundingBox();
+  const heroHeadingBox = await page.getByRole("heading", { name: "Hôm nay", exact: true }).boundingBox();
+  expect(walletBox.y, "GP stat must sit below the greeting, not overlap it").toBeGreaterThan(
+    heroHeadingBox.y + heroHeadingBox.height,
+  );
 
   const square = page.locator("[data-home-square-lab]");
   await expect(square).toBeVisible();
@@ -38,6 +43,14 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await expect(page.locator(".home-wallet")).toContainText(initialGp.split("\n")[0]);
 
   fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
+  // Navigate again so browser scroll restoration and focus don't crop the
+  // warning/hero in the presentation screenshot.
+  await page.goto("/");
+  await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: path.join("test-results", "visual", "home-bento-390-viewport.png"),
+  });
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-390.png"),
     fullPage: true,
@@ -48,10 +61,28 @@ test("Today bento: interactive square uses published Math 9 content and never aw
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBeLessThanOrEqual(1);
+  const tabOverflow = await page.locator(".home-next-mode-tabs").evaluate(
+    (element) => element.scrollWidth - element.clientWidth,
+  );
+  expect(tabOverflow, "mode cards must not clip or scroll horizontally").toBeLessThanOrEqual(1);
 
   await page.setViewportSize({ width: 1440, height: 900 });
+  // A fresh desktop load avoids mid-transition sidebar positioning in visual QA.
+  await page.goto("/");
+  await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
   await expect(square).toBeVisible();
   await expect(page.locator(".home-next-bento-bottom")).toBeVisible();
+  const heroDesktop = await page.locator(".home-next-hero").boundingBox();
+  const labDesktop = await page.locator(".home-next-lab-card").boundingBox();
+  const modesDesktop = await page.locator(".home-next-modes").boundingBox();
+  expect(heroDesktop.height, "hero must stay compact at desktop").toBeLessThan(310);
+  expect(labDesktop.width / modesDesktop.width, "7:5 bento proportion").toBeGreaterThan(1.2);
+  expect(Math.abs(labDesktop.y - modesDesktop.y), "first row aligns").toBeLessThan(2);
+  await expect(page.locator(".home-next-mode-tabs .ui-tab-copy")).toHaveCount(3);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: path.join("test-results", "visual", "home-bento-1440-viewport.png"),
+  });
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-1440.png"),
     fullPage: true,

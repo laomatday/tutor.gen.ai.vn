@@ -10,7 +10,7 @@ test("Mission Control: a real lesson micro-lab allows a safe preview without ear
   await expect(lab.locator('[data-exercise="can-bac-hai-1"]')).not.toBeVisible();
   await lab.locator("summary").click();
   await expect(lab.locator('[data-exercise="can-bac-hai-1"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: "Bắt đầu bài học", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tiếp tục học ngay", exact: true })).toBeVisible();
   const initialProgress = await page.locator(".home-progress-header-info strong").textContent();
 
   await lab.getByRole("button", { name: "Tăng x" }).click();
@@ -41,7 +41,7 @@ test("Home: keyboard learning choices change the mission and keep the mobile sta
     page.locator('.course-path-step[data-state="complete"]'),
   ).toHaveCount(0);
   const start = page.getByRole("button", {
-    name: "Bắt đầu bài học",
+    name: "Tiếp tục học ngay",
     exact: true,
   });
   await expect(start).toBeVisible();

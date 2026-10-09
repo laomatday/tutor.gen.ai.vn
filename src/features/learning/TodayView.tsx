@@ -8,7 +8,6 @@ import {
   Progress,
   Tabs,
 } from "../../components/ui";
-import { RichMathText } from "../../components/MathLatex";
 import { useCurriculum } from "../../context/CurriculumContext";
 import {
   courseHref,
@@ -43,16 +42,45 @@ interface TodayViewProps {
 type LearningMood = "learn" | "practice" | "replay";
 
 const learningMoods = [
-  { id: "learn", label: "Học mới", icon: "menu_book" },
-  { id: "practice", label: "Luyện một bài", icon: "edit_square" },
-  { id: "replay", label: "Xem lại", icon: "history" },
+  {
+    id: "learn",
+    label: "Học mới",
+    icon: "menu_book",
+    description: "Khám phá kiến thức, hiểu qua mô hình",
+    actionLabel: "Chọn",
+  },
+  {
+    id: "practice",
+    label: "Luyện một bài",
+    icon: "edit_square",
+    description: "Tự giải từng bước, nhận gợi ý khi cần",
+    actionLabel: "Chọn",
+  },
+  {
+    id: "replay",
+    label: "Xem lại",
+    icon: "history",
+    description: "Nhìn lại những lần thử và tự sửa",
+    actionLabel: "Chọn",
+  },
 ] as const;
 
+function greetingForHour(hour: number) {
+  if (hour < 11) return "Chào buổi sáng";
+  if (hour < 18) return "Chào buổi chiều";
+  return "Chào buổi tối";
+}
+
 /**
- * Source-aware homepage: published curriculum, retained attempts and actual
- * device GP only. No artificial AI recommendations, streaks or mastery scores.
+ * A screenshot-faithful learning dashboard driven by real published lessons,
+ * device-backed practice events and the existing genAi design system.
+ * Never simulate AI, XP, streaks, scores or class rankings.
  */
-export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProps) {
+export function TodayView({
+  onNavigate,
+  onOpenBadges,
+  gpBalance,
+}: TodayViewProps) {
   const { subjects, topics, lessons, completedLessonIds } = useCurriculum();
   const [mood, setMood] = useState<LearningMood>("learn");
   const journey = useStudyJourney();
@@ -61,7 +89,6 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
     attempts: recentStats.checks,
     selfCorrected: recentStats.corrections,
   };
-
   const allProgress = getCourseProgress(lessons, topics, completedLessonIds);
   const primaryProgress = getCourseProgress(
     lessons,
@@ -74,6 +101,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
   const nextSubject = subjects.find((item) => item.id === nextLesson?.subjectId);
   const nextTopic = topics.find((item) => item.id === nextLesson?.topicId);
   const firstName = studentProfile.name.trim().split(" ").at(-1) || "bạn";
+  const greeting = greetingForHour(new Date().getHours());
 
   const courses = studentProfile.enrollments
     .map((enrollment) => ({
@@ -82,6 +110,9 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
       progress: getCourseProgress(lessons, topics, completedLessonIds, enrollment),
     }))
     .filter((item) => item.subject && item.progress.total > 0);
+  const englishNextLesson = courses.find(
+    (item) => item.enrollment.subjectId === "tieng-anh",
+  )?.progress.nextLesson;
 
   const problems = getEnrolledPracticeProblems(
     getPracticeProblems(),
@@ -97,8 +128,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
     evidence.attempts.length > 0;
   const recentEvents = recorded ? evidence.attempts.slice(-3) : [];
 
-  // This small visual is an illustration associated with the existing,
-  // published and enrolled Grade 9 square-root lesson, not a generic AI lab.
+  // Never show the square manipulative for unpublished or non-enrolled lessons.
   const squareLesson = lessons.find(
     (lesson) =>
       lesson.id === "can-bac-hai" &&
@@ -139,7 +169,6 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
     completedLessonIds,
     missionEnrollment,
   );
-
   const lessonDestination = nextLesson
     ? lessonHref(nextLesson)
     : routePath("hoc-bai");
@@ -151,88 +180,76 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
     <div className="learning-os-page home-hub home-exploration home-next">
       <header className="home-next-hero">
         <div className="home-next-hero-copy">
-          <span className="home-next-hero-label">
-            <Icon name="auto_awesome" /> Góc học tập chủ động
-          </span>
-          <h1>Hôm nay</h1>
+          <h1 className="home-next-hero-label" aria-label="Hôm nay">
+            <Icon name="auto_awesome" /> Hôm nay · Góc học của {firstName}
+          </h1>
           <p className="home-next-hero-greeting">
-            Chào {firstName}, hôm nay mình khám phá gì?
+            {greeting}, {firstName}! <span aria-hidden="true">👋</span>
           </p>
           <p className="home-next-hero-summary">
             {nextLesson ? (
               <>
-                Bắt đầu với <strong>{nextLesson.title}</strong> trong môn{" "}
-                {nextSubject?.name ?? "đang học"}. Thử ý tưởng của em trước
-                khi xem lời giải.
+                Hôm nay, mình khám phá <strong>{nextLesson.title}</strong>
+                {englishNextLesson && englishNextLesson.id !== nextLesson.id && (
+                  <> và <strong>{englishNextLesson.title}</strong></>
+                )}.
+                Hãy thử ý tưởng của em trước khi xem lời giải.
               </>
             ) : (
-              "Các bài đã xuất bản trong khóa học hiện tại đều đã hoàn thành. Em có thể chọn một chủ đề khác hoặc tự luyện thêm."
+              "Em đã hoàn thành các bài hiện có. Hãy chọn một chủ đề để tiếp tục khám phá."
             )}
           </p>
-          <div className="home-next-hero-meta">
-            <span><Icon name="menu_book" /> {nextSubject?.name ?? "Môn học"} · Lớp {nextLesson?.gradeId ?? studentProfile.gradeId}</span>
-            {nextLesson && nextLesson.durationMinutes > 0 && (
-              <span><Icon name="schedule" /> {nextLesson.durationMinutes} phút</span>
+          <div className="home-next-hero-stats" aria-label="Hoạt động học tập đã ghi nhận">
+            {onOpenBadges && (
+              <Button
+                variant="surface"
+                className="home-wallet home-next-hero-stat home-next-hero-stat--wallet"
+                onClick={onOpenBadges}
+              >
+                <Icon name="workspace_premium" />
+                <span>
+                  <small>Điểm đã tích lũy</small>
+                  <strong>{gpBalance} GP</strong>
+                </span>
+              </Button>
             )}
-            {nextTopic && (
-              <span><Icon name="hub" /> {nextTopic.title}</span>
-            )}
-          </div>
-          <div className="home-next-hero-actions">
-            <Button
-              variant="secondary"
-              className="home-next-hero-start"
-              onClick={() => onNavigate(lessonDestination)}
-            >
-              <Icon name="play_arrow" />
-              {nextLesson ? "Bắt đầu bài học" : "Khám phá môn học"}
-              <Icon name="arrow_forward" />
-            </Button>
-            <Button
-              variant="ghost"
-              className="home-next-hero-secondary"
-              onClick={() => onNavigate(routePath("hoc-bai"))}
-            >
-              Xem lộ trình <Icon name="arrow_forward" />
-            </Button>
+            <div className="home-next-hero-stat">
+              <Icon name="edit_square" />
+              <span>
+                <small>Lượt kiểm tra hôm nay</small>
+                <strong>{journey.todayAttempts} lượt</strong>
+              </span>
+            </div>
+            <div className="home-next-hero-stat home-next-hero-stat--progress">
+              <span>
+                <small>Tiến độ {nextSubject?.name ?? "môn học"}</small>
+                <strong>{primaryProgress.completed}/{primaryProgress.total} bài</strong>
+              </span>
+              <Progress
+                value={primaryProgress.completed}
+                max={primaryProgress.total}
+                label="Tiến độ môn học hiện tại"
+              />
+            </div>
           </div>
         </div>
-        <div className="home-next-hero-aside">
-          <div className="home-next-hero-progress">
-            <span className="home-next-hero-mini-label">Tiến độ môn đang học</span>
-            <strong>{primaryProgress.completed}/{primaryProgress.total} bài</strong>
-            <Progress
-              value={primaryProgress.completed}
-              max={primaryProgress.total}
-              label="Tiến độ môn học hiện tại"
-            />
-          </div>
-          <div className="home-next-hero-signals">
-            <div>
-              <Icon name="edit_square" />
-              <strong>{journey.totalAttempts}</strong>
-              <span>lượt kiểm tra đã lưu</span>
-            </div>
-            <div>
-              <Icon name="verified_user" />
-              <strong>{journey.corrections}</strong>
-              <span>lần tự sửa đúng</span>
-            </div>
-          </div>
-          {onOpenBadges && (
-            <Button
-              variant="surface"
-              className="home-wallet home-next-wallet"
-              onClick={onOpenBadges}
-            >
-              <Icon name="workspace_premium" />
-              <span>
-                <strong>{gpBalance} GP</strong>
-                <small>Điểm trên thiết bị</small>
-              </span>
-              <Icon name="chevron_right" />
-            </Button>
-          )}
+        <div className="home-next-hero-actions">
+          <Button
+            variant="secondary"
+            className="home-next-hero-start"
+            onClick={() => onNavigate(lessonDestination)}
+          >
+            <Icon name="play_arrow" />
+            {nextLesson ? "Tiếp tục học ngay" : "Khám phá môn học"}
+            <Icon name="arrow_forward" />
+          </Button>
+          <Button
+            variant="ghost"
+            className="home-next-hero-secondary"
+            onClick={() => onNavigate(routePath("hoc-bai"))}
+          >
+            <Icon name="route" /> Xem lộ trình học
+          </Button>
         </div>
       </header>
 
@@ -243,15 +260,21 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
               <Icon name="functions" />
             </div>
             <div>
-              <p className="home-next-eyebrow">Khám phá bằng thao tác</p>
+              <p className="home-next-eyebrow">
+                Toán 9 <span aria-hidden="true">·</span>{" "}
+                {squareLesson ? nextTopic?.title ?? "Căn bậc hai" : "Khám phá kiến thức"}
+              </p>
               <h2 id="home-next-lab-title">
-                {squareLesson ? "Căn bậc hai qua mô hình hình vuông" : "Góc khám phá bài học"}
+                {squareLesson ? "Căn bậc hai & căn thức bậc hai" : "Góc khám phá bài học"}
               </h2>
             </div>
-            <Badge tone="info">Math Lab</Badge>
+            {squareLesson && <Badge tone="success">Phòng thí nghiệm</Badge>}
           </div>
           {squareLesson ? (
-            <HomeSquareLab onOpenLesson={() => onNavigate(lessonHref(squareLesson))} />
+            <HomeSquareLab
+              onOpenLesson={() => onNavigate(lessonHref(squareLesson))}
+              onOpenExercises={() => onNavigate(lessonHref(squareLesson, "exercises"))}
+            />
           ) : nextLesson && nextDiscovery ? (
             <div className="home-next-no-square">
               <LessonDiscovery
@@ -263,7 +286,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
           ) : (
             <div className="home-next-empty-lab">
               <Icon name="menu_book" />
-              <p>Chưa có mô hình khám phá phù hợp với học liệu hiện tại.</p>
+              <p>Chưa có mô hình phù hợp với học liệu hiện tại.</p>
               <Button variant="secondary" onClick={() => onNavigate(routePath("hoc-bai"))}>
                 Xem nội dung đã xuất bản <Icon name="arrow_forward" />
               </Button>
@@ -282,7 +305,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
                 onContinue={() => onNavigate(lessonHref(nextLesson))}
               />
               <p className="home-next-preview-note">
-                Đây là bản khám phá thử, không cộng điểm hoặc hoàn thành bài.
+                Bản khám phá thử, không cộng điểm hoặc hoàn thành bài.
               </p>
             </details>
           )}
@@ -290,18 +313,13 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
 
         <section className="home-next-modes" aria-labelledby="home-next-modes-title">
           <div className="home-next-section-heading">
-            <div className="home-next-section-icon" aria-hidden="true">
-              <Icon name="route" />
-            </div>
             <div>
-              <p className="home-next-eyebrow">Chọn cách học</p>
               <h2 id="home-next-modes-title">Lộ trình & chế độ học</h2>
+              <p className="home-next-modes-intro">
+                Chọn một cách học phù hợp với mục tiêu hôm nay.
+              </p>
             </div>
           </div>
-          <p className="home-next-modes-intro">
-            Học mới, tự thử sức hoặc xem lại lời giải. Mỗi lựa chọn đưa em đến
-            một hoạt động thực sự.
-          </p>
           <Tabs
             tabs={learningMoods}
             value={mood}
@@ -319,25 +337,30 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
           >
             {mood === "learn" && (
               <>
-                <p className="home-next-mode-kicker"><Icon name="menu_book" /> Bài tiếp theo</p>
-                <h3>{nextLesson?.title ?? "Chọn một bài để khám phá"}</h3>
-                <p>{nextLesson?.summary ?? "Khám phá một chủ đề và quay lại luyện tập khi sẵn sàng."}</p>
+                <div>
+                  <p className="home-next-mode-kicker"><Icon name="menu_book" /> Bài đang chờ em</p>
+                  <h3>{nextLesson?.title ?? "Chọn một bài để khám phá"}</h3>
+                  <small>
+                    {nextSubject?.name ?? "Môn học"}
+                    {nextLesson?.durationMinutes ? ` · ${nextLesson.durationMinutes} phút` : ""}
+                  </small>
+                </div>
                 <Button variant="primary" onClick={() => onNavigate(lessonDestination)}>
-                  {nextLesson ? "Mở nội dung bài học" : "Xem môn học"}
+                  {nextLesson ? "Vào học" : "Xem môn học"}
                   <Icon name="arrow_forward" />
                 </Button>
               </>
             )}
             {mood === "practice" && (
               <>
-                <p className="home-next-mode-kicker"><Icon name="edit_square" /> Bài tự giải</p>
-                <h3>{practice?.title ?? "Chọn một bài để thử sức"}</h3>
-                <p>{practice?.course ?? "Tự giải từng bước"}{practice?.durationMinutes ? ` · ${practice.durationMinutes} phút` : ""}</p>
-                {practice?.statement && (
-                  <div className="home-next-practice-prompt">
-                    <RichMathText text={practice.statement} />
-                  </div>
-                )}
+                <div>
+                  <p className="home-next-mode-kicker"><Icon name="edit_square" /> Bài tự giải</p>
+                  <h3>{practice?.title ?? "Chọn một bài để thử sức"}</h3>
+                  <small>
+                    {practice?.course ?? "Luyện tập"}
+                    {practice?.durationMinutes ? ` · ${practice.durationMinutes} phút` : ""}
+                  </small>
+                </div>
                 <Button variant="primary" onClick={() => onNavigate(practiceDestination)}>
                   {practice ? "Mở bàn tự giải" : "Khám phá bài học"}
                   <Icon name="arrow_forward" />
@@ -346,18 +369,20 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
             )}
             {mood === "replay" && (
               <>
-                <p className="home-next-mode-kicker"><Icon name="history" /> Xem lại cách giải</p>
-                <h3>{recorded && practice ? practice.title : "Mỗi lần thử đều đáng lưu lại"}</h3>
-                <p>
-                  {recorded
-                    ? "Dùng những lần kiểm tra đã lưu để tìm ra bước cần điều chỉnh."
-                    : "Sau khi thử một bài tự giải, em có thể xem lại những lần thử và cả cách mình tự sửa."}
-                </p>
+                <div>
+                  <p className="home-next-mode-kicker"><Icon name="history" /> Nhìn lại cách giải</p>
+                  <h3>{recorded && practice ? practice.title : "Mỗi lần thử đều đáng lưu lại"}</h3>
+                  <small>
+                    {recorded
+                      ? `${evidence.attempts.length} lượt kiểm tra · ${evidence.selfCorrected} lần tự sửa đúng`
+                      : "Sau khi thử một bài tự giải, em có thể xem lại những lần thử và tự sửa."}
+                  </small>
+                </div>
                 {recorded && (
                   <ol className="home-replay-notes" aria-label="Lượt kiểm tra mới nhất">
                     {recentEvents.map((event, index) => (
                       <li key={event.id}>
-                        <Icon name={event.valid ? "check_circle" : "edit_note"} />
+                        <Icon name={event.valid ? "check_circle" : "edit_square"} />
                         <span>
                           <strong>Lần thử {evidence.attempts.length - recentEvents.length + index + 1}</strong>
                           <small>{event.detail}</small>
@@ -384,7 +409,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
           </div>
           <div className="home-next-modes-bottom">
             <Icon name="lightbulb" />
-            <p>Em không cần giỏi ngay lần đầu. Hãy thử, kiểm tra rồi sửa cách làm của mình.</p>
+            <p><strong>Gợi ý:</strong> Hãy thử một bước của chính mình trước khi mở lời giải.</p>
           </div>
         </section>
       </div>
@@ -392,13 +417,13 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
       <div className="home-next-bento-bottom">
         <Card className="home-rhythm home-next-week-card" aria-label="Nhịp học tuần này">
           <div className="home-next-card-header">
-            <span className="home-next-card-symbol"><Icon name="calendar_today" /></span>
-            <h2>Nhịp học tuần này</h2>
+            <h2><Icon name="calendar_today" /> Nhịp học tuần này</h2>
+            <Badge tone="neutral">{journey.activeDays} ngày học</Badge>
           </div>
           <p className="home-next-card-desc">
             {journey.activeDays
-              ? `Đã có ${journey.activeDays} ngày có lượt kiểm tra được lưu trong tuần.`
-              : "Chưa có lượt kiểm tra nào được lưu trong tuần. Bắt đầu theo nhịp của em."}
+              ? `Tuần này đã ghi nhận ${journey.activeDays} ngày có lượt kiểm tra.`
+              : "Chưa có lượt kiểm tra nào được lưu trong tuần."}
           </p>
           <ol className="home-week">
             {journey.weekDays.map((day) => (
@@ -427,7 +452,7 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
             <p>
               {journey.todayAttempts
                 ? `${journey.todayAttempts} lượt tự kiểm tra hôm nay. Một lần thử cũng là một bước tiến.`
-                : "Mỗi ngày có lượt tự kiểm tra sẽ được đánh dấu ở đây. Cứ theo nhịp của bạn."}
+                : "Ngày có lượt tự kiểm tra đã lưu sẽ được đánh dấu ở đây."}
             </p>
           </div>
           <Button
@@ -441,28 +466,23 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
 
         <section className="home-courses home-next-courses-card" aria-labelledby="home-courses-title">
           <div className="home-next-card-header home-next-card-header--spread">
-            <div>
-              <p className="home-next-eyebrow">Theo môn đã đăng ký</p>
-              <h2 id="home-courses-title">Bạn muốn khám phá môn nào?</h2>
-            </div>
+            <h2 id="home-courses-title">Bạn muốn khám phá môn nào?</h2>
             <Button variant="ghost" onClick={() => onNavigate(routePath("hoc-bai"))}>
               Xem tất cả <Icon name="arrow_forward" />
             </Button>
           </div>
           <p className="home-next-card-desc">
-            Tiến độ được tính theo bài học đã xuất bản và bài đã hoàn thành.
+            Tiến độ theo số bài học đã xuất bản và hoàn thành.
           </p>
           <div className="home-next-course-list">
             {courses.map(({ enrollment, subject, progress }) => (
               <div className="home-next-course" key={`${enrollment.gradeId}-${enrollment.subjectId}`}>
                 <div className="home-next-course-title">
                   <span className="home-next-course-icon"><Icon name={subject!.icon} /></span>
-                  <div>
-                    <strong>{subject!.name} · Lớp {enrollment.gradeId}</strong>
-                    <small>{progress.nextLesson?.title ?? "Đã hoàn thành các bài hiện có"}</small>
-                  </div>
+                  <strong>{subject!.name} · Lớp {enrollment.gradeId}</strong>
                   <span className="home-next-course-count">{progress.completed}/{progress.total} bài</span>
                 </div>
+                <p>{progress.nextLesson?.title ?? "Đã hoàn thành các bài hiện có"}</p>
                 <Progress
                   label={`Tiến độ môn ${subject!.name}`}
                   value={progress.completed}
@@ -506,27 +526,27 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
 
         <Card className="home-next-evidence-card">
           <div className="home-next-card-header">
-            <span className="home-next-card-symbol"><Icon name="psychology" /></span>
-            <h2>Dấu ấn tự học</h2>
+            <h2><Icon name="psychology" /> Dấu ấn tự học</h2>
+            <span className="home-next-aside-tag">Đã ghi nhận</span>
           </div>
           <p className="home-next-card-desc">
-            Những gì được ghi lại từ các phiên tự giải trên thiết bị này.
+            Những kết quả có dữ liệu trên thiết bị này.
           </p>
           <div className="home-progress-evidence">
             <div>
-              <Icon name="edit_square" />
-              <strong>{journey.totalAttempts}</strong>
-              <span>lượt tự kiểm tra</span>
+              <span className="home-next-evidence-icon"><Icon name="edit_square" /></span>
+              <span className="home-next-evidence-copy"><strong>Đã tự kiểm tra</strong><small>Các lượt đã lưu</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.totalAttempts}</strong>lượt tự kiểm tra</span>
             </div>
             <div>
-              <Icon name="verified_user" />
-              <strong>{journey.corrections}</strong>
-              <span>lần tự sửa đúng</span>
+              <span className="home-next-evidence-icon"><Icon name="verified_user" /></span>
+              <span className="home-next-evidence-copy"><strong>Đã tự sửa</strong><small>Những bước sửa đúng</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.corrections}</strong>lần tự sửa đúng</span>
             </div>
             <div>
-              <Icon name="menu_book" />
-              <strong>{journey.savedMistakes}</strong>
-              <span>lỗi đã lưu để ôn</span>
+              <span className="home-next-evidence-icon"><Icon name="menu_book" /></span>
+              <span className="home-next-evidence-copy"><strong>Đang ôn lại</strong><small>Lỗi đã ghi chú</small></span>
+              <span className="home-next-evidence-number"><strong>{journey.savedMistakes}</strong>lỗi đã lưu để ôn</span>
             </div>
           </div>
           <Button
@@ -541,14 +561,14 @@ export function TodayView({ onNavigate, onOpenBadges, gpBalance }: TodayViewProp
 
       {practice && (
         <section className="home-next-challenge" aria-labelledby="home-next-challenge-title">
-          <div className="home-next-challenge-icon"><Icon name="lightbulb" /></div>
+          <span className="home-next-challenge-icon"><Icon name="lightbulb" /></span>
           <div>
-            <p className="home-next-eyebrow">Một thử thách ngay bây giờ</p>
+            <p className="home-next-eyebrow">Thử thách cho hôm nay</p>
             <h2 id="home-next-challenge-title">{practice.title}</h2>
-            <p>{practice.course}{practice.durationMinutes ? ` · ${practice.durationMinutes} phút` : ""} · Tự giải từng bước và xem lại kết quả đã lưu.</p>
+            <p>{practice.course}{practice.durationMinutes ? ` · ${practice.durationMinutes} phút` : ""} · Tự giải và kiểm tra từng bước.</p>
           </div>
           <Button variant="primary" onClick={() => onNavigate(practiceHref(practice.id))}>
-            Thử sức <Icon name="arrow_forward" />
+            Bắt đầu thử thách <Icon name="arrow_forward" />
           </Button>
         </section>
       )}
