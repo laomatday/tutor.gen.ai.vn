@@ -6,6 +6,9 @@ test("Mission Control: a real lesson micro-lab allows a safe preview without ear
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   const lab = page.locator(".home-micro-lab");
+  await expect(lab).toBeVisible();
+  await expect(lab.locator('[data-exercise="can-bac-hai-1"]')).not.toBeVisible();
+  await lab.locator("summary").click();
   await expect(lab.locator('[data-exercise="can-bac-hai-1"]')).toBeVisible();
   await expect(page.getByRole("button", { name: "Bắt đầu bài học", exact: true })).toBeVisible();
   const initialProgress = await page.locator(".home-progress-header-info strong").textContent();
