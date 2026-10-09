@@ -73,6 +73,23 @@ test.describe("UI mapping — tempt.gen.ai.vn → Tutor", () => {
     const lab = await page.locator(".v2-mini-lab").boundingBox();
     expect(mission.width / lab.width).toBeGreaterThan(1.2);
     await page.goto("/hoc-bai");
+    await expect(page.locator(".v2-universe-node").first()).toBeVisible();
+    const boxes = await page.locator(".v2-universe-node").evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { label: node.getAttribute("aria-label"), x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+      }),
+    );
+    const collisions = [];
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const a = boxes[i], b = boxes[j];
+        const overlapX = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+        const overlapY = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+        if (overlapX > 2 && overlapY > 2) collisions.push([a.label, b.label]);
+      }
+    }
+    expect(collisions, "published curriculum nodes must not visually overlap at 1440px").toEqual([]);
     const mode = page.getByRole("tablist", { name: "Chế độ khám phá tri thức" });
     await mode.getByRole("tab", { name: "Danh sách" }).click();
     await expect(page.locator('.v2-universe-list[data-view="list"]')).toBeVisible();
