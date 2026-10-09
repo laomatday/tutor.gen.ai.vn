@@ -4,7 +4,7 @@ import {
   useState,
   type PointerEvent,
 } from "react";
-import { Button, Icon, Input, Tabs } from "../../components/ui";
+import { Button, Icon, Input, Progress, Tabs } from "../../components/ui";
 import { useCurriculum } from "../../context/CurriculumContext";
 import { lessonHref } from "../../features/curriculum";
 import { V2HeroArtwork } from "../components/V2HeroArtwork";
