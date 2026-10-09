@@ -26,7 +26,7 @@ The source prototype contains `src/data/mockData.ts` with fabricated node enroll
 
 ## What changed in this PR
 
-1. V2 shell accepts a self-contained theme preference, stored under **new UI-only key** `genai-tutor-v2-theme`. It never modifies app auth, GP, practice session or content persistence. The production feature flag remains unchanged.
+1. V2 shell accepts a self-contained theme preference, stored under **new UI-only key** `genai-tutor-v2-theme-v1`. It never modifies app auth, GP, practice session or content persistence. The production feature flag remains unchanged.
 2. M3 navigation group labels, 256px desktop drawer, 64px topbar, compact typography and source-matched pills. Desktop main content scrolls within its own container as in the reference application; mobile uses natural document scrolling with the established bottom navigation dock.
 3. Published lesson search suggestions show only **ownedPublishedLessons**, and their destinations use `lessonHref`; text search route remains working. No dependence on hard-coded `TOPIC_NODES`.
 4. Source M3 dark and light visual tokens mapped into one scoped stylesheet; four V2 pages receive source-style composition, surfaces, state and spacing. No new runtime fonts/dependencies, and no change to Teacher/Admin.
