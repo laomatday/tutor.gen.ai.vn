@@ -30,6 +30,12 @@ import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
 import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
+const FocusStudioPageV2 = lazy(() =>
+  import("../experience-v2/focus/FocusStudioPage").then((module) => ({
+    default: module.FocusStudioPage,
+  })),
+);
+
 const KnowledgeUniversePageV2 = lazy(() =>
   import("../experience-v2/universe/KnowledgeUniversePage").then((module) => ({
     default: module.KnowledgeUniversePage,
@@ -189,6 +195,12 @@ export default function App() {
                 !new URLSearchParams(location.search).has("lesson") ? (
                 <KnowledgeUniversePageV2
                   onNavigate={navigateStudent}
+                  search={location.search}
+                />
+              ) : section === "tu-giai" ? (
+                <FocusStudioPageV2
+                  onNavigate={navigateStudent}
+                  onEarnGp={wallet.earn}
                   search={location.search}
                 />
               ) : (
