@@ -43,7 +43,7 @@ test.describe("V2 Mission Control — published learning, not a cosmetic clone",
     await slider.focus();
     await slider.press("ArrowRight");
     await expect(lab.getByRole("img")).toHaveAccessibleName(/Đồ thị hàm số y =/);
-    await expect(page.locator(".v2-home-metrics")).toHaveText(originalEvidence);
+    expect(await page.locator(".v2-home-metrics").innerText()).toBe(originalEvidence);
     await page.screenshot({ path: path.join("test-results", "visual", "v2-mission-390.png"), fullPage: true });
     await page.setViewportSize({ width: 360, height: 800 });
     const overflow = await page.evaluate(
