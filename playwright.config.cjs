@@ -20,7 +20,10 @@ module.exports = defineConfig({
   },
   webServer: {
     command: `npm run dev -- --host 127.0.0.1 --port ${port}`,
-    env: { VITE_CONTENT_SOURCE: "local" },
+    env: {
+      VITE_CONTENT_SOURCE: "local",
+      VITE_STUDENT_EXPERIENCE_V2: process.env.VITE_STUDENT_EXPERIENCE_V2 || "false",
+    },
     url: baseURL,
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
