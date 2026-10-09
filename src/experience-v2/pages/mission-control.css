@@ -553,14 +553,16 @@
     .learning-os-v2 .v2-mission-surface h3 { font-size: 19px; }
     .learning-os-v2 .v2-root-symbol { right: -13px; width: 28%; }
     .learning-os-v2 .v2-root-symbol span { width: 59px; height: 59px; font-size: 23px; border-radius: 12px; }
-    .learning-os-v2 .v2-choices-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+    .learning-os-v2 .v2-choices-grid { grid-template-columns: minmax(0,1fr); gap: 8px; }
     .learning-os-v2 .v2-choice.ui-btn {
-      min-height: 132px;
-      flex-direction: column;
-      padding: 9px;
+      min-height: 76px;
+      flex-direction: row;
+      align-items: center;
+      padding: 10px 12px;
+      gap: 10px;
     }
     .learning-os-v2 .v2-choice-icon { width: 34px; height: 34px; flex-basis: 34px; }
-    .learning-os-v2 .v2-choice.ui-btn > .ui-icon:last-child { display: none; }
+    .learning-os-v2 .v2-choice.ui-btn > .ui-icon:last-child { display: block; }
     .learning-os-v2 .v2-choice strong { font-size: 12px; }
     .learning-os-v2 .v2-choice small { font-size: 12px; line-height: 1.4; }
     .learning-os-v2 .v2-panel { padding: 14px; border-radius: 15px; }
