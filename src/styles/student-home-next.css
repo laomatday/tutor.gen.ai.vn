@@ -1,0 +1,1022 @@
+/*
+ * Student Home — Bento Learning Canvas
+ * Visual composition is based on the user-supplied HTML reference.
+ * ONLY existing genAi tokens and existing self-hosted fonts are used.
+ * All selectors are restricted to the Today page to protect other routes.
+ */
+@layer components {
+  .home-next {
+    --home-next-edge: var(--color-line-subtle);
+    --home-next-muted: var(--color-ink-600);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2.5vw, 26px);
+    color: var(--color-ink-900);
+    padding-bottom: 24px;
+  }
+  .home-next > * { min-width: 0; margin: 0; }
+  .home-next h1, .home-next h2, .home-next h3,
+  .home-next h4, .home-next p { margin: 0; }
+  .home-next .ui-icon { flex-shrink: 0; }
+  .home-next .ui-btn { min-height: 44px; }
+
+  /* Mission hero — brand canvas, not the violet palette in the sample. */
+  .home-next-hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(245px, 286px);
+    align-items: center;
+    gap: clamp(18px, 3vw, 38px);
+    overflow: hidden;
+    border-radius: 28px;
+    padding: clamp(24px, 3vw, 38px);
+    color: var(--color-white);
+    background: var(--color-brand);
+  }
+  .home-next-hero::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: -1;
+    inset: auto -6% -110px 30%;
+    height: 240px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    filter: blur(72px);
+  }
+  .home-next-hero::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: -1;
+    top: -96px;
+    right: -56px;
+    height: 290px;
+    width: 290px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    box-shadow: 0 0 0 45px color-mix(in srgb, var(--color-white) 4%, transparent);
+  }
+  .home-next-hero-copy { min-width: 0; max-width: 760px; }
+  .home-next-hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-white) 11%, transparent);
+    color: var(--color-accent-pale);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.025em;
+  }
+  .home-next-hero h1 {
+    color: var(--color-white);
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin-top: 12px;
+  }
+  .home-next .home-next-hero-greeting {
+    margin-top: 2px;
+    color: var(--color-white);
+    font-size: clamp(25px, 2.7vw, 35px);
+    line-height: 1.23;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+  .home-next .home-next-hero-summary {
+    margin-top: 12px;
+    color: var(--color-ice);
+    font-size: 14px;
+    line-height: 1.65;
+    max-width: 58ch;
+  }
+  .home-next-hero-summary strong {
+    color: var(--color-white);
+    font-weight: 750;
+  }
+  .home-next-hero-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 14px;
+    color: var(--color-ice);
+    font-size: 12px;
+  }
+  .home-next-hero-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .home-next-hero-meta .ui-icon { width: 16px; height: 16px; }
+  .home-next-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .home-next-hero-start.ui-btn {
+    gap: 10px;
+    min-height: 52px;
+    padding: 11px 18px;
+    border: 1px solid var(--color-white);
+    border-radius: 14px;
+    background: var(--color-white);
+    color: var(--color-brand);
+    font-size: 14px;
+    font-weight: 750;
+  }
+  .home-next-hero-start.ui-btn:hover {
+    background: var(--color-ice);
+    border-color: var(--color-ice);
+    color: var(--color-brand-strong);
+  }
+  .home-next-hero-secondary.ui-btn {
+    gap: 7px;
+    background: color-mix(in srgb, var(--color-white) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 23%, transparent);
+    color: var(--color-white);
+    font-size: 13px;
+    font-weight: 650;
+    min-height: 52px;
+    padding: 10px 15px;
+    border-radius: 14px;
+  }
+  .home-next-hero-secondary.ui-btn:hover {
+    background: color-mix(in srgb, var(--color-white) 20%, transparent);
+  }
+  .home-next-hero-start.ui-btn:focus-visible,
+  .home-next-hero-secondary.ui-btn:focus-visible,
+  .home-next-wallet.ui-btn:focus-visible {
+    outline: 3px solid var(--color-accent-pale);
+    outline-offset: 3px;
+  }
+  .home-next-hero-aside {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    display: grid;
+    align-self: stretch;
+    align-content: center;
+    gap: 12px;
+  }
+  .home-next-hero-progress {
+    display: grid;
+    gap: 8px;
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--color-white) 18%, transparent);
+    background: color-mix(in srgb, var(--color-white) 10%, transparent);
+    padding: 15px;
+  }
+  .home-next-hero-mini-label {
+    font-size: 12px;
+    color: var(--color-ice);
+  }
+  .home-next-hero-progress > strong {
+    font-size: 22px;
+    color: var(--color-white);
+    font-weight: 800;
+  }
+  .home-next-hero-progress .ui-progress {
+    width: 100%;
+    background: color-mix(in srgb, var(--color-white) 18%, transparent);
+  }
+  .home-next-hero-progress .ui-progress::-webkit-progress-value {
+    background: var(--color-accent-soft);
+  }
+  .home-next-hero-progress .ui-progress::-moz-progress-bar {
+    background: var(--color-accent-soft);
+  }
+  .home-next-hero-signals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 9px;
+  }
+  .home-next-hero-signals > div {
+    min-width: 0;
+    border-radius: 15px;
+    padding: 13px;
+    background: color-mix(in srgb, var(--color-white) 11%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 14%, transparent);
+    display: grid;
+    gap: 3px;
+  }
+  .home-next-hero-signals .ui-icon { color: var(--color-accent-pale); }
+  .home-next-hero-signals strong {
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .home-next-hero-signals span {
+    color: var(--color-ice);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .home-next .home-next-wallet.ui-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    min-height: 52px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-white) 13%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 18%, transparent);
+    color: var(--color-white);
+    text-align: left;
+    box-shadow: none;
+  }
+  .home-next .home-next-wallet > .ui-icon:last-child { margin-left: auto; }
+  .home-next .home-next-wallet > span { min-width: 0; }
+  .home-next .home-next-wallet strong {
+    color: var(--color-white);
+    font-size: 15px;
+    font-weight: 750;
+  }
+  .home-next .home-next-wallet small {
+    display: block;
+    font-size: 12px;
+    color: var(--color-ice);
+    margin-top: 0;
+  }
+
+  /* Two asymmetric modules from the reference: lab and learning modes. */
+  .home-next-bento-top {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr);
+    align-items: start;
+    gap: 20px;
+  }
+  .home-next .home-next-lab-card,
+  .home-next .home-next-modes,
+  .home-next .home-next-courses-card,
+  .home-next .home-next-week-card.ui-card,
+  .home-next .home-next-evidence-card.ui-card {
+    min-width: 0;
+    border: 1px solid var(--home-next-edge);
+    border-radius: 22px;
+    background: var(--color-white);
+    padding: clamp(18px, 2vw, 26px);
+    box-shadow: var(--shadow-card);
+    color: var(--color-ink-900);
+  }
+  .home-next .home-next-lab-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    grid-template-columns: none;
+    overflow: visible;
+  }
+  .home-next-section-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+  }
+  .home-next-section-heading > div:nth-child(2) { flex: 1; min-width: 0; }
+  .home-next-section-icon,
+  .home-next-card-symbol,
+  .home-next-course-icon,
+  .home-next-challenge-icon {
+    flex: 0 0 auto;
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: var(--color-brand-100);
+    color: var(--color-brand);
+  }
+  .home-next-card-symbol {
+    background: var(--color-accent-50);
+    color: var(--color-accent-strong);
+  }
+  .home-next .home-next-eyebrow {
+    color: var(--color-accent-strong);
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 750;
+    letter-spacing: 0.01em;
+  }
+  .home-next .home-next-section-heading h2,
+  .home-next .home-next-card-header h2 {
+    color: var(--color-ink-900);
+    font-size: clamp(17px, 1.55vw, 22px);
+    line-height: 1.35;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    margin-top: 2px;
+  }
+  .home-next-section-heading .ui-badge {
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  /* Live square with exact x²: no AI call or invented score. */
+  .home-next-square-lab {
+    display: grid;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--color-line-subtle);
+    border-radius: 17px;
+    background: var(--color-surface-muted);
+    min-width: 0;
+  }
+  .home-next-square-head,
+  .home-next-square-slider label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-ink-600);
+  }
+  .home-next-square-head > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .home-next-square-head > strong {
+    border-radius: 9px;
+    background: var(--color-white);
+    padding: 6px 9px;
+    color: var(--color-brand);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .home-next-square-stage {
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--color-white);
+    display: grid;
+    place-items: center;
+  }
+  .home-next-square-stage svg {
+    display: block;
+    width: 100%;
+    max-height: 235px;
+  }
+  .home-next-square-dot {
+    fill: var(--color-ink-200);
+  }
+  .home-next-square-shape {
+    fill: var(--color-brand);
+    stroke: var(--color-brand-strong);
+    stroke-width: 2;
+  }
+  .home-next-square-dimension {
+    fill: var(--color-ink-700);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .home-next-square-area {
+    fill: var(--color-white);
+    font-family: var(--font-sans);
+    font-size: 19px;
+    font-weight: 800;
+  }
+  .home-next-square-formula {
+    fill: var(--color-ice);
+    font-family: var(--font-sans);
+    font-size: 11px;
+  }
+  .home-next-square-slider {
+    display: grid;
+    gap: 8px;
+    border-radius: 13px;
+    background: var(--color-white);
+    padding: 13px;
+  }
+  .home-next-square-slider label { font-size: 13px; }
+  .home-next-square-slider label > strong {
+    color: var(--color-brand);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .home-next-square-slider .ui-range {
+    width: 100%;
+    min-height: 44px;
+    accent-color: var(--color-brand);
+  }
+  .home-next-square-scale {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-ink-600);
+  }
+  .home-next-square-insight {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 12px;
+    background: var(--color-accent-50);
+    padding: 12px 14px;
+    color: var(--color-ink-800);
+    line-height: 1.6;
+    font-size: 13px;
+  }
+  .home-next-square-insight .ui-icon { color: var(--color-accent-strong); }
+  .home-next-square-insight p { flex: 1; }
+  .home-next-square-insight strong { color: var(--color-accent-strong); }
+  .home-next-square-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .home-next-square-footer .ui-btn {
+    gap: 8px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+  .home-next-square-footer small {
+    color: var(--color-ink-600);
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+    min-width: 160px;
+  }
+  .home-next .home-micro-lab {
+    display: grid;
+    gap: 10px;
+    background: var(--color-sky-50);
+    border: 1px solid var(--color-sky-200);
+    border-radius: 17px;
+    padding: 12px;
+    margin-top: 4px;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .home-next-discovery-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .home-next-discovery-head > span {
+    font-size: 12px;
+    color: var(--color-ink-700);
+  }
+  .home-next .home-micro-lab .lesson-discovery {
+    background: var(--color-white);
+    box-shadow: none;
+    height: auto;
+    border-radius: 12px;
+  }
+  .home-next .home-next-preview-note {
+    font-size: 12px;
+    color: var(--color-ink-600);
+    padding: 0 6px 3px;
+    line-height: 1.6;
+  }
+  .home-next-empty-lab,
+  .home-next-no-square {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+    background: var(--color-surface-muted);
+    border-radius: 16px;
+  }
+  .home-next-empty-lab .ui-btn { width: fit-content; }
+
+  /* Vertical mode deck using the app's keyboard-operable Tabs component. */
+  .home-next-modes {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: stretch;
+  }
+  .home-next .home-next-modes-intro,
+  .home-next .home-next-card-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--color-ink-600);
+  }
+  .home-next .home-next-mode-tabs.ui-tabs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    width: 100%;
+  }
+  .home-next .home-next-mode-tabs .ui-segment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 13px;
+    width: 100%;
+    min-height: 61px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--color-line-subtle);
+    color: var(--color-ink-800);
+    background: var(--color-surface-muted);
+    text-align: left;
+    font-size: 14px;
+    font-weight: 750;
+    box-shadow: none;
+  }
+  .home-next .home-next-mode-tabs .ui-segment .ui-icon {
+    color: var(--color-brand);
+    width: 23px;
+    height: 23px;
+  }
+  .home-next .home-next-mode-tabs .ui-segment[aria-selected="true"] {
+    background: var(--color-sky-50);
+    border-color: var(--color-brand-300);
+    color: var(--color-brand);
+    box-shadow: inset 3px 0 0 var(--color-brand);
+  }
+  .home-next .home-next-mode-tabs .ui-segment:hover {
+    background: var(--color-brand-50);
+  }
+  .home-next .home-next-mode-tabs .ui-segment:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .home-next-mode-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    border-top: 1px solid var(--color-line-subtle);
+    padding-top: 17px;
+    min-width: 0;
+  }
+  .home-next .home-next-mode-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-accent-strong);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .home-next .home-next-mode-detail h3 {
+    color: var(--color-brand);
+    font-size: clamp(18px, 1.55vw, 21px);
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+  }
+  .home-next .home-next-mode-detail > p:not(.home-next-mode-kicker) {
+    color: var(--color-ink-600);
+    line-height: 1.65;
+    font-size: 13px;
+  }
+  .home-next-mode-detail > .ui-btn {
+    display: inline-flex;
+    gap: 10px;
+    padding: 11px 16px;
+    min-height: 48px;
+    margin-top: 4px;
+    border-radius: 12px;
+  }
+  .home-next-practice-prompt {
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--color-surface-muted);
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .home-next .home-replay-notes {
+    width: 100%;
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .home-next .home-replay-notes li {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    border: 1px solid var(--color-line-subtle);
+    border-radius: 11px;
+    background: var(--color-surface-muted);
+    padding: 10px;
+    font-size: 12px;
+  }
+  .home-next .home-replay-notes li .ui-icon {
+    color: var(--color-brand);
+    width: 17px;
+    height: 17px;
+  }
+  .home-next .home-replay-notes small {
+    display: block;
+    line-height: 1.6;
+    color: var(--color-ink-600);
+  }
+  .home-next-modes-bottom {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--color-accent-50);
+    padding: 13px;
+    border-radius: 13px;
+    margin-top: auto;
+    color: var(--color-ink-700);
+    font-size: 12px;
+    line-height: 1.65;
+  }
+  .home-next-modes-bottom .ui-icon {
+    color: var(--color-accent-strong);
+  }
+
+  /* Weekly rhythm (4) / real course progress (5) / learning evidence (3). */
+  .home-next-bento-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+  .home-next-week-card.ui-card,
+  .home-next-evidence-card.ui-card {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 0;
+  }
+  .home-next-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .home-next-card-header--spread {
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .home-next-card-header--spread > div { min-width: 0; }
+  .home-next-card-header .ui-btn {
+    flex: 0 0 auto;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .home-next .home-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0,1fr));
+    list-style: none;
+    gap: 5px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  .home-next .home-week li {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 5px;
+    padding: 0;
+    min-width: 0;
+    color: var(--color-ink-600);
+    font-size: 12px;
+  }
+  .home-next .home-week .home-day-stamp {
+    display: grid;
+    place-items: center;
+    margin: 0;
+    width: clamp(26px, 2.6vw, 38px);
+    height: clamp(32px, 2.9vw, 40px);
+    border-radius: 10px;
+    border: 1px solid var(--color-line-subtle);
+    background: var(--color-surface-muted);
+    color: var(--color-ink-500);
+  }
+  .home-next .home-week li[data-active="true"] .home-day-stamp {
+    background: var(--color-accent-50);
+    color: var(--color-accent-strong);
+    border-color: var(--color-accent-200);
+  }
+  .home-next .home-week li.is-today .home-day-stamp {
+    border: 2px solid var(--color-brand);
+    color: var(--color-brand);
+  }
+  .home-next .home-week li small {
+    display: block;
+    color: var(--color-brand);
+    font-size: 12px;
+  }
+  .home-next .home-week-note {
+    display: flex;
+    gap: 9px;
+    padding: 13px;
+    margin: 0;
+    border-radius: 12px;
+    border: 0;
+    background: var(--color-sky-50);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .home-next .home-week-note .ui-icon { color: var(--color-brand); }
+  .home-next .home-week-note p { color: var(--color-ink-700); }
+  .home-next-link-bottom.ui-btn {
+    margin-top: auto;
+    align-self: flex-start;
+    gap: 6px;
+    padding-inline: 0;
+    min-height: 44px;
+    font-size: 13px;
+    color: var(--color-brand);
+  }
+  .home-next .home-next-courses-card {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .home-next-course-list { display: grid; gap: 12px; }
+  .home-next-course {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    padding: 13px;
+    border: 1px solid var(--color-line-subtle);
+    border-radius: 14px;
+    background: var(--color-surface-muted);
+  }
+  .home-next-course-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    min-width: 0;
+  }
+  .home-next-course-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--color-accent-50);
+    color: var(--color-accent-strong);
+  }
+  .home-next-course-title > div { flex: 1; min-width: 0; }
+  .home-next-course-title strong {
+    display: block;
+    color: var(--color-ink-900);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .home-next-course-title small {
+    display: block;
+    font-size: 12px;
+    color: var(--color-ink-600);
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+  .home-next-course-count {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--color-brand);
+    font-weight: 750;
+  }
+  .home-next-course .ui-progress {
+    width: 100%;
+  }
+  .home-next-course-open.ui-btn {
+    width: fit-content;
+    margin-left: auto;
+    min-height: 36px;
+    padding: 5px 9px;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-brand);
+  }
+  .home-next-course-empty {
+    display: grid;
+    gap: 12px;
+    color: var(--color-ink-600);
+    font-size: 13px;
+  }
+  .home-next-course-empty .ui-btn { justify-self: start; }
+  .home-next-journey-details {
+    border-top: 1px solid var(--color-line-subtle);
+    padding-top: 12px;
+  }
+  .home-next-journey-details summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--color-brand);
+    font-size: 13px;
+    font-weight: 700;
+    min-height: 44px;
+  }
+  .home-next-journey-details summary:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .home-next-journey-details .home-progress-header-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    font-size: 12px;
+    color: var(--color-ink-600);
+    margin: 8px 0 12px;
+  }
+  .home-next-journey-details .home-progress-header-info strong {
+    color: var(--color-brand);
+  }
+  .home-next-evidence-card .home-progress-evidence {
+    display: grid;
+    gap: 9px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+  .home-next-evidence-card .home-progress-evidence > div {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid var(--color-line-subtle);
+    border-radius: 12px;
+    background: var(--color-surface-muted);
+    min-width: 0;
+  }
+  .home-next-evidence-card .home-progress-evidence .ui-icon {
+    align-self: center;
+    margin-right: 4px;
+    color: var(--color-accent-strong);
+  }
+  .home-next-evidence-card .home-progress-evidence strong {
+    font-size: 20px;
+    color: var(--color-brand);
+    font-weight: 800;
+  }
+  .home-next-evidence-card .home-progress-evidence span {
+    font-size: 12px;
+    color: var(--color-ink-700);
+  }
+
+  /* Bottom mini challenge: real practice source, never a fabricated award. */
+  .home-next-challenge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 19px 24px;
+    border-radius: 20px;
+    border: 1px solid var(--color-line-subtle);
+    background: var(--color-sky-50);
+  }
+  .home-next-challenge > div:nth-child(2) {
+    min-width: 0;
+    flex: 1;
+  }
+  .home-next-challenge-icon {
+    width: 54px;
+    height: 54px;
+    background: var(--color-accent-100);
+    color: var(--color-accent-strong);
+  }
+  .home-next .home-next-challenge h2 {
+    color: var(--color-ink-900);
+    font-size: 17px;
+    margin-top: 3px;
+  }
+  .home-next .home-next-challenge p:not(.home-next-eyebrow) {
+    color: var(--color-ink-600);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+  .home-next-challenge .ui-btn {
+    flex-shrink: 0;
+    padding: 10px 17px;
+    border-radius: 12px;
+    gap: 8px;
+  }
+  .home-next-data-notice {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1199px) {
+    .home-next-bento-bottom {
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+    .home-next-evidence-card.ui-card { grid-column: 1 / -1; }
+    .home-next-evidence-card .home-progress-evidence {
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+  }
+  @media (max-width: 1023px) {
+    .home-next-hero {
+      grid-template-columns: minmax(0,1fr);
+    }
+    .home-next-hero-aside {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      align-items: stretch;
+    }
+    .home-next-hero-signals {
+      grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .home-next .home-next-wallet.ui-btn {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 899px) {
+    .home-next-bento-top {
+      grid-template-columns: minmax(0,1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .home-next {
+      gap: 16px;
+      padding-bottom: 12px;
+    }
+    .home-next-hero {
+      border-radius: 22px;
+      padding: 20px 17px;
+      gap: 13px;
+    }
+    .home-next .home-next-hero-greeting {
+      font-size: 25px;
+      line-height: 1.2;
+    }
+    .home-next .home-next-hero-summary {
+      font-size: 13px;
+      line-height: 1.55;
+      margin-top: 8px;
+    }
+    .home-next-hero-meta { margin-top: 10px; }
+    .home-next-hero-actions { margin-top: 15px; }
+    .home-next-hero-actions .ui-btn {
+      min-height: 46px;
+    }
+    .home-next-hero-start.ui-btn { width: 100%; }
+    .home-next-hero-secondary.ui-btn { padding-inline: 9px; min-height: 44px; }
+    .home-next-hero-aside {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+    .home-next-hero-progress {
+      padding: 10px;
+      border-radius: 13px;
+    }
+    .home-next-hero-progress > strong { font-size: 17px; }
+    .home-next-hero-signals { gap: 6px; }
+    .home-next-hero-signals > div { padding: 9px; }
+    .home-next-hero-signals strong { font-size: 17px; }
+    .home-next-hero-signals span { font-size: 12px; }
+    .home-next .home-next-wallet.ui-btn { padding: 7px 11px; min-height: 44px; }
+    .home-next-bento-bottom {
+      grid-template-columns: minmax(0,1fr);
+      gap: 16px;
+    }
+    .home-next-evidence-card.ui-card { grid-column: auto; }
+    .home-next-evidence-card .home-progress-evidence { grid-template-columns: 1fr; }
+    .home-next .home-next-lab-card,
+    .home-next .home-next-modes,
+    .home-next .home-next-courses-card,
+    .home-next .home-next-week-card.ui-card,
+    .home-next .home-next-evidence-card.ui-card {
+      border-radius: 18px;
+      padding: 17px 14px;
+    }
+    .home-next .home-next-section-heading h2,
+    .home-next .home-next-card-header h2 { font-size: 18px; }
+    .home-next .home-next-section-heading { gap: 9px; }
+    .home-next-section-icon { width: 40px; height: 40px; }
+    .home-next .home-next-mode-tabs .ui-segment { min-height: 51px; padding: 12px; }
+    .home-next .home-next-square-lab { padding: 9px; }
+    .home-next-square-head { gap: 5px; }
+    .home-next-square-scale { font-size: 12px; }
+    .home-next .home-micro-lab { padding: 8px; }
+    .home-next .home-week .home-day-stamp { width: 34px; height: 36px; }
+    .home-next-challenge { align-items: flex-start; padding: 17px; flex-wrap: wrap; }
+    .home-next-challenge > div:nth-child(2) { flex-basis: calc(100% - 74px); }
+    .home-next-challenge .ui-btn { margin-left: auto; }
+  }
+  @media (max-width: 375px) {
+    .home-next-hero-aside { grid-template-columns: minmax(0,1fr); }
+    .home-next-hero-signals { gap: 8px; }
+    .home-next .home-next-wallet.ui-btn { grid-column: auto; }
+    .home-next-hero-actions { gap: 6px; }
+    .home-next-square-head > strong { font-size: 12px; }
+    .home-next .home-week .home-day-stamp { width: 30px; }
+    .home-next-course-title { flex-wrap: wrap; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-next *, .home-next *::before, .home-next *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
