@@ -104,14 +104,16 @@ export function V2MiniLab({ lesson, onOpen }: { lesson: Lesson; onOpen: () => vo
               value={c} aria-label="Hệ số c" aria-valuetext={`Hệ số c bằng ${c}`}
               onChange={(event) => setC(Number(event.target.value))} />
           </label>
-          <Button variant="ghost" className="v2-lab-reset" onClick={() => { setA(1); setB(0); setC(0); }}>
-            <Icon name="refresh" /> Đặt lại
-          </Button>
         </div>
       </div>
       <div className="v2-mini-lab-footer">
         <p role="status">Quan sát: đồ thị <strong>{a > 0 ? "mở lên" : "mở xuống"}</strong>{b || c ? "; b và c là phần khám phá mở rộng." : " và đối xứng qua trục tung."}</p>
-        <span className="v2-lab-dots" aria-hidden="true"><i/><i/><i/></span>
+        <div className="v2-mini-lab-footer-tools">
+          <Button variant="ghost" className="v2-lab-reset" onClick={() => { setA(1); setB(0); setC(0); }}>
+            <Icon name="refresh" /> Đặt lại
+          </Button>
+          <span className="v2-lab-dots" aria-hidden="true"><i/><i/><i/></span>
+        </div>
       </div>
       <small className="v2-lab-source">Thí nghiệm gắn bài đã xuất bản; không cộng GP hay tự hoàn thành.</small>
     </section>
