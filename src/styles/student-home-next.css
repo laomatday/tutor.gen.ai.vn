@@ -484,6 +484,8 @@
     border: 0;
     background: none;
     margin: 0;
+    max-width: 100%;
+    overflow: visible;
   }
   .home-next .home-next-mode-tabs .ui-segment {
     display: flex;
@@ -491,6 +493,9 @@
     justify-content: flex-start;
     min-height: 67px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-shrink: 1;
     gap: 12px;
     padding: 12px;
     border: 1px solid var(--color-line-subtle);
@@ -970,9 +975,23 @@
     .home-next .home-next-mode-tabs .ui-segment { min-height: 60px; padding: 10px; }
     .home-next .home-next-mode-tabs .ui-segment > .ui-icon { width: 36px; height: 36px; }
     .home-next .home-week .home-day-stamp { width: 35px; }
-    .home-next-challenge { flex-wrap: wrap; }
-    .home-next-challenge > div:nth-child(2) { flex: 1; }
-    .home-next-challenge .ui-btn { margin-left: auto; }
+    .home-next-challenge {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+    .home-next-challenge > div:nth-child(2) {
+      min-width: 0;
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .home-next-challenge .ui-btn {
+      grid-column: 1 / -1;
+      justify-self: end;
+      max-width: 100%;
+      margin: 0;
+    }
   }
   @media (max-width: 375px) {
     .home-next .home-next-hero-greeting { font-size: 23px; }
@@ -981,8 +1000,7 @@
     .home-next-hero-actions .ui-btn { font-size: 12px; }
     .home-next .home-next-square-footer { grid-template-columns: 1fr; }
     .home-next .home-week .home-day-stamp { width: 29px; }
-    .home-next .home-next-mode-tabs .ui-tab-action { padding: 5px 6px; }
-    .home-next-challenge > div:nth-child(2) { flex-basis: calc(100% - 57px); }
+    .home-next .home-next-mode-tabs .ui-tab-action { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .home-next *,
