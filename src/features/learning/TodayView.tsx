@@ -200,13 +200,19 @@ export function TodayView({
             )}
           </p>
           <div className="home-next-hero-stats" aria-label="Hoạt động học tập đã ghi nhận">
-            <div className="home-next-hero-stat">
-              <Icon name="menu_book" />
-              <span>
-                <small>Bài học tiếp theo</small>
-                <strong>{nextLesson ? "Đã sẵn sàng" : "Chọn bài ôn"}</strong>
-              </span>
-            </div>
+            {onOpenBadges && (
+              <Button
+                variant="surface"
+                className="home-wallet home-next-hero-stat home-next-hero-stat--wallet"
+                onClick={onOpenBadges}
+              >
+                <Icon name="workspace_premium" />
+                <span>
+                  <small>Điểm đã tích lũy</small>
+                  <strong>{gpBalance} GP</strong>
+                </span>
+              </Button>
+            )}
             <div className="home-next-hero-stat">
               <Icon name="edit_square" />
               <span>
