@@ -100,7 +100,7 @@ export function LearningShell({
         />
       )}
 
-      <aside className={`v2-sidebar${menuOpen ? " is-open" : ""}`} aria-label="Thanh điều hướng học tập">
+      <aside id="v2-mobile-menu" className={`v2-sidebar${menuOpen ? " is-open" : ""}`} aria-label="Thanh điều hướng học tập">
         <div className="v2-brand">
           <img src={appConfig.brand.logoUrl} width={39} height={39} alt="" />
           <div className="v2-brand-copy">
