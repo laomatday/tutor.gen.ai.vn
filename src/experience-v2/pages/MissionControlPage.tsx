@@ -176,7 +176,7 @@ export function MissionControlPage({
       <div className="v2-home-lower-grid">
         <section className="v2-panel v2-journey" aria-labelledby="v2-journey-title">
           <header className="v2-panel-head">
-            <h2 id="v2-journey-title"><Icon name="map" /> Hành trình học tập của em</h2>
+            <h2 id="v2-journey-title"><Icon name="hub" /> Hành trình học tập của em</h2>
             <Button variant="ghost" onClick={() => onNavigate("/hoc-bai")}>Xem chi tiết <Icon name="arrow_forward" /></Button>
           </header>
           {previewSteps.length ? (
