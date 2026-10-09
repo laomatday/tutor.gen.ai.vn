@@ -25,7 +25,17 @@ test.describe("Student Support V2 — preserve domain, replace screens", () => {
     await modal.getByRole("button", { name: "Đóng hộp thoại" }).click();
     await expect(modal).not.toBeVisible();
     fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
+    await page.goto("/tien-bo");
+    await expect(page.locator(".v2-progress-page")).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: path.join("test-results", "visual", "v2-progress-1440.png"), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/tien-bo");
+    await expect(page.locator(".v2-progress-page")).toBeVisible();
+    await page.screenshot({ path: path.join("test-results", "visual", "v2-progress-390.png"), fullPage: true });
+    await page.getByRole("button", { name: "Hồ sơ học tập" }).click();
+    await expect(page.getByRole("dialog", { name: "Hồ sơ học tập" })).toBeVisible();
+    await page.screenshot({ path: path.join("test-results", "visual", "v2-profile-390.png") });
   });
 
   test("Schedule: create, persist, edit, delete and undo the same local session", async ({ page }) => {
@@ -58,7 +68,14 @@ test.describe("Student Support V2 — preserve domain, replace screens", () => {
     await expect(updated).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
+    await page.goto("/thoi-khoa-bieu");
+    await expect(page.locator(".v2-schedule-page")).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: path.join("test-results", "visual", "v2-schedule-390.png"), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/thoi-khoa-bieu");
+    await expect(page.locator(".v2-schedule-page")).toBeVisible();
+    await page.screenshot({ path: path.join("test-results", "visual", "v2-schedule-1440.png"), fullPage: true });
   });
 
   test("Rewards: sample filter, one local redemption, never store parent contact", async ({ page }) => {
@@ -91,6 +108,15 @@ test.describe("Student Support V2 — preserve domain, replace screens", () => {
     expect(JSON.parse(stored.requests)).toHaveLength(1);
     expect(stored.requests).not.toContain("0900000000");
     expect(stored.requests).not.toContain("Số 123 đường");
+    fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/doi-qua");
+    await expect(page.locator(".v2-rewards-page")).toBeVisible();
+    await page.screenshot({ path: path.join("test-results", "visual", "v2-rewards-390.png"), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/doi-qua");
+    await expect(page.locator(".v2-rewards-page")).toBeVisible();
+    await page.screenshot({ path: path.join("test-results", "visual", "v2-rewards-1440.png"), fullPage: true });
   });
 
   test("Mobile 360: progress, schedule and rewards without horizontal overflow", async ({ page }) => {
