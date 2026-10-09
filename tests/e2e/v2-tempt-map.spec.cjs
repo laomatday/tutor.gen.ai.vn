@@ -93,6 +93,10 @@ test.describe("UI mapping — tempt.gen.ai.vn → Tutor", () => {
       await page.goto(entry.url);
       await expect(page.locator(entry.selector)).toBeVisible();
       await expect(page.getByRole("navigation", { name: "Điều hướng học tập chính" })).toBeVisible();
+      const topbar = await page.locator(".v2-topbar").boundingBox();
+      const canvas = await page.locator(".v2-main").boundingBox();
+      expect(topbar.y, "mobile topbar must start at viewport top").toBeLessThanOrEqual(2);
+      expect(canvas.y, "closed desktop sidebar must not push the mobile page down").toBeLessThan(70);
       await page.screenshot({ path: path.join("test-results","visual",`tempt-map-${entry.name}-390.png`) });
     }
     await page.setViewportSize({ width: 360, height: 800 });
