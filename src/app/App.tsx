@@ -30,6 +30,12 @@ import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
 import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
+const ThinkingReplayPageV2 = lazy(() =>
+  import("../experience-v2/replay/ThinkingReplayPage").then((module) => ({
+    default: module.ThinkingReplayPage,
+  })),
+);
+
 const FocusStudioPageV2 = lazy(() =>
   import("../experience-v2/focus/FocusStudioPage").then((module) => ({
     default: module.FocusStudioPage,
@@ -201,6 +207,11 @@ export default function App() {
                 <FocusStudioPageV2
                   onNavigate={navigateStudent}
                   onEarnGp={wallet.earn}
+                  search={location.search}
+                />
+              ) : section === "replay" ? (
+                <ThinkingReplayPageV2
+                  onNavigate={navigateStudent}
                   search={location.search}
                 />
               ) : (
