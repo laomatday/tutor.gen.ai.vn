@@ -20,6 +20,8 @@ test("Today bento: interactive square uses published Math 9 content and never aw
 
   const square = page.locator("[data-home-square-lab]");
   await expect(square).toBeVisible();
+  await expect(page.locator(".home-micro-lab")).toBeVisible();
+  await expect(page.locator(".home-micro-lab")).not.toHaveAttribute("open");
   await expect(square.getByRole("img")).toHaveAccessibleName(
     "Hình vuông cạnh 3 centimét có diện tích 9 centimét vuông",
   );
