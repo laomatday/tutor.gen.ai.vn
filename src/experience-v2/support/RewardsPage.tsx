@@ -89,7 +89,7 @@ export function RewardsPage({ gpBalance, dailyGp, onNavigate, onSpendGp }: Props
 
       <div className="v2-support-demo-notice" role="note">
         <Icon name="info" />
-        <p>Danh mục và tồn kho quà là **dữ liệu minh họa**. Bấm đổi quà chỉ lưu yêu cầu và trừ GP trên trình duyệt này, không tạo đơn giao hàng.</p>
+        <p>Danh mục và tồn kho quà là dữ liệu minh họa. Bấm đổi quà chỉ lưu yêu cầu và trừ GP trên trình duyệt này, không tạo đơn giao hàng.</p>
         <Button variant="ghost" onClick={() => setShowFlow(true)}>Xem quy trình</Button>
       </div>
 
