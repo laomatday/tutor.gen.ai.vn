@@ -104,6 +104,8 @@
     color: var(--color-accent-pale);
   }
   .home-next .home-next-hero-stat--wallet.ui-btn {
+    position: static;
+    inset: auto;
     justify-content: flex-start;
     min-height: 48px;
     width: 100%;
