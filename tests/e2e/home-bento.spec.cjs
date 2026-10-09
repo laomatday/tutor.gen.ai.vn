@@ -43,6 +43,10 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   await expect(page.locator(".home-wallet")).toContainText(initialGp.split("\n")[0]);
 
   fs.mkdirSync(path.join("test-results", "visual"), { recursive: true });
+  // Navigate again so browser scroll restoration and focus don't crop the
+  // warning/hero in the presentation screenshot.
+  await page.goto("/");
+  await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
     path: path.join("test-results", "visual", "home-bento-390-viewport.png"),
