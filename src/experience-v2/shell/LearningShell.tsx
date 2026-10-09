@@ -118,7 +118,7 @@ export function LearningShell({
             aria-label="Đóng menu học tập"
           ><Icon name="close" /></Button>
         </div>
-        <nav className="v2-nav-primary" aria-label="Điều hướng học tập chính">
+        <nav className="v2-nav-primary" aria-label="Điều hướng ở thanh bên">
           {destinations.map(navigationItem)}
         </nav>
         <nav className="v2-nav-secondary" aria-label="Các trang học tập khác">
