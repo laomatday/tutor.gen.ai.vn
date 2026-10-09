@@ -12,6 +12,15 @@
 3. Run the app:
    `npm run dev`
 
+### Tutor Pilot (dữ liệu học tập theo tài khoản)
+
+- Khu vực `/pilot` **mặc định bị tắt**; chỉ mở khi người vận hành đặt `VITE_TUTOR_PILOT_ENABLED=true` ở môi trường đã hoàn thành kiểm tra RLS và consent. Cờ trên trình duyệt chỉ điều khiển UI, quyền thực tế vẫn do Auth/RLS máy chủ xác thực. **Pilot không tự đăng ký tài khoản**; cần điều phối viên cấp tài khoản và phê duyệt tham gia phù hợp trước khi học sinh đăng nhập.
+- Pilot chạy tách biệt với các route bản trải nghiệm `/`, `/hoc-bai`, `/tu-giai`, `/replay` vốn vẫn dùng dữ liệu minh họa/localStorage. Không gộp hoặc báo cáo chung kết quả hai chế độ.
+- Trạng thái bài hoàn thành, quiz, GP và skill evidence của pilot do Postgres lưu. Nháp Focus Studio được đồng bộ giữa thiết bị nhưng tự chấm lời giải bằng bộ kiểm tra ở client **không phải chứng nhận năng lực**.
+- Trước khi thử nghiệm có học sinh thật: phải chạy kiểm tra RLS bằng các tài khoản có vai trò riêng, xác minh đồng ý tham gia, đánh giá học thuật từng bài và kiểm tra quy định bảo vệ dữ liệu trẻ em.
+- 100 bài Toán 9 tại `src/data/draft/math9-question-bank.json` là **bản nháp sinh tự động**; không có bài nào được tự động xuất bản. Dùng `node scripts/generate-tutor-math9-bank.mjs` để tái tạo, `npm test` để kiểm tra tính nhất quán; cần người có chuyên môn duyệt.
+- Hướng dẫn vận hành: [Tutor Pilot Runbook](docs/tutor-pilot-runbook.md).
+
 ### Các không gian trong ứng dụng
 
 - Học sinh: `http://localhost:3000/`.

@@ -79,7 +79,7 @@ test("Student shell: mobile logo, keyboard trap and viewport changes keep focus 
   await expect(close).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(
-    sidebar.getByRole("button", { name: "Phần thưởng", exact: true }),
+    sidebar.getByRole("button", { name: "Học có tài khoản", exact: true }),
   ).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();

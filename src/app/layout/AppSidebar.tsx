@@ -42,7 +42,10 @@ export function AppSidebar({
 }: Props) {
   if (role === "Học sinh") {
     const core = studentRoutes.filter((item) => item.group === "Core");
-    const other = studentRoutes.filter((item) => item.group !== "Core");
+    const other = studentRoutes.filter((item) =>
+      item.group !== "Core" &&
+      (item.id !== "pilot" || import.meta.env.VITE_TUTOR_PILOT_ENABLED === "true")
+    );
     return (
       <aside
         ref={sidebarRef}

@@ -10,6 +10,7 @@ export const studentRoutes = [
   { id: "tien-bo", path: "/tien-bo", label: "Tiến bộ", icon: "bar_chart", group: "Other", description: "Bài đã học và đánh giá" },
   { id: "thoi-khoa-bieu", path: "/thoi-khoa-bieu", label: "Lịch học", icon: "calendar_month", group: "Other", description: "Lịch học cá nhân" },
   { id: "doi-qua", path: "/doi-qua", label: "Phần thưởng", icon: "workspace_premium", group: "Other", description: "Điểm thưởng và huy hiệu" },
+  { id: "pilot", path: "/pilot", label: "Học có tài khoản", icon: "verified_user", group: "Other", description: "Dữ liệu cá nhân trên máy chủ · Pilot" },
 ] as const;
 export type NavTab = (typeof studentRoutes)[number]["id"];
 

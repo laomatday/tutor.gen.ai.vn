@@ -17,4 +17,5 @@ export const storageKeys = {
   adminUsers: "genai-admin-users-v1",
   practiceSession: "genai-practice-session-v1",
   rewardRequests: "genai-reward-requests-v1",
+  pilotSession: "genai-tutor-pilot-session-v1",
 } as const;

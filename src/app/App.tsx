@@ -74,6 +74,12 @@ const AdminView = lazy(() =>
   })),
 );
 
+const TutorPilotView = lazy(() =>
+  import("../features/pilot/TutorPilotView").then(module => ({
+    default: module.TutorPilotView,
+  })),
+);
+
 export default function App() {
   const location = useAppLocation();
   const { role, section, label } = readRoute(location.pathname);
@@ -138,6 +144,28 @@ export default function App() {
 
   const navigateStudent = (tab: string) =>
     navigate(tab.startsWith("/") ? tab : routePath(tab as NavTab));
+
+  // Pilot deployment requires explicit rollout approval. This public client
+  // flag controls discoverability only; server-side Auth and RLS enforce access.
+  if (location.pathname === "/pilot") {
+    if (import.meta.env.VITE_TUTOR_PILOT_ENABLED !== "true") {
+      return (
+        <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-4 p-6">
+          <h1 className="text-2xl font-bold text-brand">Tutor Pilot chưa được mở</h1>
+          <p className="text-ink-600">
+            Không gian có tài khoản chỉ được bật sau khi kiểm chứng phân quyền,
+            học liệu và quy trình tham gia. Bản trải nghiệm công khai vẫn hoạt động.
+          </p>
+          <a className="ui-btn ui-btn-secondary w-fit" href="/">Quay lại bản trải nghiệm</a>
+        </main>
+      );
+    }
+    return (
+      <Suspense fallback={<div role="status" className="p-6">Đang mở không gian học có tài khoản…</div>}>
+        <TutorPilotView />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
