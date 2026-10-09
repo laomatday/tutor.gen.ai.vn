@@ -113,7 +113,7 @@ export function V2MiniLab({ lesson, onOpen }: { lesson: Lesson; onOpen: () => vo
         <p role="status">Quan sát: đồ thị <strong>{a > 0 ? "mở lên" : "mở xuống"}</strong>{b || c ? "; b và c là phần khám phá mở rộng." : " và đối xứng qua trục tung."}</p>
         <span className="v2-lab-dots" aria-hidden="true"><i/><i/><i/></span>
       </div>
-      <small className="v2-lab-source">Mô hình minh họa từ bài học đã xuất bản. Không cộng GP hoặc tự đánh dấu hoàn thành.</small>
+      <small className="v2-lab-source">Thí nghiệm gắn bài đã xuất bản; không cộng GP hay tự hoàn thành.</small>
     </section>
   );
 }
