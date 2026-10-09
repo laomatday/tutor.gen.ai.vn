@@ -612,9 +612,36 @@
       visibility: visible;
       transform: translateX(0);
     }
-    .learning-os-v2 .v2-topbar {
-      padding: 0 11px;
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-topbar {
+      width: 100%;
+      max-width: 100vw;
+      min-width: 0;
+      gap: 7px;
+      padding: 0 10px;
       min-height: 60px;
+    }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-topbar-end {
+      flex: 0 0 auto;
+      min-width: 0;
+      gap: 0;
+    }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-search-trigger.ui-btn {
+      flex: 1 1 0;
+      width: 0;
+      max-width: 100%;
+      min-width: 0;
+      padding-inline: 9px;
+    }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-profile.ui-btn {
+      flex: 0 0 44px;
+      width: 44px;
+      min-width: 0;
+      max-width: 44px;
+      justify-content: center;
+      padding: 4px;
+    }
+    .learning-os-v2[data-design-source="tempt-genai"] .v2-profile > .ui-icon {
+      display: none;
     }
     .learning-os-v2 .v2-nav-group-title { display: block; }
     .learning-os-v2 .v2-mobile-dock {
