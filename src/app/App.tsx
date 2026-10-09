@@ -30,6 +30,12 @@ import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
 import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
+const MissionControlPageV2 = lazy(() =>
+  import("../experience-v2/pages/MissionControlPage").then((module) => ({
+    default: module.MissionControlPage,
+  })),
+);
+
 const TodayView = lazy(() =>
   import("../features/learning/TodayView").then((module) => ({
     default: module.TodayView,
@@ -171,20 +177,13 @@ export default function App() {
                 <div className="v2-notice" role="status" aria-label="Đang tải học liệu">
                   Đang tải học liệu…
                 </div>
+              ) : section === "hom-nay" ? (
+                <MissionControlPageV2 onNavigate={navigateStudent} />
               ) : (
                 <div className="v2-legacy-surface">
                   <p className="v2-bridge-note">
                     Trang này đang chuyển sang giao diện V2; chức năng học tập hiện tại được giữ nguyên.
                   </p>
-                  {section === "hom-nay" && (
-                    <TodayView
-                      onNavigate={navigateStudent}
-                      onOpenBadges={() => setIsProfileOpen(true)}
-                      gpBalance={wallet.balance}
-                      dailyGp={wallet.dailyGp}
-                      onEarnGp={wallet.earn}
-                    />
-                  )}
                   {section === "hoc-bai" && (
                     <KnowledgeMapView onNavigate={navigateStudent} onEarnGp={wallet.earn} />
                   )}
