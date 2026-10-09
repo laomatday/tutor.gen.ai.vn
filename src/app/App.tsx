@@ -30,6 +30,12 @@ import { studentExperienceV2Enabled } from "../experience-v2/featureFlag";
 import { LearningShell } from "../experience-v2/shell/LearningShell";
 import "./layout/shell.css";
 
+const KnowledgeUniversePageV2 = lazy(() =>
+  import("../experience-v2/universe/KnowledgeUniversePage").then((module) => ({
+    default: module.KnowledgeUniversePage,
+  })),
+);
+
 const MissionControlPageV2 = lazy(() =>
   import("../experience-v2/pages/MissionControlPage").then((module) => ({
     default: module.MissionControlPage,
@@ -179,6 +185,12 @@ export default function App() {
                 </div>
               ) : section === "hom-nay" ? (
                 <MissionControlPageV2 onNavigate={navigateStudent} />
+              ) : section === "hoc-bai" &&
+                !new URLSearchParams(location.search).has("lesson") ? (
+                <KnowledgeUniversePageV2
+                  onNavigate={navigateStudent}
+                  search={location.search}
+                />
               ) : (
                 <div className="v2-legacy-surface">
                   <p className="v2-bridge-note">
