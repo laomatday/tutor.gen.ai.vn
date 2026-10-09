@@ -19,11 +19,14 @@ export interface UniverseEdge {
   kind: "curriculum_order";
 }
 
+// Spatial composition maps enrolled subjects to distinct learning territories.
+// Display-only positions are deterministic, never prerequisite/mastery evidence.
+// The first two territories reserve separate zones at common 1440px widths.
 const subjectAnchors = [
-  { x: 60, y: 44, rx: 25, ry: 28 },
-  { x: 28, y: 70, rx: 19, ry: 21 },
-  { x: 67, y: 73, rx: 17, ry: 15 },
-  { x: 26, y: 24, rx: 18, ry: 14 },
+  { x: 63, y: 40, rx: 20, ry: 28 },
+  { x: 20, y: 68, rx: 8, ry: 20 },
+  { x: 80, y: 73, rx: 8, ry: 13 },
+  { x: 23, y: 24, rx: 11, ry: 13 },
 ] as const;
 
 /**
