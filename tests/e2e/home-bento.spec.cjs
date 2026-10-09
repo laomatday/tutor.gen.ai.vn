@@ -17,6 +17,11 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   expect(startBox.y + startBox.height).toBeLessThan(navBox.y);
   const initialProgress = await page.locator(".home-progress-header-info strong").textContent();
   const initialGp = await page.locator(".home-wallet").innerText();
+  const walletBox = await page.locator(".home-wallet").boundingBox();
+  const heroHeadingBox = await page.getByRole("heading", { name: "Hôm nay", exact: true }).boundingBox();
+  expect(walletBox.y, "GP stat must sit below the greeting, not overlap it").toBeGreaterThan(
+    heroHeadingBox.y + heroHeadingBox.height,
+  );
 
   const square = page.locator("[data-home-square-lab]");
   await expect(square).toBeVisible();
@@ -58,6 +63,9 @@ test("Today bento: interactive square uses published Math 9 content and never aw
   expect(tabOverflow, "mode cards must not clip or scroll horizontally").toBeLessThanOrEqual(1);
 
   await page.setViewportSize({ width: 1440, height: 900 });
+  // A fresh desktop load avoids mid-transition sidebar positioning in visual QA.
+  await page.goto("/");
+  await expect(page.locator(".learning-load-skeleton")).toHaveCount(0);
   await expect(square).toBeVisible();
   await expect(page.locator(".home-next-bento-bottom")).toBeVisible();
   const heroDesktop = await page.locator(".home-next-hero").boundingBox();
