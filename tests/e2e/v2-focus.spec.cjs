@@ -38,7 +38,8 @@ test.describe("Focus Studio V2 — math, agency and persistence", () => {
     await field.fill("Một ý tưởng cần lưu");
     await page.reload();
     await expect(field).toHaveValue("Một ý tưởng cần lưu");
-    await page.getByRole("combobox", { name: "Chọn bài tập luyện tập" }).selectOption("parabola-coefficient-03");
+    await page.getByRole("combobox", { name: "Chọn bài tập luyện tập" }).click();
+    await page.getByRole("option", { name: "Xác định hệ số của parabol" }).click();
     await expect(page).toHaveURL(/problem=parabola-coefficient-03/);
     await expect(field).toHaveValue("");
     await page.goto("/tu-giai?problem=quadratic-factor-01");
