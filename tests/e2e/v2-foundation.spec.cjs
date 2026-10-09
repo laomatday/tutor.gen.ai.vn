@@ -17,7 +17,7 @@ test.describe("Opt-in Learning OS V2 shell", () => {
     await page.getByRole("searchbox", { name: "Từ khóa tìm kiếm học liệu" }).fill("căn thức");
     await page.getByRole("button", { name: "Tìm", exact: true }).click();
     await expect(page).toHaveURL(/\/hoc-bai\?q=c%C4%83n%20th%E1%BB%A9c/);
-    await expect(page.locator(".v2-legacy-surface")).toBeVisible();
+    await expect(page.locator(".v2-universe-page")).toBeVisible();
     await page.getByRole("link", { name: "Focus Studio" }).click();
     await expect(page).toHaveURL(/\/tu-giai/);
     await expect(page.getByLabel("Trình bày từng phép biến đổi")).toBeVisible();
