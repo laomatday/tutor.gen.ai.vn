@@ -158,6 +158,7 @@ test("Discovery: keyboard manipulation and retry explain an idea without awardin
   const discovery = page.locator(
     `.lesson-discovery[data-exercise="${exercise.id}"]`,
   );
+  await page.locator(".home-micro-lab > summary").click();
   await expect(discovery).toBeVisible();
   const check = discovery.getByRole("button", {
     name: "Kiểm tra ý tưởng",
