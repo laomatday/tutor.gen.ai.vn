@@ -463,10 +463,40 @@
     justify-content: space-between;
     gap: 10px;
     flex-wrap: wrap;
+    padding: 6px;
+    min-height: 48px;
+    cursor: pointer;
+    color: var(--color-brand);
+    list-style: none;
+  }
+  .home-next-discovery-head::-webkit-details-marker { display: none; }
+  .home-next-discovery-head:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 8px;
   }
   .home-next-discovery-head > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 750;
+    color: var(--color-brand);
+  }
+  .home-next-discovery-head > strong {
     font-size: 12px;
-    color: var(--color-ink-700);
+    color: var(--color-ink-600);
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .home-next-discovery-head > .ui-icon:last-child {
+    transition: transform 150ms ease;
+  }
+  .home-next .home-micro-lab[open] .home-next-discovery-head > .ui-icon:last-child {
+    transform: rotate(180deg);
+  }
+  .home-next .home-micro-lab:not([open]) > :not(summary) {
+    display: none !important;
   }
   .home-next .home-micro-lab .lesson-discovery {
     background: var(--color-white);
