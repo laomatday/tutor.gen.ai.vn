@@ -12,8 +12,8 @@
   --tempt-muted: #cbd5e1;
   --tempt-subtle: #94a3b8;
   --tempt-blue: var(--color-brand);
-  --tempt-cyan: #38bdf8;
-  --tempt-teal: #22d3ee;
+  --tempt-cyan: var(--color-sky);
+  --tempt-teal: var(--color-cyan);
   --v2-sidebar-width: 248px;
   --v2-bg: var(--tempt-bg);
   --v2-panel: var(--tempt-surface);
@@ -36,7 +36,7 @@
 .learning-os-v2 .v2-nav-link { min-height: 49px; border-radius: 11px; font-weight: 650; color: #cbd5e1; }
 .learning-os-v2 .v2-nav-link[aria-current="page"] {
   background: linear-gradient(95deg,var(--color-brand),var(--color-brand-strong));
-  border: 1px solid #38bdf8;
+  border: 1px solid var(--color-sky);
   box-shadow: 0 0 19px rgba(56,189,248,.23);
   color: white;
 }
@@ -101,7 +101,7 @@
   border: 1px solid var(--tempt-border); background: #0b142c;
   border-radius: 23px; box-shadow: 0 9px 22px rgba(0,0,0,.19);
 }
-.learning-os-v2 .v2-choice.ui-btn:hover { border-color: #38bdf8; background: #132653; }
+.learning-os-v2 .v2-choice.ui-btn:hover { border-color: var(--color-sky); background: #132653; }
 .learning-os-v2 .v2-panel-head h2,
 .learning-os-v2 .v2-section-top h2 { font-size: 16px; }
 .learning-os-v2 .v2-journey-steps li[data-state="current"] .v2-journey-dot { box-shadow:0 0 18px rgba(56,189,248,.48); }
