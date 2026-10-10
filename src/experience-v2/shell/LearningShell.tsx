@@ -5,6 +5,7 @@ import { appConfig } from "../../config/app";
 import { studentProfile } from "../../features/curriculum";
 import { ordinaryLinkClick } from "../../app/navigation";
 import "../../experience-v2/theme.css";
+import "../tempt-mapping.css";
 
 const destinations = [
   { section: "hom-nay", path: "/", label: "Nhiệm vụ hôm nay", mobile: "Hôm nay", icon: "home" },
