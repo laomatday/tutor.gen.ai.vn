@@ -1,0 +1,169 @@
+/* Visual adaptation of tempt.gen.ai.vn — source-backed Tutor V2 only.
+ * Intentionally unlayered: this cross-screen theme follows existing @layer components.
+ * Nothing here grants learning credit, changes routes, or touches V1/Teacher/Admin. */
+.learning-os-v2 {
+  --tempt-bg: #070c1b;
+  --tempt-surface: #0b142c;
+  --tempt-elevated: #0e1a38;
+  --tempt-inset: #081026;
+  --tempt-border: rgba(56,189,248,.16);
+  --tempt-border-active: rgba(56,189,248,.48);
+  --tempt-text: #f8fafc;
+  --tempt-muted: #cbd5e1;
+  --tempt-subtle: #94a3b8;
+  --tempt-blue: var(--color-brand);
+  --tempt-cyan: var(--color-sky);
+  --tempt-teal: var(--color-cyan);
+  --v2-sidebar-width: 248px;
+  --v2-bg: var(--tempt-bg);
+  --v2-panel: var(--tempt-surface);
+  --v2-raised: var(--tempt-elevated);
+  --v2-border: var(--tempt-border);
+  --v2-text: var(--tempt-text);
+  --v2-muted: var(--tempt-muted);
+  --v2-action: var(--tempt-cyan);
+  background: var(--tempt-bg);
+  color: var(--tempt-text);
+}
+.learning-os-v2 .v2-sidebar {
+  background: #081026;
+  border-right: 1px solid var(--tempt-border);
+  padding: 20px 15px;
+}
+.learning-os-v2 .v2-brand { min-height: 72px; padding: 5px 8px 23px; }
+.learning-os-v2 .v2-brand-copy strong { font-weight: 800; letter-spacing: -.04em; }
+.learning-os-v2 .v2-nav-primary { padding-top: 24px; gap: 8px; }
+.learning-os-v2 .v2-nav-link { min-height: 49px; border-radius: 11px; font-weight: 650; color: #cbd5e1; }
+.learning-os-v2 .v2-nav-link[aria-current="page"] {
+  background: linear-gradient(95deg,var(--color-brand),var(--color-brand-strong));
+  border: 1px solid var(--color-sky);
+  box-shadow: 0 0 19px rgba(56,189,248,.23);
+  color: white;
+}
+.learning-os-v2 .v2-nav-link[aria-current="page"] .v2-nav-icon { color: #c8f5ff; }
+.learning-os-v2 .v2-sidebar-bottom {
+  min-height: 170px; border-radius: 20px; background: #102554;
+  border-color: rgba(56,189,248,.25);
+}
+.learning-os-v2 .v2-topbar {
+  min-height: 65px; padding-inline: clamp(20px,2.4vw,37px);
+  background: rgba(7,12,27,.96); border-bottom: 1px solid var(--tempt-border);
+}
+.learning-os-v2 .v2-search-trigger.ui-btn {
+  border-color: rgba(148,163,184,.18); border-radius: 12px;
+  background: #142344; min-height: 43px; max-width: 505px;
+}
+.learning-os-v2 .v2-main { max-width: 1680px; padding: 24px clamp(18px,1.8vw,30px) 56px; }
+.learning-os-v2 .v2-profile.ui-btn { font-size: 13px; font-weight: 650; }
+.learning-os-v2 .v2-home-hero,
+.learning-os-v2 .v2-universe-hero,
+.learning-os-v2 .v2-focus-hero,
+.learning-os-v2 .v2-replay-hero {
+  border-radius: 24px; border-color: rgba(56,189,248,.22);
+  box-shadow: 0 12px 32px rgba(0,0,0,.17);
+}
+.learning-os-v2 .v2-home-hero { min-height: 278px; }
+.learning-os-v2 .v2-home-hero h1 { font-size: clamp(30px,2.9vw,42px); }
+.learning-os-v2 .v2-home-metrics > div {
+  background: rgba(18,32,68,.75);
+  border: 1px solid rgba(56,189,248,.2);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+}
+.learning-os-v2 .v2-home-main-grid { grid-template-columns: minmax(0,8fr) minmax(0,4fr); gap: 20px; }
+.learning-os-v2 .v2-home-lower-grid { grid-template-columns: minmax(0,5fr) minmax(0,4fr) minmax(0,3fr); gap: 20px; }
+.learning-os-v2 .v2-home-primary-col { gap: 17px; }
+.learning-os-v2 .v2-next-mission {
+  background: #0b142c; border-radius: 23px; border: 1px solid rgba(56,189,248,.39);
+  box-shadow: 0 0 24px rgba(56,189,248,.12); padding: 16px;
+}
+.learning-os-v2 .v2-mission-surface { background: #fcfbf9; border-radius: 17px; padding: 23px; }
+.learning-os-v2 .v2-mission-surface h3 { font-size: clamp(19px,1.6vw,24px); }
+.learning-os-v2 .v2-mission-primary.ui-btn {
+  background: linear-gradient(95deg,var(--color-brand),var(--color-brand-strong)); color: #fff;
+  border-radius: 12px; min-width: 170px; min-height: 46px;
+}
+.learning-os-v2 .v2-mini-lab { border-radius: 23px; background: linear-gradient(145deg,#08293b,#0b142c 55%); }
+.learning-os-v2 .v2-mini-graph { background: #050c1d; border-color: rgba(56,189,248,.2); }
+.learning-os-v2 .v2-choice.ui-btn,
+.learning-os-v2 .v2-panel,
+.learning-os-v2 .v2-universe-main-panel,
+.learning-os-v2 .v2-universe-inspector,
+.learning-os-v2 .v2-focus-editor,
+.learning-os-v2 .v2-focus-visual,
+.learning-os-v2 .v2-focus-hints,
+.learning-os-v2 .v2-focus-attempts,
+.learning-os-v2 .v2-focus-feedback,
+.learning-os-v2 .v2-replay-timeline,
+.learning-os-v2 .v2-replay-player,
+.learning-os-v2 .v2-replay-reflection,
+.learning-os-v2 .v2-replay-bottom-panel {
+  border: 1px solid var(--tempt-border); background: #0b142c;
+  border-radius: 23px; box-shadow: 0 9px 22px rgba(0,0,0,.19);
+}
+.learning-os-v2 .v2-choice.ui-btn:hover { border-color: var(--color-sky); background: #132653; }
+.learning-os-v2 .v2-panel-head h2,
+.learning-os-v2 .v2-section-top h2 { font-size: 16px; }
+.learning-os-v2 .v2-journey-steps li[data-state="current"] .v2-journey-dot { box-shadow:0 0 18px rgba(56,189,248,.48); }
+.learning-os-v2 .v2-rhythm-summary > div { background: #13224a; }
+.learning-os-v2 .v2-challenge-cta.ui-btn { background:linear-gradient(95deg,var(--color-brand),var(--color-brand-strong)); }
+.learning-os-v2 .v2-universe-grid { grid-template-columns:minmax(0,8fr) minmax(300px,4fr); gap:20px; }
+.learning-os-v2 .v2-universe-main-panel,
+.learning-os-v2 .v2-universe-inspector { border-radius:24px; }
+.learning-os-v2 .v2-universe-map { min-height: 510px; }
+.learning-os-v2 .v2-universe-inspector { background:#0e1a38; padding:22px; }
+.learning-os-v2 .v2-universe-node.ui-btn { background:rgba(14,25,54,.82); border:1px solid rgba(56,189,248,.25); }
+.learning-os-v2 .v2-universe-node[aria-pressed="true"] { box-shadow:0 0 24px rgba(56,189,248,.34); }
+.learning-os-v2 .v2-universe-related-grid .ui-btn { border-radius:15px; background:#13224a; }
+.learning-os-v2 .v2-focus-workspace { grid-template-columns:minmax(0,5fr) minmax(0,4fr) minmax(260px,3fr); gap:18px; }
+.learning-os-v2 .v2-focus-problem { background:#0e1a38; border-radius:23px; }
+.learning-os-v2 .v2-focus-problem-body { background:#fcfbf9; border-radius:15px; }
+.learning-os-v2 .v2-focus-editor-surface,
+.learning-os-v2 .v2-focus-tool-content { background:#081026; border-radius:14px; }
+.learning-os-v2 .v2-focus-feedback-grid { gap:14px; }
+.learning-os-v2 .v2-replay-main { grid-template-columns:minmax(178px,3fr) minmax(0,6fr) minmax(270px,3fr); gap:18px; }
+.learning-os-v2 .v2-replay-paper {
+  background-color:#fcfbf9;
+  background-image:radial-gradient(#cbd5e1 .75px,transparent .75px);
+  background-size:18px 18px; border-radius:16px;
+}
+.learning-os-v2 .v2-replay-transport { background:#081026; }
+.learning-os-v2 .v2-replay-bottom { gap:18px; }
+.learning-os-v2 .v2-replay-context { border-radius:19px; background:#0e1a38; }
+@media (max-width:1239px) {
+  .learning-os-v2 .v2-home-lower-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .learning-os-v2 .v2-home-lower-grid .v2-journey { grid-column:1 / -1; }
+}
+@media (max-width:1100px) {
+  .learning-os-v2 .v2-focus-workspace { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .learning-os-v2 .v2-focus-aside { grid-column:1 / -1; }
+}
+@media (max-width:960px) {
+  .learning-os-v2 .v2-home-main-grid,
+  .learning-os-v2 .v2-universe-grid,
+  .learning-os-v2 .v2-replay-main { grid-template-columns:minmax(0,1fr); }
+  .learning-os-v2 .v2-universe-map { min-height:400px; }
+}
+@media (max-width:767px) {
+  .learning-os-v2 { --v2-sidebar-width:248px; }
+  .learning-os-v2 .v2-topbar { padding-inline:12px; }
+  .learning-os-v2 .v2-main { padding:14px 12px calc(92px + env(safe-area-inset-bottom)); }
+  .learning-os-v2 .v2-home-hero { min-height:210px; }
+  .learning-os-v2 .v2-home-lower-grid,
+  .learning-os-v2 .v2-focus-workspace { grid-template-columns:minmax(0,1fr); }
+  .learning-os-v2 .v2-home-lower-grid .v2-journey,
+  .learning-os-v2 .v2-focus-aside { grid-column:auto; }
+  .learning-os-v2 .v2-choice.ui-btn { border-radius:15px; }
+  .learning-os-v2 .v2-universe-main-panel,
+  .learning-os-v2 .v2-universe-inspector,
+  .learning-os-v2 .v2-focus-editor,
+  .learning-os-v2 .v2-replay-player { border-radius:17px; }
+  .learning-os-v2 .v2-universe-map { min-height:350px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .learning-os-v2 *, .learning-os-v2 *::before, .learning-os-v2 *::after {
+    scroll-behavior:auto !important;
+    animation:none !important;
+    transition:none !important;
+  }
+}
